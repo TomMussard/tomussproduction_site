@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tomuss Production — Variante C · Color grading studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Boldonse&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0B0C;
+    --bg-2: #11141A;
+    --fg: #EDE6D6;
+    --fg-dim: rgba(237, 230, 214, .58);
+    --fg-faint: rgba(237, 230, 214, .28);
+    --line: rgba(237, 230, 214, .12);
+    --teal: #2A9D8F;
+    --orange: #E76F51;
+    --magenta: #C44569;
+    --green: #6BCB77;
+
+    --f-display: 'Boldonse', 'Inter', sans-serif;
+    --f-body: 'Inter', sans-serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    --gutter: clamp(24px, 4vw, 56px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* film noise */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    opacity: .04; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='2' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px var(--gutter);
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(180deg, rgba(10,11,12,.88), rgba(10,11,12,0));
+  }
+  .brand {
+    font-family: var(--f-mono); font-size: 12px; letter-spacing: .2em;
+    text-transform: uppercase; display: flex; align-items: center; gap: 12px;
+  }
+  .brand .dot { width: 10px; height: 10px; background: var(--teal); border-radius: 50%; }
+  .nav-links { display: flex; gap: 28px; list-style: none; font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .2em; }
+  .nav-links a { opacity: .65; transition: opacity .25s; }
+  .nav-links a:hover, .nav-links a.active { opacity: 1; }
+  .nav-cta {
+    font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .22em;
+    padding: 10px 18px; border: 1px solid var(--fg); color: var(--fg);
+  }
+  .nav-cta:hover { background: var(--fg); color: var(--bg); }
+
+  /* ── HERO with vectorscope ── */
+  .hero {
+    min-height: 100vh;
+    padding: 120px var(--gutter) 60px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 60px;
+    align-items: end;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 32px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--teal); }
+  .hero h1 {
+    font-family: var(--f-display); font-size: clamp(64px, 11vw, 180px); line-height: .92;
+    letter-spacing: -.02em; margin-bottom: 36px;
+  }
+  .hero h1 .clr-teal { color: var(--teal); }
+  .hero h1 .clr-orange { color: var(--orange); }
+  .hero p.lede {
+    color: var(--fg-dim); font-size: 17px; line-height: 1.55; max-width: 540px; margin-bottom: 40px;
+  }
+  .hero-meta {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    display: flex; gap: 28px;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em; color: var(--fg-dim);
+    text-transform: uppercase;
+  }
+
+  /* Vectorscope module */
+  .scope {
+    aspect-ratio: 1;
+    background: radial-gradient(circle at center, #1a1f26 0%, #0a0d12 70%);
+    border: 1px solid var(--line);
+    position: relative;
+    padding: 16px;
+    overflow: hidden;
+  }
+  .scope-svg {
+    position: absolute; inset: 16px;
+  }
+  .scope-label {
+    position: absolute; top: 12px; left: 16px; right: 16px;
+    display: flex; justify-content: space-between;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--fg-dim); z-index: 2;
+  }
+  .scope-label .live { color: var(--orange); display: inline-flex; align-items: center; gap: 6px; }
+  .scope-label .live::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--orange);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink { 50% { opacity: .3; } }
+
+  .scope-readout {
+    position: absolute; bottom: 12px; left: 16px; right: 16px;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .04em; color: var(--fg-dim);
+    z-index: 2;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px;
+  }
+  .scope-readout span strong { color: var(--fg); font-weight: 500; }
+
+  /* ── LUT GALLERY SECTIONS ── */
+  /* each project section gets its own color grading look */
+  .lut-section {
+    padding: 100px var(--gutter);
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .lut-section .lut-bar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    display: flex;
+  }
+  .lut-bar span { flex: 1; }
+
+  .lut-head {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    margin-bottom: 60px; align-items: end;
+  }
+  .lut-tag {
+    display: inline-flex; gap: 12px; align-items: center;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .lut-tag .chip {
+    padding: 5px 10px; background: var(--bg-2); border: 1px solid var(--line);
+    color: var(--fg); letter-spacing: .15em;
+  }
+  .lut-head h2 {
+    font-family: var(--f-display); font-size: clamp(40px, 5.5vw, 80px); line-height: .95;
+    letter-spacing: -.02em; margin-top: 16px;
+  }
+  .lut-head p {
+    color: var(--fg-dim); font-size: 15px; line-height: 1.55; max-width: 460px;
+  }
+  .lut-head .stat-pill {
+    display: inline-flex; gap: 18px; margin-top: 24px;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em; color: var(--fg-dim);
+    text-transform: uppercase;
+  }
+  .lut-head .stat-pill b { color: var(--fg); font-weight: 500; }
+
+  .lut-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px;
+  }
+
+  /* project card */
+  .proj {
+    cursor: pointer;
+  }
+  .proj-frame {
+    aspect-ratio: 16/9; position: relative; overflow: hidden;
+    border: 1px solid var(--line);
+    transition: border-color .35s ease;
+  }
+  .proj:hover .proj-frame { border-color: var(--fg); }
+  /* GRADED frames: each LUT section paints its own background */
+  .lut-tealorange .proj-frame::before { background: radial-gradient(80% 60% at 30% 30%, rgba(231,111,81,.45), transparent 60%), radial-gradient(70% 70% at 80% 80%, rgba(42,157,143,.5), transparent 60%), #0c1518; }
+  .lut-bleach .proj-frame::before    { background: radial-gradient(80% 60% at 50% 50%, #cdc7b0, #6b6557 70%, #2a2924); filter: saturate(.4); }
+  .lut-dayfornight .proj-frame::before { background: radial-gradient(60% 60% at 60% 40%, #1f3a5c, #0a1530 80%); }
+  .lut-technicolor .proj-frame::before { background: linear-gradient(135deg, #b51e2e 0%, #e8a73a 35%, #2c6fb5 70%, #1a4a8a 100%); }
+  .lut-section.lut-tealorange { background: linear-gradient(180deg, #0a0b0c 0%, #0d1213 100%); }
+  .lut-section.lut-bleach { background: #0c0d0b; }
+  .lut-section.lut-dayfornight { background: #08101c; }
+  .lut-section.lut-technicolor { background: #0d0a0e; }
+
+  .proj-frame::before {
+    content: ''; position: absolute; inset: 0;
+  }
+  .proj-frame::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 14px);
+  }
+  .proj-frame .play {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    opacity: 0; transition: opacity .3s; z-index: 2;
+  }
+  .proj:hover .proj-frame .play { opacity: 1; }
+  .proj-frame .play span {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1.5px solid var(--fg); display: grid; place-items: center;
+    backdrop-filter: blur(8px); background: rgba(0,0,0,.3); color: var(--fg);
+  }
+  .proj-frame .tc {
+    position: absolute; left: 12px; top: 12px; z-index: 2;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; color: var(--fg);
+    background: rgba(0,0,0,.6); padding: 4px 8px; border: 1px solid rgba(255,255,255,.15);
+  }
+  .proj-frame .dur {
+    position: absolute; right: 12px; bottom: 12px; z-index: 2;
+    font-family: var(--f-mono); font-size: 11px; color: var(--fg);
+    background: rgba(0,0,0,.7); padding: 4px 8px;
+  }
+  /* mini histogram bottom-left */
+  .proj-frame .histo {
+    position: absolute; left: 12px; bottom: 12px; z-index: 2;
+    display: flex; align-items: end; gap: 1px; height: 18px;
+    padding: 3px 5px; background: rgba(0,0,0,.7);
+  }
+  .proj-frame .histo i { display: block; width: 2px; background: rgba(255,255,255,.6); }
+
+  .proj-meta {
+    padding-top: 18px;
+    display: grid; grid-template-columns: 1fr auto; gap: 8px 14px;
+  }
+  .proj-meta h3 {
+    font-family: var(--f-display); font-size: 18px; letter-spacing: -.01em; line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .proj-meta .info {
+    color: var(--fg-dim); font-size: 13px;
+  }
+  .proj-meta .info .sep { color: var(--fg-faint); margin: 0 6px; }
+  .proj-meta .lutchip {
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--fg-dim);
+    padding: 4px 8px; border: 1px solid var(--line); align-self: start;
+  }
+
+  /* ── WAVEFORM strip between sections ── */
+  .waveform {
+    height: 64px;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 1px; padding: 0 var(--gutter);
+    overflow: hidden;
+  }
+  .waveform i {
+    display: block; width: 2px; background: var(--teal); opacity: .8;
+    animation: wave 1.4s ease-in-out infinite;
+  }
+  @keyframes wave {
+    0%, 100% { height: 8px; }
+    50% { height: var(--h, 40px); }
+  }
+
+  /* ── STATS / SCOPES ROW ── */
+  .scopes-row {
+    padding: 100px var(--gutter);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .scope-stat {
+    border: 1px solid var(--line);
+    padding: 24px;
+    aspect-ratio: 1.2;
+    background: var(--bg-2);
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .scope-stat .scope-stat-head {
+    display: flex; justify-content: space-between; align-items: start;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em; color: var(--fg-dim);
+    text-transform: uppercase;
+  }
+  .scope-stat .num {
+    font-family: var(--f-display); font-size: clamp(48px, 5vw, 80px); line-height: .9;
+    letter-spacing: -.02em;
+  }
+  .scope-stat .num em { font-style: normal; }
+  .scope-stat .lbl {
+    font-family: var(--f-mono); font-size: 11px; color: var(--fg-dim);
+    text-transform: uppercase; letter-spacing: .2em;
+  }
+  .scope-stat .mini-graph {
+    position: absolute; right: 16px; top: 50%; transform: translateY(-30%);
+    width: 100px; height: 60px;
+    opacity: .5;
+  }
+  .scope-stat:nth-child(1) .num em { color: var(--teal); }
+  .scope-stat:nth-child(2) .num em { color: var(--orange); }
+  .scope-stat:nth-child(3) .num em { color: var(--magenta); }
+  .scope-stat:nth-child(4) .num em { color: var(--green); }
+
+  /* CTA */
+  .end {
+    padding: 140px var(--gutter); text-align: center;
+    background: radial-gradient(ellipse at center, rgba(231,111,81,.05), transparent 60%);
+  }
+  .end .eyebrow {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 28px;
+  }
+  .end h2 {
+    font-family: var(--f-display); font-size: clamp(56px, 10vw, 160px); line-height: .92;
+    letter-spacing: -.02em; margin-bottom: 40px;
+  }
+  .end h2 .clr-teal { color: var(--teal); }
+  .end h2 .clr-orange { color: var(--orange); }
+  .end .cta {
+    display: inline-flex; gap: 12px; align-items: center;
+    padding: 18px 32px; border: 1px solid var(--fg);
+    font-family: var(--f-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .22em;
+  }
+  .end .cta:hover { background: var(--fg); color: var(--bg); }
+
+  /* footer */
+  .footer {
+    padding: 60px var(--gutter); border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center; gap: 32px; flex-wrap: wrap;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em; color: var(--fg-faint); text-transform: uppercase;
+  }
+  .footer .grade-strip {
+    display: flex; gap: 0; flex: 1; max-width: 400px; height: 4px;
+  }
+  .footer .grade-strip span { flex: 1; }
+
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; }
+    .lut-head { grid-template-columns: 1fr; gap: 32px; }
+    .lut-grid { grid-template-columns: 1fr; }
+    .scopes-row { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><span class="dot"></span> TOMUSS / PRODUCTION</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Variante A</a></li>
+    <li><a class="active" href="#">Variante C</a></li>
+    <li><a href="index-g.html">Variante G</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">Brief ↗</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" data-screen-label="C · Hero">
+  <div>
+    <p class="hero-eyebrow">TOMUSS · COLORIST &amp; EDITOR · LE MANS · 2026</p>
+    <h1>
+      Je raconte<br/>
+      en <span class="clr-teal">teal</span><br/>
+      &amp; <span class="clr-orange">orange.</span>
+    </h1>
+    <p class="lede">
+      Monteur vidéo, cadreur et coloriste basé au Mans. Je traite la couleur comme une signature : chaque projet a son look, son grain, sa température. Vingt-quatre projets, douze millions de vues, trois ans de table de montage.
+    </p>
+    <div class="hero-meta">
+      <span>CAM · SONY A7III</span>
+      <span>NLE · PREMIERE PRO</span>
+      <span>GRADE · LUMETRI / DAVINCI</span>
+      <span>OUTPUT · UHD · 4:2:2</span>
+    </div>
+  </div>
+
+  <!-- Vectorscope -->
+  <div class="scope">
+    <div class="scope-label">
+      <span>VECTORSCOPE / LIVE</span>
+      <span class="live">SIGNAL</span>
+    </div>
+    <svg class="scope-svg" viewBox="0 0 200 200">
+      <!-- Circle outer -->
+      <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(237,230,214,.15)" stroke-width="1"/>
+      <circle cx="100" cy="100" r="65" fill="none" stroke="rgba(237,230,214,.08)" stroke-width="1"/>
+      <circle cx="100" cy="100" r="35" fill="none" stroke="rgba(237,230,214,.08)" stroke-width="1"/>
+      <!-- Cross -->
+      <line x1="100" y1="5" x2="100" y2="195" stroke="rgba(237,230,214,.1)" stroke-width="1"/>
+      <line x1="5" y1="100" x2="195" y2="100" stroke="rgba(237,230,214,.1)" stroke-width="1"/>
+      <!-- Color targets (R G B Cy Mg Yl) -->
+      <g font-family="JetBrains Mono" font-size="8" fill="rgba(237,230,214,.4)">
+        <text x="170" y="40">R</text>
+        <text x="20" y="160">Cy</text>
+        <text x="40" y="35">Yl</text>
+        <text x="160" y="160">B</text>
+        <text x="170" y="170">Mg</text>
+        <text x="20" y="40">G</text>
+      </g>
+      <!-- Trace cloud teal-orange -->
+      <g opacity=".85">
+        <circle cx="135" cy="55"  r="1.5" fill="#E76F51"/>
+        <circle cx="142" cy="60"  r="1.2" fill="#E76F51"/>
+        <circle cx="128" cy="62"  r="1" fill="#E76F51"/>
+        <circle cx="148" cy="50"  r="1" fill="#E76F51"/>
+        <circle cx="125" cy="50"  r="1.4" fill="#E76F51"/>
+        <circle cx="60"  cy="142" r="1.5" fill="#2A9D8F"/>
+        <circle cx="55"  cy="135" r="1.2" fill="#2A9D8F"/>
+        <circle cx="68"  cy="148" r="1" fill="#2A9D8F"/>
+        <circle cx="48"  cy="150" r="1.4" fill="#2A9D8F"/>
+        <circle cx="65"  cy="130" r="1" fill="#2A9D8F"/>
+        <circle cx="100" cy="100" r="2" fill="#EDE6D6"/>
+        <circle cx="105" cy="95"  r="1" fill="#EDE6D6"/>
+        <circle cx="95"  cy="105" r="1" fill="#EDE6D6"/>
+      </g>
+    </svg>
+    <div class="scope-readout">
+      <span>R<strong> 78%</strong></span>
+      <span>G<strong> 64%</strong></span>
+      <span>B<strong> 41%</strong></span>
+      <span>SAT<strong> 1.18</strong></span>
+    </div>
+  </div>
+</section>
+
+<!-- waveform divider -->
+<div class="waveform" id="wf1"></div>
+
+<!-- ── LUT 01 — Teal & Orange ── -->
+<section class="lut-section lut-tealorange" data-screen-label="C · LUT 01 Teal &amp; Orange">
+  <div class="lut-bar"><span style="background:#0d3a3a"></span><span style="background:#2A9D8F"></span><span style="background:#E76F51"></span><span style="background:#FFD3A8"></span></div>
+  <div class="lut-head">
+    <div>
+      <p class="lut-tag"><span class="chip">LUT 01</span> Teal &amp; Orange · Cinematic</p>
+      <h2>Cinéma blockbuster.<br/>Peau chaude,<br/>ombres froides.</h2>
+    </div>
+    <div>
+      <p>La signature des longs métrages depuis 2010. J'utilise ce look sur les vidéos qui demandent du contraste émotionnel et du punch visuel. Trois projets emblématiques tournés en S-Log3, dégradés en Lumetri puis affinés à la main.</p>
+      <p class="stat-pill"><span><b>03</b> projets</span><span><b>6,2 M</b> vues cumulées</span><span><b>2025—2026</b></span></p>
+    </div>
+  </div>
+
+  <div class="lut-grid">
+    <a class="proj" href="#">
+      <div class="proj-frame">
+        <span class="tc">TC · 01:14:32:18</span>
+        <span class="dur">14:32</span>
+        <span class="histo"><i style="height:4px"></i><i style="height:8px"></i><i style="height:14px"></i><i style="height:11px"></i><i style="height:6px"></i><i style="height:3px"></i></span>
+        <div class="play"><span>▶</span></div>
+      </div>
+      <div class="proj-meta">
+        <h3>Projet 01 — Documentaire long format</h3>
+        <span class="lutchip">LUT · T-O 01</span>
+        <p class="info">Créateur X<span class="sep">·</span>2,4 M vues<span class="sep">·</span>Mars 2026</p>
+      </div>
+    </a>
+    <a class="proj" href="#">
+      <div class="proj-frame">
+        <span class="tc">TC · 00:11:07:04</span>
+        <span class="dur">11:07</span>
+        <span class="histo"><i style="height:6px"></i><i style="height:10px"></i><i style="height:16px"></i><i style="height:9px"></i><i style="height:4px"></i><i style="height:2px"></i></span>
+        <div class="play"><span>▶</span></div>
+      </div>
+      <div class="proj-meta">
+        <h3>Projet 04 — Récit immersif voyage</h3>
+        <span class="lutchip">LUT · T-O 02</span>
+        <p class="info">Créateur W<span class="sep">·</span>1,1 M vues<span class="sep">·</span>Nov. 2025</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── LUT 02 — Bleach Bypass ── -->
+<section class="lut-section lut-bleach" data-screen-label="C · LUT 02 Bleach Bypass">
+  <div class="lut-bar"><span style="background:#3a3833"></span><span style="background:#8a847a"></span><span style="background:#cdc7b0"></span><span style="background:#f0eadc"></span></div>
+  <div class="lut-head">
+    <div>
+      <p class="lut-tag"><span class="chip">LUT 02</span> Bleach Bypass · Documentaire</p>
+      <h2>Désaturé, brut,<br/>presque argentique.<br/>L'image qui dit vrai.</h2>
+    </div>
+    <div>
+      <p>Quand le sujet l'exige : interviews, documentaires sociaux, formats premiers degrés. Saturation à 40 %, contraste relevé, grain photochimique simulé. L'image se met au service du récit, pas l'inverse.</p>
+      <p class="stat-pill"><span><b>02</b> projets</span><span><b>1,8 M</b> vues cumulées</span><span><b>2025</b></span></p>
+    </div>
+  </div>
+
+  <div class="lut-grid">
+    <a class="proj" href="#">
+      <div class="proj-frame">
+        <span class="tc">TC · 00:22:04:09</span>
+        <span class="dur">22:04</span>
+        <span class="histo"><i style="height:2px"></i><i style="height:10px"></i><i style="height:18px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:3px"></i></span>
+        <div class="play"><span>▶</span></div>
+      </div>
+      <div class="proj-meta">
+        <h3>Projet 08 — Format interview</h3>
+        <span class="lutchip">LUT · BB 01</span>
+        <p class="info">Créateur S<span class="sep">·</span>480 k vues<span class="sep">·</span>Juil. 2025</p>
+      </div>
+    </a>
+    <a class="proj" href="#">
+      <div class="proj-frame">
+        <span class="tc">TC · 00:02:46:22</span>
+        <span class="dur">02:46</span>
+        <span class="histo"><i style="height:3px"></i><i style="height:7px"></i><i style="height:14px"></i><i style="height:18px"></i><i style="height:10px"></i><i style="height:4px"></i></span>
+        <div class="play"><span>▶</span></div>
+      </div>
+      <div class="proj-meta">
+        <h3>Projet 09 — Brand film court</h3>
+        <span class="lutchip">LUT · BB 02</span>
+        <p class="info">Marque R<span class="sep">·</span>310 k vues<span class="sep">·</span>Juin 2025</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── LUT 03 — Day for Night ── -->
+<section class="lut-section lut-dayfornight" data-screen-label="C · LUT 03 Day for Night">
+  <div class="lut-bar"><span style="background:#0a1530"></span><span style="background:#1f3a5c"></span><span style="background:#4a6fa0"></span><span style="background:#a8c8e0"></span></div>
+  <div class="lut-head">
+    <div>
+      <p class="lut-tag"><span class="chip">LUT 03</span> Day for Night · Mood</p>
+      <h2>Bleu nuit profond.<br/>Pour les rêves<br/>et les concerts.</h2>
+    </div>
+    <div>
+      <p>Le grade des nuits américaines, retravaillé pour la captation live et les ambiances oniriques. Mid-tones tirés vers le cyan, hautes lumières conservées, blacks crushés. Utilisé sur les concerts et les vlogs cinématographiques.</p>
+      <p class="stat-pill"><span><b>02</b> projets</span><span><b>3,7 M</b> vues cumulées</span><span><b>2025</b></span></p>
+    </div>
+  </div>
+
+  <div class="lut-grid">
+    <a class="proj" href="#">
+      <div class="proj-frame">
+        <span class="tc">TC · 00:17:22:11</span>
+        <span class="dur">17:22</span>
+        <span class="histo"><i style="height:14px"></i><i style="height:18px"></i><i style="height:10px"></i><i style="height:5px"></i><i style="height:3px"></i><i style="height:2px"></i></span>
+        <div class="play"><span>▶</span></div>
+      </div>
+      <div class="proj-meta">
+        <h3>Projet 05 — Vlog cinématographique</h3>
+        <span class="lutchip">LUT · DFN 01</span>
+        <p class="info">Créateur V<span class="sep">·</span>2,9 M vues<span class="sep">·</span>Oct. 2025</p>
+      </div>
+    </a>
+    <a class="proj" href="#">
+      <div class="proj-frame">
+        <span class="tc">TC · 00:04:22:08</span>
+        <span class="dur">04:22</span>
+        <span class="histo"><i style="height:16px"></i><i style="height:14px"></i><i style="height:8px"></i><i style="height:4px"></i><i style="height:2px"></i><i style="height:2px"></i></span>
+        <div class="play"><span>▶</span></div>
+      </div>
+      <div class="proj-meta">
+        <h3>Projet 10 — Concert live indoor</h3>
+        <span class="lutchip">LUT · DFN 02</span>
+        <p class="info">Artiste Q<span class="sep">·</span>860 k vues<span class="sep">·</span>Mai 2025</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── SCOPES / STATS ── -->
+<section class="scopes-row" data-screen-label="C · Scopes &amp; chiffres">
+  <div class="scope-stat">
+    <div class="scope-stat-head"><span>SCOPE · 01</span><span>VUES</span></div>
+    <div class="num">12<em>M+</em></div>
+    <div class="lbl">VUES CUMULÉES · 2023→2026</div>
+    <svg class="mini-graph" viewBox="0 0 100 60"><path d="M 0 50 L 20 45 L 40 38 L 60 25 L 80 14 L 100 6" fill="none" stroke="#2A9D8F" stroke-width="1.5"/></svg>
+  </div>
+  <div class="scope-stat">
+    <div class="scope-stat-head"><span>SCOPE · 02</span><span>PROJETS</span></div>
+    <div class="num">100<em>+</em></div>
+    <div class="lbl">PROJETS LIVRÉS · TOUS FORMATS</div>
+    <svg class="mini-graph" viewBox="0 0 100 60"><rect x="5"  y="40" width="6" height="20" fill="#E76F51"/><rect x="18" y="32" width="6" height="28" fill="#E76F51"/><rect x="31" y="22" width="6" height="38" fill="#E76F51"/><rect x="44" y="28" width="6" height="32" fill="#E76F51"/><rect x="57" y="18" width="6" height="42" fill="#E76F51"/><rect x="70" y="10" width="6" height="50" fill="#E76F51"/><rect x="83" y="6"  width="6" height="54" fill="#E76F51"/></svg>
+  </div>
+  <div class="scope-stat">
+    <div class="scope-stat-head"><span>SCOPE · 03</span><span>ANS</span></div>
+    <div class="num">3<em>ans</em></div>
+    <div class="lbl">EN FREELANCE · DEPUIS 2022</div>
+    <svg class="mini-graph" viewBox="0 0 100 60"><path d="M 0 30 Q 25 0, 50 30 T 100 30" fill="none" stroke="#C44569" stroke-width="1.5"/></svg>
+  </div>
+  <div class="scope-stat">
+    <div class="scope-stat-head"><span>SCOPE · 04</span><span>CRÉATEURS</span></div>
+    <div class="num">15<em>+</em></div>
+    <div class="lbl">CRÉATEURS ACCOMPAGNÉS</div>
+    <svg class="mini-graph" viewBox="0 0 100 60"><circle cx="20" cy="30" r="6" fill="none" stroke="#6BCB77" stroke-width="1"/><circle cx="40" cy="30" r="6" fill="none" stroke="#6BCB77" stroke-width="1"/><circle cx="60" cy="30" r="6" fill="none" stroke="#6BCB77" stroke-width="1"/><circle cx="80" cy="30" r="6" fill="#6BCB77"/></svg>
+  </div>
+</section>
+
+<!-- ── END / CTA ── -->
+<section class="end" id="contact" data-screen-label="C · CTA">
+  <p class="eyebrow">— RENDU FINAL · MASTER</p>
+  <h2>Calibrons<br/>votre prochain <span class="clr-teal">cut.</span></h2>
+  <a href="mailto:hello@tomussproduction.fr" class="cta">hello@tomussproduction.fr ↗</a>
+</section>
+
+<footer class="footer">
+  <span>© 2026 — TOMUSS / PRODUCTION · LE MANS</span>
+  <div class="grade-strip">
+    <span style="background:#0d3a3a"></span>
+    <span style="background:#2A9D8F"></span>
+    <span style="background:#EDE6D6"></span>
+    <span style="background:#E76F51"></span>
+    <span style="background:#5a1a10"></span>
+  </div>
+  <span>VARIANTE C · COLOR GRADING STUDIO</span>
+</footer>
+
+<script>
+  // Waveform random bars
+  const wf = document.getElementById('wf1');
+  if (wf) {
+    let html = '';
+    for (let i=0;i<200;i++) {
+      const h = 8 + Math.floor(Math.random()*48);
+      const d = (Math.random()*1.4).toFixed(2);
+      html += `<i style="--h:${h}px;animation-delay:${d}s"></i>`;
+    }
+    wf.innerHTML = html;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Projets — Tomuss Production</title>
+<link rel="stylesheet" href="assets/shared.css" />
+<style>
+  .page-head {
+    padding: 160px var(--gutter) 60px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+  }
+  .page-head h1 {
+    font-family: var(--f-display);
+    font-size: clamp(72px, 13vw, 220px);
+    line-height: .84;
+    text-transform: uppercase;
+  }
+  .page-head h1 em { color: var(--accent); font-style: italic; font-weight: 400; }
+  .page-head .right p {
+    color: var(--fg-dim);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 420px;
+    margin-bottom: 18px;
+  }
+  .page-head .meta {
+    display: flex; gap: 28px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+
+  /* Stats inline */
+  .stats-line {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--line);
+  }
+  .stats-line .stat {
+    padding: 48px var(--gutter);
+    border-right: 1px solid var(--line);
+  }
+  .stats-line .stat:last-child { border-right: none; }
+  .stats-line .num {
+    font-family: var(--f-display);
+    font-size: clamp(40px, 5vw, 76px);
+    line-height: .95;
+  }
+  .stats-line .num em { color: var(--accent); font-style: italic; }
+  .stats-line .lbl {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    color: var(--fg-dim);
+    margin-top: 12px;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    padding: 60px var(--gutter) 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter {
+    padding: 10px 20px;
+    border: 1px solid var(--line-strong);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    color: var(--fg-dim);
+    cursor: pointer;
+    transition: all .25s var(--ease);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .filter:hover { color: var(--fg); border-color: var(--fg); }
+  .filter .count { color: var(--fg-faint); font-size: 10px; }
+  .filter.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .filter.active .count { color: rgba(15,15,15,.55); }
+
+  .sort {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    color: var(--fg-dim);
+  }
+  .sort select {
+    background: #fff;
+    color: #111;
+    border: 1px solid var(--line-strong);
+    padding: 8px 12px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+  }
+  .sort select option {
+    color: #111;
+    background: #fff;
+  }
+
+  /* Grid */
+  .grid {
+    padding: 30px var(--gutter) 120px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px 32px;
+  }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px)  { .grid { grid-template-columns: 1fr; } }
+
+  .thumb.is-hidden { display: none; }
+
+  /* Featured / first */
+  .grid .thumb.featured {
+    grid-column: span 2;
+  }
+  .grid .thumb.featured .thumb-frame { aspect-ratio: 21 / 9; }
+  @media (max-width: 1100px) { .grid .thumb.featured { grid-column: span 2; } }
+  @media (max-width: 640px) { .grid .thumb.featured { grid-column: span 1; } .grid .thumb.featured .thumb-frame { aspect-ratio: 16/9; } }
+
+  /* Bottom callout */
+  .bottom-cta {
+    border-top: 1px solid var(--line);
+    padding: 120px var(--gutter);
+    text-align: center;
+  }
+  .bottom-cta h2 {
+    font-family: var(--f-display);
+    font-size: clamp(48px, 8vw, 140px);
+    line-height: .88;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .bottom-cta h2 em { color: var(--accent); font-style: italic; }
+  .bottom-cta .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 36px;
+    border: 1px solid var(--fg);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .25em;
+    transition: background .3s, color .3s;
+  }
+  .bottom-cta .pill:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  @media (max-width: 880px) {
+    .page-head { grid-template-columns: 1fr; gap: 40px; padding-top: 130px; }
+    .stats-line { grid-template-columns: repeat(2, 1fr); }
+    .stats-line .stat:nth-child(2) { border-right: none; }
+    .stats-line .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<div class="curtain"></div>
+<div id="nav-mount"></div>
+
+<header class="page-head" data-screen-label="02 Projets — Head">
+  <div>
+    <p class="eyebrow" style="margin-bottom: 32px;">découvrez mon univers</p>
+    <h1>Tous mes<br/>projets <em>—</em></h1>
+  </div>
+  <div class="right">
+    <p>
+      Depuis 3 ans je monte exclusivement pour des créateurs YouTube. Des vidéos qui divertissent, qui racontent, qui captivent et qui font des chiffres.
+    </p>
+    <div class="meta">
+      <span>Des millions de vues, Du storytelling, du rythme, une image maîtrisée.</span>
+    </div>
+  </div>
+</header>
+
+<section class="stats-line" data-screen-label="02 Projets — Chiffres">
+  <div class="stat"><div class="num">12<em>M+</em></div><div class="lbl">— Vues cumulées</div></div>
+  <div class="stat"><div class="num">100<em>+</em></div><div class="lbl">— Projets livrés</div></div>
+  <div class="stat"><div class="num">3<em>ans</em></div><div class="lbl">— En freelance</div></div>
+  <div class="stat"><div class="num">15<em>+</em></div><div class="lbl">— Créateurs</div></div>
+</section>
+
+<div class="filter-bar" data-screen-label="02 Projets — Filtres">
+  <div class="filters" id="filters">
+    <button class="filter active" data-filter="all">Tous <span class="count">24</span></button>
+  </div>
+  <div class="sort">
+    <span>— Trier par</span>
+    <select id="sort">
+      <option>Plus récents</option>
+      <option>Plus vus</option>
+      <option>Ordre alphabétique</option>
+    </select>
+  </div>
+</div>
+
+<div class="grid" id="grid" data-screen-label="02 Projets — Grille">
+  <!-- 12 projets pour la démo, mix des 3 types -->
+</div>
+
+<section class="bottom-cta" data-screen-label="02 Projets — CTA">
+  <p class="eyebrow fade-up" style="margin-bottom: 28px;">— Vous voulez un projet ?</p>
+  <h2 class="fade-up">Faisons<br/>la <em>prochaine.</em></h2>
+  <a href="offres.html#contact" class="pill fade-up">Démarrer un projet ↗</a>
+</section>
+
+<div id="footer-mount"></div>
+
+<script src="assets/partials.js"></script>
+<script src="assets/shared.js"></script>
+<script>
+  window.injectChrome('projects');
+
+  const CONFIG = {
+    apiKey: 'AIzaSyDrxvyFZJhjZauXxcs4bU11xs3mAzeaL8M',
+    playlistId: 'PL00Z1aG7rYtiV35v_4hWYZpzRZ18TuLqA',
+    maxVideos: 24,
+    defaultTags: ['Montage', 'YouTube', 'Captation', 'Montage', 'YouTube', 'Captation'],
+    videoTags: {}
+  };
+
+  const fallbackProjects = [
+    { idx: 1, type: 'montage',   title: 'Documentaire long format',   creator: 'Créateur X', views: '2,4 M',  date: 'Mars 2026', dur: '14:32', feat: true, thumbnail: '', avatar: '', url: '#' },
+    { idx: 2, type: 'youtube',   title: 'Challenge format viral',      creator: 'Créateur Y', views: '3,8 M',  date: 'Janv. 2026', dur: '08:11', thumbnail: '', avatar: '', url: '#' },
+    { idx: 3, type: 'captation', title: 'Aftermovie événement privé',  creator: 'Marque Z',   views: '720 k',  date: 'Déc. 2025', dur: '03:48', thumbnail: '', avatar: '', url: '#' },
+    { idx: 4, type: 'montage',   title: 'Récit immersif voyage',        creator: 'Créateur W', views: '1,1 M',  date: 'Nov. 2025', dur: '11:07', thumbnail: '', avatar: '', url: '#' },
+    { idx: 5, type: 'youtube',   title: 'Vlog cinématographique',      creator: 'Créateur V', views: '2,9 M',  date: 'Oct. 2025', dur: '17:22', thumbnail: '', avatar: '', url: '#' },
+    { idx: 6, type: 'captation', title: 'Festival multi-cam',          creator: 'Festival U', views: '1,2 M',  date: 'Sept. 2025', dur: '05:54', thumbnail: '', avatar: '', url: '#' },
+    { idx: 7, type: 'montage',   title: 'Best-of saison',              creator: 'Créateur T', views: '1,8 M',  date: 'Août 2025', dur: '09:18', thumbnail: '', avatar: '', url: '#' },
+    { idx: 8, type: 'youtube',   title: 'Format interview',            creator: 'Créateur S', views: '480 k',  date: 'Juil. 2025', dur: '22:04', thumbnail: '', avatar: '', url: '#' },
+    { idx: 9, type: 'montage',   title: 'Brand film court',            creator: 'Marque R',   views: '310 k',  date: 'Juin 2025', dur: '02:46', thumbnail: '', avatar: '', url: '#' },
+    { idx: 10,type: 'captation', title: 'Concert live indoor',         creator: 'Artiste Q',  views: '860 k',  date: 'Mai 2025',  dur: '04:22', thumbnail: '', avatar: '', url: '#' },
+    { idx: 11,type: 'youtube',   title: 'Mini-série format hebdo',     creator: 'Créateur P', views: '950 k',  date: 'Avril 2025', dur: '12:41', thumbnail: '', avatar: '', url: '#' },
+    { idx: 12,type: 'montage',   title: 'Récap année',                 creator: 'Créateur O', views: '1,4 M',  date: 'Janv. 2025', dur: '07:33', thumbnail: '', avatar: '', url: '#' }
+  ];
+
+  const grid = document.getElementById('grid');
+
+  function fmtViews(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' M';
+    if (n >= 1e3) return Math.round(n / 1e3) + ' k';
+    return String(n);
+  }
+
+  function fmtDuration(iso) {
+    const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/) || [];
+    const h = +m[1] || 0, min = +m[2] || 0, sec = +m[3] || 0;
+    const pad = v => String(v).padStart(2, '0');
+    return h ? `${h}:${pad(min)}:${pad(sec)}` : `${min}:${pad(sec)}`;
+  }
+
+  function fmtDate(str) {
+    const days = Math.floor((Date.now() - new Date(str)) / 86400000);
+    if (days < 30) return 'ce mois-ci';
+    const months = Math.floor(days / 30);
+    if (months < 12) return `il y a ${months} mois`;
+    const years = Math.floor(months / 12);
+    return `il y a ${years} an${years > 1 ? 's' : ''}`;
+  }
+
+  function makeProjectCard(p) {
+    console.log('Thumbnail for', p.title, ':', p.thumbnail);
+    const thumbContent = p.thumbnail ? `<img src="${p.thumbnail}" alt="${p.title}" loading="lazy" />` : `<span class="ph-label">[ projet ${String(p.idx).padStart(2, '0')} · placeholder ]</span>`;
+    return `
+      <a class="thumb ${p.feat ? 'featured' : ''}" data-type="${p.type}" href="${p.url || '#'}" target="_blank" rel="noopener">
+        <div class="thumb-frame">
+          ${thumbContent}
+          <span class="duration">${p.dur || '—'}</span>
+          <div class="play"><span>▶</span></div>
+        </div>
+        <div class="thumb-meta">
+          <div class="avatar">${p.avatar ? `<img src="${p.avatar}" alt="${p.creator}" />` : ''}</div>
+          <div class="info">
+            <h3>${p.title}</h3>
+            <p>${p.creator}<span class="sep">·</span>${p.views} vues<span class="sep">·</span>${p.date}</p>
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  function updateCounts(projects) {
+    const counts = projects.reduce((acc, p) => {
+      acc.all += 1;
+      return acc;
+    }, { all: 0 });
+
+    document.querySelector('[data-filter="all"] .count').textContent = counts.all;
+  }
+
+  let currentProjects = [];
+
+  function renderProjects(projects, sortBy = 'Plus récents') {
+    currentProjects = sortProjects(projects, sortBy);
+    grid.innerHTML = currentProjects.map(makeProjectCard).join('');
+    updateCounts(currentProjects);
+  }
+
+  function parseViews(viewsStr) {
+    const num = parseFloat(viewsStr.replace(',', '.').replace(' M', 'e6').replace(' k', 'e3'));
+    return isNaN(num) ? 0 : num;
+  }
+
+  function sortProjects(projects, sortBy) {
+    const sorted = [...projects];
+    switch (sortBy) {
+      case 'Plus vus':
+        sorted.sort((a, b) => parseViews(b.views) - parseViews(a.views));
+        break;
+      case 'Ordre alphabétique':
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'Plus récents':
+      default:
+        // Déjà trié par date dans fetch
+        break;
+    }
+    return sorted;
+  }
+
+  async function fetchPlaylistProjects() {
+    console.log('[YT projets] Démarrage fetch avec clé:', CONFIG.apiKey.substring(0, 10) + '...');
+    if (!CONFIG.apiKey || CONFIG.apiKey === 'VOTRE_CLE_API_ICI') {
+      throw new Error('YouTube API key non configurée');
+    }
+
+    const base = 'https://www.googleapis.com/youtube/v3';
+    console.log('[YT projets] Fetch playlist items...');
+    const playlistRes = await fetch(`${base}/playlistItems?part=snippet&playlistId=${CONFIG.playlistId}&maxResults=50&key=${CONFIG.apiKey}`);
+    if (!playlistRes.ok) throw new Error('playlist ' + playlistRes.status);
+    const playlistData = await playlistRes.json();
+    console.log('[YT projets] Playlist data:', playlistData);
+
+    const items = (playlistData.items || [])
+      .filter(i => i.snippet.resourceId?.kind === 'youtube#video')
+      .sort((a, b) => new Date(b.snippet.publishedAt) - new Date(a.snippet.publishedAt))
+      .map((item, index) => {
+        console.log('[YT projets] Thumbnails for', item.snippet.title, ':', item.snippet.thumbnails);
+        return {
+          idx: index + 1,
+          type: CONFIG.videoTags[item.snippet.resourceId.videoId] || CONFIG.defaultTags[index % CONFIG.defaultTags.length] || 'youtube',
+          title: item.snippet.title,
+          creator: item.snippet.videoOwnerChannelTitle || 'Tomuss Production',
+          views: '—',
+          date: fmtDate(item.snippet.publishedAt),
+          dur: '—',
+          url: `https://youtu.be/${item.snippet.resourceId.videoId}`,
+          videoId: item.snippet.resourceId.videoId,
+          thumbnail: (item.snippet.thumbnails?.maxres || item.snippet.thumbnails?.high || item.snippet.thumbnails?.medium || item.snippet.thumbnails?.default)?.url || '',
+          channelId: item.snippet.videoOwnerChannelId || ''
+        };
+      })
+      .slice(0, CONFIG.maxVideos);
+
+    if (!items.length) throw new Error('playlist vide');
+    console.log('[YT projets] Items filtrés:', items.length);
+
+    // Récupérer les avatars des channels
+    const channelIds = [...new Set(items.map(i => i.channelId).filter(id => id))];
+    let channelAvatars = {};
+    if (channelIds.length) {
+      console.log('[YT projets] Fetch channels avatars...');
+      const channelsRes = await fetch(`${base}/channels?part=snippet&id=${channelIds.join(',')}&key=${CONFIG.apiKey}`);
+      if (channelsRes.ok) {
+        const channelsData = await channelsRes.json();
+        channelAvatars = Object.fromEntries((channelsData.items || []).map(c => [
+          c.id,
+          (c.snippet.thumbnails?.default?.url || '')
+        ]));
+      }
+    }
+
+    const ids = items.map(i => i.videoId).join(',');
+    console.log('[YT projets] Fetch videos stats...');
+    const videosRes = await fetch(`${base}/videos?part=snippet,statistics,contentDetails&id=${ids}&key=${CONFIG.apiKey}`);
+    if (!videosRes.ok) throw new Error('videos ' + videosRes.status);
+    const videosData = await videosRes.json();
+    const statsMap = Object.fromEntries((videosData.items || []).map(v => [v.id, v]));
+
+    return items.map((item, index) => {
+      const extra = statsMap[item.videoId] || {};
+      const videoThumbs = extra.snippet?.thumbnails || {};
+      return {
+        ...item,
+        views: fmtViews(+(extra.statistics?.viewCount || 0)),
+        dur: extra.contentDetails ? fmtDuration(extra.contentDetails.duration) : '—',
+        idx: index + 1,
+        thumbnail: (videoThumbs.maxres || videoThumbs.high || videoThumbs.medium || videoThumbs.default)?.url || item.thumbnail,
+        avatar: channelAvatars[item.channelId] || ''
+      };
+    });
+  }
+
+  fetchPlaylistProjects()
+    .then(renderProjects)
+    .catch(err => {
+      console.warn('[YT projets]', err);
+      renderProjects(fallbackProjects);
+    });
+
+  document.getElementById('sort').addEventListener('change', (e) => {
+    renderProjects(currentProjects, e.target.value);
+  });
+
+  document.getElementById('filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter');
+    if (!btn) return;
+    document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('#grid .thumb').forEach(t => {
+      t.classList.toggle('is-hidden', !(f === 'all' || t.dataset.type === f));
+    });
+  });
+</script>
+</body>
+</html>

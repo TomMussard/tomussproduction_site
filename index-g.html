@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tomuss Production — Variante G · TAPE / VHS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A1530;
+    --bg-2: #0E1B3D;
+    --bg-3: #142555;
+    --fg: #EDE7D6;
+    --fg-dim: rgba(237, 231, 214, .55);
+    --fg-faint: rgba(237, 231, 214, .26);
+    --red: #FF3B30;
+    --red-dim: #B5251D;
+    --cyan: #4DD0E1;
+    --yellow: #F4D35E;
+    --line: rgba(237, 231, 214, .14);
+
+    --f-display: 'Antonio', 'Impact', sans-serif;
+    --f-vhs: 'VT323', monospace;
+    --f-mono: 'Space Mono', monospace;
+
+    --gutter: clamp(24px, 4vw, 56px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--fg); font-family: var(--f-mono); font-weight: 400; overflow-x: hidden; }
+  body { -webkit-font-smoothing: antialiased; }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* CRT scanlines globales */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 998;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.15) 0 1px, transparent 1px 3px);
+    mix-blend-mode: multiply;
+  }
+  /* CRT curvature vignette */
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 997;
+    background: radial-gradient(ellipse 110% 110% at center, transparent 55%, rgba(0,0,0,.5) 100%);
+  }
+
+  /* ── TAPE HEAD UI / NAV ── */
+  .vhs-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--bg-2);
+    border-bottom: 2px solid var(--red);
+    padding: 12px var(--gutter);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em;
+    text-transform: uppercase;
+  }
+  .vhs-bar .left { display: flex; align-items: center; gap: 18px; }
+  .vhs-bar .rec {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--red); font-weight: 700;
+  }
+  .vhs-bar .rec::before {
+    content: ''; width: 9px; height: 9px; background: var(--red); border-radius: 50%;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: .15; } }
+  .vhs-bar .tape-id { color: var(--yellow); }
+  .vhs-bar .time {
+    font-family: var(--f-vhs); font-size: 18px; color: var(--fg);
+    letter-spacing: .08em;
+  }
+  .vhs-bar nav { display: flex; gap: 22px; }
+  .vhs-bar nav a { color: var(--fg-dim); transition: color .2s; }
+  .vhs-bar nav a:hover, .vhs-bar nav a.active { color: var(--fg); }
+  .vhs-bar nav a.active { color: var(--yellow); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    padding: 100px var(--gutter) 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 60px;
+    align-items: end;
+    min-height: calc(100vh - 180px);
+  }
+
+  /* Big number stack like TAPE 003 */
+  .tape-num {
+    font-family: var(--f-vhs);
+    font-size: 22px;
+    color: var(--yellow);
+    margin-top: 32px;
+    margin-bottom: 28px;
+    display: inline-block;
+    padding: 4px 12px;
+    border: 2px solid var(--yellow);
+  }
+
+  /* Hero title with tracking error */
+  .hero h1 {
+    font-family: var(--f-display); font-weight: 700;
+    font-size: clamp(72px, 14vw, 220px); line-height: .85;
+    text-transform: uppercase;
+    letter-spacing: -.01em;
+    position: relative;
+  }
+  /* RGB chromatic aberration via layered shadows */
+  .hero h1 {
+    text-shadow:
+      -3px 0 0 var(--red),
+      3px 0 0 var(--cyan);
+  }
+  .hero h1 .wobble {
+    display: inline-block;
+    animation: wobble 4s ease-in-out infinite;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-4px); }
+  }
+  .hero h1 em { font-style: italic; color: var(--yellow); text-shadow: -3px 0 0 var(--red), 3px 0 0 var(--cyan); }
+
+  .hero p.lede {
+    margin-top: 36px; max-width: 580px;
+    font-family: var(--f-mono); font-size: 16px; line-height: 1.55;
+    color: var(--fg-dim);
+  }
+
+  /* Tape spec card */
+  .tape-spec {
+    border: 2px solid var(--fg);
+    padding: 20px;
+    background: rgba(14, 27, 61, .8);
+    font-family: var(--f-mono); font-size: 11px;
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+  .tape-spec h4 {
+    background: var(--fg); color: var(--bg);
+    padding: 6px 10px; margin: -20px -20px 16px -20px;
+    font-weight: 700; letter-spacing: .2em;
+  }
+  .tape-spec dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; }
+  .tape-spec dt { color: var(--fg-faint); }
+  .tape-spec dd { color: var(--fg); }
+  .tape-spec dd .ok { color: var(--yellow); }
+  .tape-spec .barcode {
+    margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line);
+    display: flex; gap: 1px; height: 28px;
+  }
+  .tape-spec .barcode i {
+    display: block; background: var(--fg);
+  }
+
+  /* Hero background — tracking distortion bands */
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(60% 50% at 30% 40%, rgba(255,59,48,.08) 0%, transparent 60%),
+      radial-gradient(50% 40% at 80% 60%, rgba(77,208,225,.08) 0%, transparent 60%);
+  }
+  .hero-bg::before {
+    content: ''; position: absolute;
+    left: 0; right: 0; height: 22px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.08) 30%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.08) 70%, transparent 100%);
+    top: 35%;
+    animation: trackingErr 7s linear infinite;
+  }
+  .hero-bg::after {
+    content: ''; position: absolute;
+    left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, transparent 0%, rgba(77,208,225,.3) 50%, transparent 100%);
+    top: 70%;
+    animation: trackingErr 11s linear infinite reverse;
+  }
+  @keyframes trackingErr {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+
+  /* PLAY ▶ FF marquee */
+  .vhs-controls {
+    position: absolute; bottom: 24px; left: var(--gutter); z-index: 3;
+    display: flex; gap: 8px; align-items: center;
+    font-family: var(--f-vhs); font-size: 22px;
+  }
+  .vhs-controls span {
+    padding: 4px 10px; border: 1.5px solid var(--fg); color: var(--fg);
+  }
+  .vhs-controls span.on { background: var(--red); color: var(--fg); border-color: var(--red); }
+
+  /* ── TICKER ── */
+  .ticker {
+    border-top: 2px solid var(--red); border-bottom: 2px solid var(--red);
+    background: var(--bg-2); overflow: hidden; white-space: nowrap;
+    padding: 14px 0;
+    font-family: var(--f-display); font-weight: 700; font-size: 28px;
+    text-transform: uppercase; letter-spacing: .04em; color: var(--fg);
+  }
+  .ticker .track {
+    display: inline-flex; gap: 36px;
+    animation: ticker 28s linear infinite;
+  }
+  .ticker .track span { display: inline-flex; align-items: center; gap: 36px; }
+  .ticker .star { color: var(--red); }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION HEAD ── */
+  .sec-head {
+    padding: 100px var(--gutter) 40px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end; gap: 40px;
+    border-top: 1px solid var(--line);
+  }
+  .sec-head .num {
+    font-family: var(--f-vhs); font-size: 80px;
+    color: var(--yellow);
+    line-height: .9;
+  }
+  .sec-head h2 {
+    font-family: var(--f-display); font-weight: 700; font-size: clamp(40px, 6vw, 88px);
+    line-height: .92; text-transform: uppercase;
+    text-shadow: -2px 0 0 var(--red), 2px 0 0 var(--cyan);
+  }
+  .sec-head h2 em { color: var(--yellow); font-style: italic; }
+  .sec-head .right {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--fg-dim);
+    text-align: right; line-height: 1.7;
+  }
+  .sec-head .right strong { color: var(--fg); }
+
+  /* ── PROJECT TAPES ── */
+  .tape-grid {
+    padding: 30px var(--gutter) 100px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+  }
+  .tape-card {
+    background: var(--bg-2);
+    border: 2px solid var(--fg);
+    padding: 14px;
+    position: relative;
+    cursor: pointer;
+    transition: transform .25s ease, border-color .25s ease;
+  }
+  .tape-card:hover {
+    transform: translate(-3px, -3px);
+    border-color: var(--yellow);
+    box-shadow: 6px 6px 0 var(--red);
+  }
+  .tape-card .corner {
+    position: absolute; top: 8px; right: 12px;
+    font-family: var(--f-vhs); font-size: 16px; color: var(--red);
+  }
+  .tape-card h3 {
+    font-family: var(--f-display); font-weight: 700;
+    font-size: 18px; text-transform: uppercase; letter-spacing: .02em;
+    margin-bottom: 4px; line-height: 1.05;
+    padding-right: 60px;
+  }
+  .tape-card .sub {
+    font-family: var(--f-mono); font-size: 10px; color: var(--fg-dim);
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .tape-frame {
+    aspect-ratio: 4/3;
+    position: relative;
+    overflow: hidden;
+    background:
+      repeating-linear-gradient(180deg, rgba(255,255,255,.04) 0 1px, transparent 1px 3px),
+      radial-gradient(60% 60% at 50% 40%, rgba(255,59,48,.18) 0%, transparent 60%),
+      radial-gradient(60% 60% at 50% 60%, rgba(77,208,225,.15) 0%, transparent 60%),
+      #0a1226;
+    border: 1px solid var(--line);
+  }
+  .tape-frame .label {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: var(--f-vhs); font-size: 24px; color: var(--fg);
+    letter-spacing: .05em;
+    text-shadow: -2px 0 0 var(--red), 2px 0 0 var(--cyan);
+  }
+  .tape-frame .glitch-bar {
+    position: absolute; left: 0; right: 0;
+    height: 10px; background: rgba(255,255,255,.16);
+    mix-blend-mode: screen;
+    animation: glitchBar 8s linear infinite;
+  }
+  .tape-frame .glitch-bar.b2 { animation-duration: 13s; animation-delay: 2s; height: 4px; }
+  @keyframes glitchBar {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+
+  .tape-meta {
+    margin-top: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .tape-meta .views { color: var(--yellow); font-weight: 700; }
+  .tape-meta .dur { color: var(--fg); }
+
+  /* dotted-cut tape sticker label vibe at bottom */
+  .tape-card::after {
+    content: ''; position: absolute;
+    left: 14px; right: 14px; bottom: 0;
+    height: 2px; background:
+      repeating-linear-gradient(90deg, var(--red) 0 8px, transparent 8px 14px);
+  }
+
+  /* ── STATS / TAPE COUNTER ── */
+  .counters {
+    border-top: 2px solid var(--red);
+    border-bottom: 2px solid var(--red);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--bg-2);
+  }
+  .counter {
+    padding: 50px var(--gutter);
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .counter:last-child { border-right: none; }
+  .counter .label {
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .counter .num {
+    font-family: var(--f-vhs); font-size: clamp(56px, 7vw, 120px);
+    line-height: .9; color: var(--fg);
+    margin-top: 8px;
+  }
+  .counter .num em { font-style: normal; color: var(--red); }
+  .counter .sub {
+    font-family: var(--f-mono); font-size: 11px; color: var(--yellow);
+    letter-spacing: .12em; text-transform: uppercase; margin-top: 4px;
+  }
+
+  /* ── BIG OUTRO ── */
+  .outro {
+    padding: 140px var(--gutter);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .outro h2 {
+    font-family: var(--f-display); font-weight: 700;
+    font-size: clamp(56px, 13vw, 240px); line-height: .86;
+    text-transform: uppercase;
+    text-shadow: -4px 0 0 var(--red), 4px 0 0 var(--cyan);
+  }
+  .outro h2 em { color: var(--yellow); font-style: italic; }
+  .outro p {
+    font-family: var(--f-vhs); font-size: 28px; color: var(--yellow);
+    margin: 28px 0 40px;
+    letter-spacing: .05em;
+  }
+  .outro .cta {
+    display: inline-block;
+    padding: 18px 32px;
+    background: var(--red); color: var(--fg);
+    font-family: var(--f-display); font-weight: 700;
+    font-size: 16px; text-transform: uppercase; letter-spacing: .15em;
+    border: 2px solid var(--fg);
+    transition: transform .2s ease;
+  }
+  .outro .cta:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--fg); }
+
+  /* footer */
+  .footer {
+    padding: 24px var(--gutter);
+    border-top: 2px solid var(--red);
+    background: var(--bg-2);
+    display: flex; justify-content: space-between; align-items: center; gap: 32px; flex-wrap: wrap;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .footer .eod {
+    color: var(--red); font-weight: 700;
+    font-family: var(--f-vhs); font-size: 16px; letter-spacing: .1em;
+  }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .tape-grid { grid-template-columns: 1fr; }
+    .counters { grid-template-columns: 1fr 1fr; }
+    .sec-head { grid-template-columns: 1fr; gap: 16px; }
+    .vhs-bar nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TAPE HEADER -->
+<header class="vhs-bar">
+  <div class="left">
+    <span class="rec">REC</span>
+    <span>SP · LP · EP</span>
+    <span class="tape-id">TAPE / 003 — TOMUSS</span>
+  </div>
+  <nav>
+    <a href="index.html">A · BRUT</a>
+    <a href="index-c.html">C · COLOR</a>
+    <a class="active" href="#">G · TAPE</a>
+  </nav>
+  <span class="time" id="tcDisplay">00:00:00:00</span>
+</header>
+
+<!-- HERO -->
+<section class="hero" data-screen-label="G · Hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid">
+    <div>
+      <span class="tape-num">▶ TAPE&nbsp;003 / SHOWREEL 2026</span>
+      <h1>
+        <span class="wobble">Tomuss</span><br/>
+        <em>Production.</em>
+      </h1>
+      <p class="lede">
+        Monteur vidéo, cadreur, vidéaste freelance basé au Mans. Trois ans de table de montage, plus de 100 projets, 12&nbsp;millions de vues. Insérez la cassette, appuyez sur PLAY.
+      </p>
+    </div>
+
+    <aside class="tape-spec">
+      <h4>// TAPE / SPEC</h4>
+      <dl>
+        <dt>FORMAT</dt><dd>VHS-C / HQ</dd>
+        <dt>DURÉE</dt><dd>2h 14min</dd>
+        <dt>AUDIO</dt><dd>STEREO HI-FI</dd>
+        <dt>SP/LP/EP</dt><dd>SP <span class="ok">●</span></dd>
+        <dt>CAM</dt><dd>SONY A7III</dd>
+        <dt>YEAR</dt><dd>2026</dd>
+        <dt>SIDE</dt><dd>A</dd>
+        <dt>STATUS</dt><dd><span class="ok">DISPO</span></dd>
+      </dl>
+      <div class="barcode" id="barcode"></div>
+    </aside>
+  </div>
+
+  <div class="vhs-controls">
+    <span class="on">▶ PLAY</span>
+    <span>■ STOP</span>
+    <span>▶▶ FF</span>
+    <span>◀◀ REW</span>
+    <span>● REC</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="track">
+    <span>MONTAGE VIDÉO <i class="star">★</i> CAPTATION ÉVÉNEMENT <i class="star">★</i> TOURNAGE YOUTUBE <i class="star">★</i> CADRAGE <i class="star">★</i> COLOR GRADING <i class="star">★</i> SOUND DESIGN <i class="star">★</i></span>
+    <span aria-hidden="true">MONTAGE VIDÉO <i class="star">★</i> CAPTATION ÉVÉNEMENT <i class="star">★</i> TOURNAGE YOUTUBE <i class="star">★</i> CADRAGE <i class="star">★</i> COLOR GRADING <i class="star">★</i> SOUND DESIGN <i class="star">★</i></span>
+  </div>
+</div>
+
+<!-- PROJECTS / TAPES -->
+<header class="sec-head" data-screen-label="G · Sélection">
+  <span class="num">06</span>
+  <h2>Bandes<br/>sélectionnées <em>—</em></h2>
+  <p class="right">
+    <strong>06 cassettes</strong><br/>
+    Sélection 2025—2026<br/>
+    Tous formats / tous clients
+  </p>
+</header>
+
+<section class="tape-grid" data-screen-label="G · Cassettes">
+  <a class="tape-card" href="#">
+    <span class="corner">EP-01</span>
+    <h3>Documentaire long format</h3>
+    <div class="sub">▶ Créateur X / Mars 2026</div>
+    <div class="tape-frame">
+      <div class="glitch-bar"></div>
+      <div class="glitch-bar b2"></div>
+      <div class="label">PROJET&nbsp;01</div>
+    </div>
+    <div class="tape-meta">
+      <span class="dur">14:32</span>
+      <span class="views">2,4 M vues</span>
+    </div>
+  </a>
+
+  <a class="tape-card" href="#">
+    <span class="corner">EP-02</span>
+    <h3>Challenge format viral</h3>
+    <div class="sub">▶ Créateur Y / Janv. 2026</div>
+    <div class="tape-frame">
+      <div class="glitch-bar"></div>
+      <div class="glitch-bar b2"></div>
+      <div class="label">PROJET&nbsp;02</div>
+    </div>
+    <div class="tape-meta">
+      <span class="dur">08:11</span>
+      <span class="views">3,8 M vues</span>
+    </div>
+  </a>
+
+  <a class="tape-card" href="#">
+    <span class="corner">EP-03</span>
+    <h3>Aftermovie événement</h3>
+    <div class="sub">▶ Marque Z / Déc. 2025</div>
+    <div class="tape-frame">
+      <div class="glitch-bar"></div>
+      <div class="glitch-bar b2"></div>
+      <div class="label">PROJET&nbsp;03</div>
+    </div>
+    <div class="tape-meta">
+      <span class="dur">03:48</span>
+      <span class="views">720 k vues</span>
+    </div>
+  </a>
+
+  <a class="tape-card" href="#">
+    <span class="corner">EP-04</span>
+    <h3>Récit immersif voyage</h3>
+    <div class="sub">▶ Créateur W / Nov. 2025</div>
+    <div class="tape-frame">
+      <div class="glitch-bar"></div>
+      <div class="glitch-bar b2"></div>
+      <div class="label">PROJET&nbsp;04</div>
+    </div>
+    <div class="tape-meta">
+      <span class="dur">11:07</span>
+      <span class="views">1,1 M vues</span>
+    </div>
+  </a>
+
+  <a class="tape-card" href="#">
+    <span class="corner">EP-05</span>
+    <h3>Vlog cinématographique</h3>
+    <div class="sub">▶ Créateur V / Oct. 2025</div>
+    <div class="tape-frame">
+      <div class="glitch-bar"></div>
+      <div class="glitch-bar b2"></div>
+      <div class="label">PROJET&nbsp;05</div>
+    </div>
+    <div class="tape-meta">
+      <span class="dur">17:22</span>
+      <span class="views">2,9 M vues</span>
+    </div>
+  </a>
+
+  <a class="tape-card" href="#">
+    <span class="corner">EP-06</span>
+    <h3>Festival multi-cam</h3>
+    <div class="sub">▶ Festival U / Sept. 2025</div>
+    <div class="tape-frame">
+      <div class="glitch-bar"></div>
+      <div class="glitch-bar b2"></div>
+      <div class="label">PROJET&nbsp;06</div>
+    </div>
+    <div class="tape-meta">
+      <span class="dur">05:54</span>
+      <span class="views">1,2 M vues</span>
+    </div>
+  </a>
+</section>
+
+<!-- COUNTERS -->
+<section class="counters" data-screen-label="G · Compteurs">
+  <div class="counter">
+    <div class="label">▶ COMPTEUR 01</div>
+    <div class="num">12<em>M+</em></div>
+    <div class="sub">VUES CUMULÉES</div>
+  </div>
+  <div class="counter">
+    <div class="label">▶ COMPTEUR 02</div>
+    <div class="num">100<em>+</em></div>
+    <div class="sub">PROJETS LIVRÉS</div>
+  </div>
+  <div class="counter">
+    <div class="label">▶ COMPTEUR 03</div>
+    <div class="num">3<em>YR</em></div>
+    <div class="sub">EN FREELANCE</div>
+  </div>
+  <div class="counter">
+    <div class="label">▶ COMPTEUR 04</div>
+    <div class="num">15<em>+</em></div>
+    <div class="sub">CRÉATEURS</div>
+  </div>
+</section>
+
+<!-- OUTRO -->
+<section class="outro" data-screen-label="G · CTA">
+  <h2>Press <em>REC.</em></h2>
+  <p>▶ HELLO@TOMUSSPRODUCTION.FR</p>
+  <a class="cta" href="mailto:hello@tomussproduction.fr">● DÉMARRER UN PROJET</a>
+</section>
+
+<footer class="footer">
+  <span>© 2026 — TOMUSS / PRODUCTION · LE MANS</span>
+  <span class="eod">— END OF TAPE — REWIND ◀◀</span>
+  <span>VARIANTE G · TAPE / VHS RETRO</span>
+</footer>
+
+<script>
+  // Live tape timecode
+  const tc = document.getElementById('tcDisplay');
+  let frames = 0;
+  setInterval(() => {
+    frames++;
+    const f = frames % 25;
+    const s = Math.floor(frames/25) % 60;
+    const m = Math.floor(frames/(25*60)) % 60;
+    const h = Math.floor(frames/(25*60*60));
+    tc.textContent =
+      String(h).padStart(2,'0') + ':' +
+      String(m).padStart(2,'0') + ':' +
+      String(s).padStart(2,'0') + ':' +
+      String(f).padStart(2,'0');
+  }, 40);
+
+  // Barcode
+  const bc = document.getElementById('barcode');
+  if (bc) {
+    let html = '';
+    for (let i=0;i<60;i++) {
+      const w = (Math.random()*3 + 1).toFixed(1);
+      const op = Math.random() > 0.45 ? 1 : 0;
+      html += `<i style="width:${w}px;opacity:${op}"></i>`;
+    }
+    bc.innerHTML = html;
+  }
+</script>
+</body>
+</html>

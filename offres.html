@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Offres &amp; Contact — Tomuss Production</title>
+<link rel="stylesheet" href="assets/shared.css" />
+<style>
+  .page-head {
+    padding: 160px var(--gutter) 60px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 80px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+  }
+  .page-head h1 {
+    font-family: var(--f-display);
+    font-size: clamp(72px, 13vw, 220px);
+    line-height: .84;
+    text-transform: uppercase;
+  }
+  .page-head h1 em { color: var(--accent); font-style: italic; }
+  .page-head p {
+    color: var(--fg-dim);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 420px;
+  }
+
+  /* Offers */
+  .offers {
+    padding: 100px var(--gutter);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .offer {
+    border: 1px solid var(--line);
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: var(--bg-2);
+    position: relative;
+    overflow: hidden;
+    transition: border-color .35s var(--ease), transform .35s var(--ease);
+  }
+  .offer:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+  .offer .idx {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .25em;
+    color: var(--fg-faint);
+  }
+  .offer h3 {
+    font-family: var(--f-display);
+    font-size: clamp(32px, 3.6vw, 56px);
+    text-transform: uppercase;
+    line-height: .92;
+  }
+  .offer .lede {
+    color: var(--fg-dim);
+    font-size: 15px;
+    line-height: 1.55;
+    min-height: 88px;
+  }
+  .offer ul {
+    list-style: none;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+  }
+  .offer li {
+    padding: 8px 0;
+    color: var(--fg);
+    font-size: 14px;
+    display: flex; gap: 12px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .offer li:last-child { border-bottom: none; }
+  .offer li::before {
+    content: '✕';
+    color: var(--accent);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .offer .price {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    color: var(--fg-dim);
+  }
+  .offer .price strong {
+    font-family: var(--f-display);
+    color: var(--fg);
+    font-size: 22px;
+    letter-spacing: 0;
+  }
+  .offer .price strong em { color: var(--accent); font-style: italic; }
+
+  /* Matos */
+  .matos {
+    padding: 120px var(--gutter);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .matos-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 60px;
+    align-items: end;
+  }
+  .matos-head h2 {
+    font-family: var(--f-display);
+    font-size: clamp(56px, 8vw, 120px);
+    line-height: .88;
+    text-transform: uppercase;
+  }
+  .matos-head h2 em { color: var(--accent); font-style: italic; }
+  .matos-head p {
+    color: var(--fg-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 420px;
+  }
+  .matos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+  .matos-card {
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background .25s var(--ease);
+    min-height: 280px;
+  }
+  .matos-card:hover { background: var(--surface); }
+  .matos-card .cat {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .matos-card .icon-frame {
+    height: 100px;
+    background:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 12px),
+      radial-gradient(60% 60% at 50% 50%, #1f1f1f 0%, #121212 100%);
+    border: 1px solid var(--line);
+    display: grid;
+    place-items: center;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--fg-faint);
+    text-transform: uppercase;
+  }
+  .matos-card h3 {
+    font-family: var(--f-display);
+    font-size: 22px;
+    text-transform: uppercase;
+    line-height: 1.05;
+  }
+  .matos-card .spec {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: .04em;
+    margin-top: auto;
+  }
+
+  /* Contact */
+  .contact {
+    padding: 140px var(--gutter);
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+  }
+  .contact-left h2 {
+    font-family: var(--f-display);
+    font-size: clamp(56px, 9vw, 140px);
+    line-height: .86;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .contact-left h2 em { color: var(--accent); font-style: italic; }
+  .contact-left p {
+    color: var(--fg-dim);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 24px;
+    max-width: 380px;
+  }
+  .contact-left .channels {
+    border-top: 1px solid var(--line);
+    margin-top: 32px;
+  }
+  .contact-left .channels a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--f-mono);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: var(--fg);
+    transition: color .25s var(--ease), padding .25s var(--ease);
+  }
+  .contact-left .channels a:hover { color: var(--accent); padding-left: 12px; }
+  .contact-left .channels a span { color: var(--fg-faint); font-size: 11px; }
+
+  /* Form */
+  form {
+    display: grid;
+    gap: 28px;
+  }
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+  .field label {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .field label .req { color: var(--accent); margin-left: 4px; }
+  .field input,
+  .field textarea,
+  .field select {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--fg);
+    font-family: var(--f-body);
+    font-size: 18px;
+    padding: 12px 0;
+    outline: none;
+    width: 100%;
+    transition: border-color .25s var(--ease);
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 100px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+  .project-types {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .ptype {
+    padding: 10px 18px;
+    border: 1px solid var(--line-strong);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    color: var(--fg-dim);
+    cursor: pointer;
+    user-select: none;
+    transition: all .2s var(--ease);
+  }
+  .ptype:hover { color: var(--fg); border-color: var(--fg); }
+  .ptype.on { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+  .submit-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .submit-bar .terms {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--fg-faint);
+    letter-spacing: .04em;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+  .submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 36px;
+    border: 1px solid var(--fg);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .25em;
+    color: var(--fg);
+    cursor: pointer;
+    transition: background .3s, color .3s, border-color .3s;
+  }
+  .submit:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  @media (max-width: 1000px) {
+    .page-head { grid-template-columns: 1fr; padding-top: 130px; gap: 40px; }
+    .offers { grid-template-columns: 1fr; }
+    .matos-grid { grid-template-columns: repeat(2, 1fr); }
+    .matos-head { grid-template-columns: 1fr; gap: 40px; }
+    .contact { grid-template-columns: 1fr; }
+    .row2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="curtain"></div>
+<div id="nav-mount"></div>
+
+<header class="page-head" data-screen-label="04 Offres — Head">
+  <div>
+    <p class="eyebrow" style="margin-bottom: 32px;">— Page 04 / Offres &amp; Contact</p>
+    <h1>Travailler<br/>ensemble <em>—</em></h1>
+  </div>
+  <p>
+    Trois prestations claires, un matos solide, un seul interlocuteur. Choisissez le format qui colle à votre besoin et envoyez-moi un brief — je reviens vers vous sous 24h.
+  </p>
+</header>
+
+<!-- ════ OFFRES ════ -->
+<section id="offres" class="offers" data-screen-label="04 Offres — Cartes">
+  <div class="offer fade-up">
+    <span class="idx">— 01 / Service</span>
+    <h3>Montage<br/>vidéo</h3>
+    <p class="lede">Pour créateurs YouTube, marques et événements. Du format court à la vidéo long format, je structure, je rythme, j'étalonne, je mixe.</p>
+    <ul>
+      <li>Dérush complet des rushs</li>
+      <li>Structure narrative &amp; montage rythmé</li>
+      <li>Étalonnage (color grading) inclus</li>
+      <li>Mix audio &amp; sound design léger</li>
+      <li>2 tours de retours timecodés</li>
+      <li>Export master + formats plateformes</li>
+    </ul>
+    <div class="price">
+      <span>— À partir de</span>
+      <strong>€<em>—</em> / projet</strong>
+    </div>
+  </div>
+
+  <div class="offer fade-up">
+    <span class="idx">— 02 / Service</span>
+    <h3>Captation<br/>événement.</h3>
+    <p class="lede">Concerts, festivals, soirées privées, événements de marque. Captation seul ou multi-cam selon l'envergure, livraison aftermovie clé en main.</p>
+    <ul>
+      <li>Repérage + brief technique préalable</li>
+      <li>Tournage A7III + objectifs adaptés</li>
+      <li>Multi-cam possible sur devis</li>
+      <li>Captation son (micros canon + cravates)</li>
+      <li>Montage aftermovie 02:00 — 05:00</li>
+      <li>Livraison sous 7 à 14 jours</li>
+    </ul>
+    <div class="price">
+      <span>— À partir de</span>
+      <strong>€<em>—</em> / jour</strong>
+    </div>
+  </div>
+
+  <div class="offer fade-up">
+    <span class="idx">— 03 / Service</span>
+    <h3>Tournage<br/>YouTube</h3>
+    <p class="lede">Cadreur dédié pour vidéastes. Focus pull, deuxième caméra, B-roll, gestion du son sur plateau. Je viens avec mon matos, vous restez focus sur le contenu.</p>
+    <ul>
+      <li>Cadrage cinéma + suivi de mise au point</li>
+      <li>Setup lumière simple inclus</li>
+      <li>Captation son lavalier + canon</li>
+      <li>B-roll cinématographique en bonus</li>
+      <li>Export rushs étalonnés ou bruts</li>
+      <li>Montage optionnel en complément</li>
+    </ul>
+    <div class="price">
+      <span>— À partir de</span>
+      <strong>€<em>—</em> / jour</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ════ MATOS ════ -->
+<section class="matos" data-screen-label="04 Offres — Matos">
+  <div class="matos-head">
+    <div class="fade-up">
+      <p class="eyebrow" style="margin-bottom: 24px;">— Setup technique</p>
+      <h2>Le matos<br/>derrière les<br/><em>images.</em></h2>
+    </div>
+    <p class="fade-up">
+      Du gear éprouvé, choisi pour la fiabilité terrain : une caméra full-frame versatile, deux objectifs Tamron qui couvrent 24 à 300 mm, du son micro canon + cravate, et tout ce qu'il faut pour stabiliser et étalonner proprement. Maîtrise complète de la suite Adobe.
+    </p>
+  </div>
+
+  <div class="matos-grid">
+    <div class="matos-card fade-up">
+      <span class="cat">Caméra</span>
+      <div class="icon-frame">[ A7III ]</div>
+      <h3>Sony Alpha 7&nbsp;III</h3>
+      <span class="spec">Full-frame · 24 MP · 4K · low-light fiable</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Objectif</span>
+      <div class="icon-frame">[ 24-70 ]</div>
+      <h3>Tamron 24-70mm</h3>
+      <span class="spec">Zoom standard polyvalent · interviews / B-roll</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Objectif</span>
+      <div class="icon-frame">[ 70-300 ]</div>
+      <h3>Tamron 70-300mm</h3>
+      <span class="spec">Téléobjectif · live, concert, événementiel</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Filtres</span>
+      <div class="icon-frame">[ ND ]</div>
+      <h3>Jeu de filtres ND</h3>
+      <span class="spec">Densité variable · contrôle expo plein jour</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Son</span>
+      <div class="icon-frame">[ MIC ]</div>
+      <h3>Rode VideoMic</h3>
+      <span class="spec">Micro canon · prise son directionnelle plateau</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Son</span>
+      <div class="icon-frame">[ LAV ]</div>
+      <h3>DJI Mic Mini 2</h3>
+      <span class="spec">Cravate sans-fil · interviews mobiles</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Support</span>
+      <div class="icon-frame">[ TRIPOD ]</div>
+      <h3>Trépied vidéo</h3>
+      <span class="spec">Tête fluide · plans stables, panos doux</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Lumière</span>
+      <div class="icon-frame">[ LIGHT ]</div>
+      <h3>Kit éclairage LED</h3>
+      <span class="spec">Bi-couleur · setup interview portable</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Post-prod</span>
+      <div class="icon-frame">[ MAC ]</div>
+      <h3>Station Mac</h3>
+      <span class="spec">Montage / étalonnage / export 4K</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Logiciels</span>
+      <div class="icon-frame">[ ADOBE ]</div>
+      <h3>Suite Adobe</h3>
+      <span class="spec">Premiere · After Effects · Audition · Photoshop</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Couleur</span>
+      <div class="icon-frame">[ LUT ]</div>
+      <h3>Étalonnage Lumetri</h3>
+      <span class="spec">LUTs custom · look cinéma cohérent</span>
+    </div>
+    <div class="matos-card fade-up">
+      <span class="cat">Workflow</span>
+      <div class="icon-frame">[ SYNC ]</div>
+      <h3>Frame.io / Cloud</h3>
+      <span class="spec">Retours timecodés · workflow client clean</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact" class="contact" data-screen-label="04 Offres — Contact">
+  <div class="contact-left fade-up">
+    <p class="eyebrow" style="margin-bottom: 28px;">— On en parle ?</p>
+    <h2>Un<br/>brief <em>&amp;</em><br/>c'est parti.</h2>
+    <p>
+      Décrivez votre projet en quelques lignes&nbsp;: objectif, format, deadline, budget si vous l'avez. Je reviens vers vous sous 24h ouvrées avec un premier retour et un devis adapté.
+    </p>
+    <div class="channels">
+      <a href="mailto:hello@tomussproduction.fr">hello@tomussproduction.fr <span>↗ email</span></a>
+      <a href="#">@tomuss.prod <span>↗ instagram</span></a>
+      <a href="#">/tomussproduction <span>↗ youtube</span></a>
+      <a href="#">+33 6 — — — — — <span>↗ téléphone</span></a>
+      <a href="#">Le Mans, France <span>↗ déplacements possibles</span></a>
+    </div>
+  </div>
+
+  <form class="fade-up" onsubmit="event.preventDefault(); alert('Démo · message envoyé !');">
+    <div class="row2">
+      <div class="field">
+        <label>Nom complet <span class="req">✕</span></label>
+        <input type="text" placeholder="Jean Dupont" required />
+      </div>
+      <div class="field">
+        <label>Email <span class="req">✕</span></label>
+        <input type="email" placeholder="jean@studio.com" required />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Type de projet <span class="req">✕</span></label>
+      <div class="project-types">
+        <span class="ptype on">Montage vidéo</span>
+        <span class="ptype">Captation événement</span>
+        <span class="ptype">Tournage YouTube</span>
+        <span class="ptype">Autre</span>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Budget approximatif</label>
+        <select>
+          <option>— Je ne sais pas encore</option>
+          <option>&lt; 500 €</option>
+          <option>500 — 1 500 €</option>
+          <option>1 500 — 5 000 €</option>
+          <option>5 000 € +</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Deadline souhaitée</label>
+        <input type="text" placeholder="ex: fin juin 2026" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Votre message <span class="req">✕</span></label>
+      <textarea placeholder="Parlez-moi du projet : contexte, format, durée, livrables, références éventuelles…" required></textarea>
+    </div>
+
+    <div class="submit-bar">
+      <p class="terms">— En envoyant ce message, vous acceptez que vos infos soient utilisées uniquement pour vous répondre. Aucune newsletter, jamais.</p>
+      <button class="submit" type="submit">Envoyer le brief ↗</button>
+    </div>
+  </form>
+</section>
+
+<div id="footer-mount"></div>
+
+<script src="assets/partials.js"></script>
+<script src="assets/shared.js"></script>
+<script>
+  window.injectChrome('offers');
+  // Project type toggle
+  document.querySelectorAll('.ptype').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.ptype').forEach(x => x.classList.remove('on'));
+      p.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>

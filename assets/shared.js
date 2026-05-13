@@ -1,5 +1,72 @@
 // Shared interactions: curtain, fade-up, nav solidify on scroll
 
+// ── Curseur Premiere Pro ──────────────────────────────────────────────────────
+(function () {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  const root = document.documentElement;
+  const dot  = document.createElement('div');
+  const ring = document.createElement('div');
+  dot.className  = 'cursor-dot';
+  ring.className = 'cursor-ring';
+  document.body.appendChild(dot);
+  document.body.appendChild(ring);
+
+  let mx = -200, my = -200;
+  let rx = -200, ry = -200;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // Suivi exact du point
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX;
+    my = e.clientY;
+    root.style.setProperty('--cx', mx + 'px');
+    root.style.setProperty('--cy', my + 'px');
+
+    // Hover sur éléments interactifs
+    const over = !!e.target.closest(
+      'a, button, [role="button"], .ptype, .filter, .collab-cell, ' +
+      '.service-row, .offer, .thumb, .approach-row, .yt-card, ' +
+      'input, textarea, select, .slide-cta, .pill, .submit, .nav-cta'
+    );
+    document.body.classList.toggle('cursor-hover', over);
+  });
+
+  // Anneau avec retard fluide
+  (function animate() {
+    rx = lerp(rx, mx, 0.1);
+    ry = lerp(ry, my, 0.1);
+    root.style.setProperty('--rx', rx + 'px');
+    root.style.setProperty('--ry', ry + 'px');
+    requestAnimationFrame(animate);
+  })();
+
+  // Apparition au premier mouvement
+  document.addEventListener('mousemove', () => {
+    dot.style.opacity  = '1';
+    ring.style.opacity = '1';
+  }, { once: true });
+
+  // Disparaît quand la souris quitte la fenêtre
+  document.addEventListener('mouseleave', () => {
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.style.opacity  = '1';
+    ring.style.opacity = '1';
+  });
+
+  // Pulse au clic
+  document.addEventListener('mousedown', () => {
+    ring.classList.remove('is-clicking');
+    void ring.offsetWidth;
+    ring.classList.add('is-clicking');
+  });
+  ring.addEventListener('animationend', () => ring.classList.remove('is-clicking'));
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // Fade-up on scroll
   const io = new IntersectionObserver((entries) => {

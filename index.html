@@ -4,6 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Tomuss Production — Monteur vidéo · Le Mans</title>
+<meta name="description" content="Tomuss — Monteur vidéo & vidéaste freelance basé au Mans. 12M+ vues cumulées, 100+ projets livrés pour des créateurs YouTube, marques et événements." />
+<meta property="og:title" content="Tomuss Production — Monteur vidéo · Le Mans" />
+<meta property="og:description" content="Monteur vidéo & vidéaste freelance. 12M+ vues, 100+ projets. YouTube, captation événementielle, cadrage." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tomussproduction.fr/" />
+<meta property="og:image" content="https://tomussproduction.fr/uploads/bg-hero.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="uploads/Plan de travail 5logotest.png" />
 <link rel="stylesheet" href="assets/shared.css" />
 <style>
   /* ── HERO ── */
@@ -125,7 +133,7 @@
   }
   .hero-tag {
     font-family: var(--f-mono);
-    font-size: 11px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .4em;
     color: var(--fg-dim);
@@ -185,7 +193,7 @@
   }
   .hero-cta .label {
     font-family: var(--f-mono);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .35em;
@@ -218,7 +226,7 @@
     position: absolute;
     z-index: 3;
     font-family: var(--f-mono);
-    font-size: 10px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: .25em;
     color: var(--fg-dim);
@@ -683,6 +691,83 @@
     .service-row { grid-template-columns: 32px 1fr; }
     .service-row .desc, .service-row .arr { display: none; }
   }
+
+  /* ── TÉMOIGNAGES ── */
+  .testimonials {
+    padding: 120px var(--gutter);
+    border-top: 1px solid var(--line);
+  }
+  .testimonials-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .testimonials-head h2 {
+    font-family: var(--f-display);
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: .88;
+    text-transform: uppercase;
+  }
+  .testimonials-head h2 em { color: var(--accent); font-style: italic; }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+  .testimonial {
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    transition: background .25s var(--ease);
+  }
+  .testimonial:hover { background: var(--surface); }
+  .testimonial .t-quote {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--fg);
+    font-style: italic;
+  }
+  .testimonial .t-quote::before {
+    content: '"';
+    font-family: var(--f-display);
+    font-size: 72px;
+    line-height: .55;
+    color: var(--accent);
+    opacity: .5;
+    display: block;
+    margin-bottom: 20px;
+  }
+  .testimonial footer {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .testimonial .t-name {
+    font-family: var(--f-display);
+    font-size: 22px;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+  .testimonial .t-role {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    color: var(--fg-dim);
+  }
+  @media (max-width: 880px) {
+    .testimonials-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -718,7 +803,7 @@
   <div class="hero-content">
     <div class="hero-tag">Portfolio · 2022 — 2026</div>
     <a href="#gallery" class="hero-cta">
-      <span class="label">Voir tout les projets</span>
+      <span class="label">Voir tous les projets</span>
       <span class="arrow"></span>
     </a>
   </div>
@@ -801,7 +886,7 @@
             <span class="sep">·</span>
             <span>01 mai 2026</span>
           </div>
-          <a href="https://youtu.be/r0zvh0ElcnM?si=f0X6Bb3FHHKV2y4V" class="slide-cta">Voir le projet →</a>
+          <a href="https://youtu.be/r0zvh0ElcnM?si=f0X6Bb3FHHKV2y4V" class="slide-cta" target="_blank">Voir le projet →</a>
         </div>
         <div class="showcase-right">
           <a href="https://youtu.be/r0zvh0ElcnM?si=H5yPHiIZo_YRdOJN" class="yt-card" target="_blank" rel="noopener noreferrer">
@@ -814,7 +899,7 @@
               </div>
             <div>
                 <div class="yt-info-title">QUI EST LE JOUEUR PRO ?! (ft. Gradur & Redouane Bougheraba)</div>
-                <div class="yt-info-sub">PITCH ADDICT · 552 K vues · 01 ai 2026</div>
+                <div class="yt-info-sub">PITCH ADDICT · 552 K vues · 01 mai 2026</div>
               </div>
             </div>
           </a>
@@ -822,7 +907,7 @@
       </div>
 
       <!-- SLIDE 02 -->
-      <div class="showcase-slide active" data-idx="1">
+      <div class="showcase-slide" data-idx="1">
         <div class="showcase-left">
           <span class="slide-idx-bg">02</span>
           <span class="slide-tag">MONTAGE VIDéo</span>
@@ -833,12 +918,12 @@
             <span class="sep">·</span>
             <span>31 août 2025</span>
           </div>
-          <a href="https://youtu.be/UqYMpBAAEA8?si=To3yi69pooUXWVfc" class="slide-cta">Voir le projet →</a>
+          <a href="https://youtu.be/UqYMpBAAEA8?si=To3yi69pooUXWVfc" class="slide-cta" target="_blank">Voir le projet →</a>
         </div>
         <div class="showcase-right">
-          <a href="https://youtu.be/r0zvh0ElcnM?si=H5yPHiIZo_YRdOJN" class="yt-card" target="_blank" rel="noopener noreferrer">
+          <a href="https://youtu.be/UqYMpBAAEA8?si=To3yi69pooUXWVfc" class="yt-card" target="_blank" rel="noopener noreferrer">
             <div class="yt-thumb-wrap">
-              <img src="uploads/maxresdefault (1).jpg" alt="Miniature projet 01" />
+              <img src="uploads/maxresdefault (1).jpg" alt="Miniature projet 02" />
             </div>
             <div class="yt-meta">
               <div class="yt-avatar">
@@ -847,6 +932,7 @@
             <div>
                 <div class="yt-info-title"> LE MEILLEUR BARBER D'INTERNET ! (ft Inoxtag Joyca Nico & Cocotte)</div>
                 <div class="yt-info-sub">HAIRTIST · 552 K vues · 31 août 2025</div>
+
               </div>
             </div>
           </a>
@@ -854,7 +940,7 @@
       </div>
 
       <!-- SLIDE 03 -->
-      <div class="showcase-slide active" data-idx="2">
+      <div class="showcase-slide" data-idx="2">
         <div class="showcase-left">
           <span class="slide-idx-bg">03</span>
           <span class="slide-tag">MONTAGE VIDéo</span>
@@ -865,7 +951,7 @@
             <span class="sep">·</span>
             <span>6 févr. 2024</span>
           </div>
-          <a href="https://youtu.be/-YiWp9Usmr0?si=DAyTsGedCLdI8vvZ" class="slide-cta">Voir le projet →</a>
+          <a href="https://youtu.be/-YiWp9Usmr0?si=DAyTsGedCLdI8vvZ" class="slide-cta" target="_blank">Voir le projet →</a>
         </div>
         <div class="showcase-right">
           <a href="https://youtu.be/r0zvh0ElcnM?si=H5yPHiIZo_YRdOJN" class="yt-card" target="_blank" rel="noopener noreferrer">
@@ -887,7 +973,7 @@
 
 
       <!-- SLIDE 04 -->
-      <div class="showcase-slide active" data-idx="3">
+      <div class="showcase-slide" data-idx="3">
         <div class="showcase-left">
           <span class="slide-idx-bg">04</span>
           <span class="slide-tag">MONTAGE VIDéo</span>
@@ -898,7 +984,7 @@
             <span class="sep">·</span>
             <span> 7 nov. 2025</span>
           </div>
-          <a href="https://youtu.be/-YiWp9Usmr0?si=RdvaeVP39kEQz0wG" class="slide-cta">Voir le projet →</a>
+          <a href="https://youtu.be/-YiWp9Usmr0?si=RdvaeVP39kEQz0wG" class="slide-cta" target="_blank">Voir le projet →</a>
         </div>
         <div class="showcase-right">
           <a href="https://youtu.be/-YiWp9Usmr0?si=RdvaeVP39kEQz0wG" class="yt-card" target="_blank" rel="noopener noreferrer">
@@ -919,7 +1005,7 @@
       </div>
 
       <!-- SLIDE 05 -->
-      <div class="showcase-slide active" data-idx="4">
+      <div class="showcase-slide" data-idx="4">
         <div class="showcase-left">
           <span class="slide-idx-bg">05</span>
           <span class="slide-tag">MONTAGE VIDéo</span>
@@ -930,7 +1016,7 @@
             <span class="sep">·</span>
             <span> 24 sept. 2024</span>
           </div>
-          <a href="https://youtu.be/F77U_yuUb5s?si=wxBk2GnN1Y2r1Ddo" class="slide-cta">Voir le projet →</a>
+          <a href="https://youtu.be/F77U_yuUb5s?si=wxBk2GnN1Y2r1Ddo" class="slide-cta" target="_blank">Voir le projet →</a>
         </div>
         <div class="showcase-right">
           <a href="https://youtu.be/F77U_yuUb5s?si=wxBk2GnN1Y2r1Ddo" class="yt-card" target="_blank" rel="noopener noreferrer">
@@ -952,7 +1038,7 @@
 
 
       <!-- SLIDE 06 -->
-      <div class="showcase-slide active" data-idx="5">
+      <div class="showcase-slide" data-idx="5">
         <div class="showcase-left">
           <span class="slide-idx-bg">06</span>
           <span class="slide-tag">MONTAGE VIDéo</span>
@@ -963,7 +1049,7 @@
             <span class="sep">·</span>
             <span> 18 sept. 2024</span>
           </div>
-          <a href="https://youtu.be/es62U2hFlA4?si=sACEBkKwRzsa_0s-" class="slide-cta">Voir le projet →</a>
+          <a href="https://youtu.be/es62U2hFlA4?si=sACEBkKwRzsa_0s-" class="slide-cta" target="_blank">Voir le projet →</a>
         </div>
         <div class="showcase-right">
           <a href="https://youtu.be/es62U2hFlA4?si=sACEBkKwRzsa_0s-" class="yt-card" target="_blank" rel="noopener noreferrer">
@@ -1026,18 +1112,53 @@
   </div>
 </section>
 
+<!-- ════════════════════ TÉMOIGNAGES ════════════════════ -->
+<!-- ⚠️ PLACEHOLDER — Remplace les citations ci-dessous par de vraies phrases de tes clients -->
+<section class="testimonials" data-screen-label="01 Landing — Témoignages">
+  <div class="testimonials-head fade-up">
+    <div>
+      <p class="eyebrow" style="margin-bottom: 20px;">— Ils en parlent mieux que moi</p>
+      <h2>Ce qu'ils<br/><em>disent.</em></h2>
+    </div>
+  </div>
+  <div class="testimonials-grid">
+    <blockquote class="testimonial fade-up">
+      <p class="t-quote">À remplacer par une vraie citation de Pitch Addict.</p>
+      <footer>
+        <span class="t-name">Pitch Addict</span>
+        <span class="t-role">Créateur YouTube · 1,2 M abonnés</span>
+      </footer>
+    </blockquote>
+    <blockquote class="testimonial fade-up">
+      <p class="t-quote">À remplacer par une vraie citation de Hairtist.</p>
+      <footer>
+        <span class="t-name">Hairtist</span>
+        <span class="t-role">Créateur YouTube</span>
+      </footer>
+    </blockquote>
+    <blockquote class="testimonial fade-up">
+      <p class="t-quote">À remplacer par une vraie citation de Camille LV.</p>
+      <footer>
+        <span class="t-name">Camille LV</span>
+        <span class="t-role">Créatrice YouTube</span>
+      </footer>
+    </blockquote>
+  </div>
+</section>
+
 <!-- ════════════════════ SERVICES TEASER ════════════════════ -->
 <section class="services-teaser" data-screen-label="01 Landing — Services">
   <div class="fade-up">
-    <p class="eyebrow" style="margin-bottom: 28px;">MES Prestations</p>
-    <h2>Trois manières<br/>de travailler<br/></h2>
+    <p class="eyebrow" style="margin-bottom: 28px;">— Expertise &amp; prestations</p>
+    <h2>Montage<br/>YouTube,<br/><em>d'abord.</em></h2>
+    <p style="color:var(--fg-dim);font-size:15px;line-height:1.6;margin-top:28px;max-width:380px;">C'est là que sont mes 12M de preuves. Le tournage et la captation, je les fais aussi sérieusement, mais c'est sur le montage que tu trouveras mes résultats.</p>
   </div>
   <div class="services-list fade-up">
-    <a class="service-row" href="offres.html#offres">
+    <a class="service-row service-row--main" href="offres.html#offres">
       <span class="idx">01</span>
       <div>
-        <div class="name">Montage vidéo</div>
-        <div class="desc" style="margin-top: 6px;">Pour créateurs YouTube, marques et événements.</div>
+        <div class="name">Montage vidéo <span style="font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--accent);vertical-align:middle;margin-left:12px;">— EXPERTISE PRINCIPALE</span></div>
+        <div class="desc" style="margin-top: 6px;">YouTube formats longs, social média, brand content.</div>
       </div>
       <span class="arr">→</span>
     </a>
@@ -1053,7 +1174,7 @@
       <span class="idx">03</span>
       <div>
         <div class="name">Tournage YouTube &amp; cadrage</div>
-        <div class="desc" style="margin-top: 6px;">Cadreur dédié pour vidéastes, vlog, production </div>
+        <div class="desc" style="margin-top: 6px;">Cadreur dédié pour vidéastes, vlog, production.</div>
       </div>
       <span class="arr">→</span>
     </a>

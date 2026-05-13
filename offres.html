@@ -4,6 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Offres &amp; Contact — Tomuss Production</title>
+<meta name="description" content="Montage vidéo YouTube, captation événementielle, tournage & cadrage. 3 offres claires avec tarifs. Contactez Tomuss pour un devis sous 24h." />
+<meta property="og:title" content="Offres & Contact — Tomuss Production" />
+<meta property="og:description" content="Montage vidéo, captation événementielle, tournage YouTube. Tarifs à partir de 500€. Devis sous 24h." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tomussproduction.fr/offres.html" />
+<meta property="og:image" content="https://tomussproduction.fr/uploads/bg-hero.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="uploads/Plan de travail 5logotest.png" />
 <link rel="stylesheet" href="assets/shared.css" />
 <style>
   .page-head {
@@ -50,6 +58,23 @@
     border-color: var(--accent);
     transform: translateY(-4px);
   }
+  .offer.flagship {
+    border-color: var(--accent);
+    position: relative;
+  }
+  .offer.flagship::before {
+    content: '— Expertise principale';
+    position: absolute;
+    top: -1px; left: 36px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    padding: 4px 12px;
+    transform: translateY(-100%);
+  }
   .offer .idx {
     font-family: var(--f-mono);
     font-size: 11px;
@@ -82,10 +107,14 @@
   }
   .offer li:last-child { border-bottom: none; }
   .offer li::before {
-    content: '✕';
+    content: '✔';
     color: var(--accent);
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2em;
   }
   .offer .price {
     margin-top: auto;
@@ -95,7 +124,7 @@
     justify-content: space-between;
     align-items: end;
     font-family: var(--f-mono);
-    font-size: 11px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: .22em;
     color: var(--fg-dim);
@@ -227,7 +256,7 @@
     transition: color .25s var(--ease), padding .25s var(--ease);
   }
   .contact-left .channels a:hover { color: var(--accent); padding-left: 12px; }
-  .contact-left .channels a span { color: var(--fg-faint); font-size: 11px; }
+  .contact-left .channels a span { color: var(--fg-faint); font-size: 13px; }
 
   /* Form */
   form {
@@ -240,8 +269,8 @@
   }
   .field label {
     font-family: var(--f-mono);
-    font-size: 10px;
-    letter-spacing: .25em;
+    font-size: 13px;
+    letter-spacing: .2em;
     text-transform: uppercase;
     color: var(--fg-dim);
   }
@@ -260,6 +289,14 @@
     width: 100%;
     transition: border-color .25s var(--ease);
   }
+  .field select {
+    color: #000;
+    background: #fff;
+  }
+  .field select option {
+    color: #000;
+    background: #fff;
+  }
   .field input:focus,
   .field textarea:focus,
   .field select:focus { border-color: var(--accent); }
@@ -274,7 +311,7 @@
     padding: 10px 18px;
     border: 1px solid var(--line-strong);
     font-family: var(--f-mono);
-    font-size: 11px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: .2em;
     color: var(--fg-dim);
@@ -295,12 +332,19 @@
   }
   .submit-bar .terms {
     font-family: var(--f-mono);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--fg-faint);
     letter-spacing: .04em;
     max-width: 320px;
-    line-height: 1.5;
+    line-height: 1.6;
   }
+  .form-status {
+    font-family: var(--f-body);
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .form-status.success { color: #5ad673; }
+  .form-status.error { color: #ff6c6c; }
   .submit {
     display: inline-flex;
     align-items: center;
@@ -308,7 +352,7 @@
     padding: 20px 36px;
     border: 1px solid var(--fg);
     font-family: var(--f-mono);
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: .25em;
     color: var(--fg);
@@ -333,155 +377,72 @@
 
 <header class="page-head" data-screen-label="04 Offres — Head">
   <div>
-    <p class="eyebrow" style="margin-bottom: 32px;">— Page 04 / Offres &amp; Contact</p>
-    <h1>Travailler<br/>ensemble <em>—</em></h1>
+    <p class="eyebrow" style="margin-bottom: 32px;">les prestations</p>
+    <h1>Travaillons<br/>ensemble <em>—</em></h1>
   </div>
   <p>
-    Trois prestations claires, un matos solide, un seul interlocuteur. Choisissez le format qui colle à votre besoin et envoyez-moi un brief — je reviens vers vous sous 24h.
+    Trois prestations claires, un matériel professionnel. Choisissez le format qui colle à votre besoin et envoyez-moi un brief et <strong>je reviens vers vous sous 24h.</strong>
   </p>
 </header>
 
 <!-- ════ OFFRES ════ -->
 <section id="offres" class="offers" data-screen-label="04 Offres — Cartes">
-  <div class="offer fade-up">
-    <span class="idx">— 01 / Service</span>
-    <h3>Montage<br/>vidéo</h3>
-    <p class="lede">Pour créateurs YouTube, marques et événements. Du format court à la vidéo long format, je structure, je rythme, j'étalonne, je mixe.</p>
+  <div class="offer flagship fade-up">
+    <span class="idx">01 / PACK</span>
+    <h3>YOUTUBE<br/>FORMATS LONGS</h3>
+    <p class="lede">Pour les créateurs de contenu, artistes et entrepreneurs qui veulent des vidéos YouTube longues avec une vraie qualité cinématographique. C'est là que sont mes 12M de vues.</p>
     <ul>
-      <li>Dérush complet des rushs</li>
-      <li>Structure narrative &amp; montage rythmé</li>
-      <li>Étalonnage (color grading) inclus</li>
-      <li>Mix audio &amp; sound design léger</li>
-      <li>2 tours de retours timecodés</li>
-      <li>Export master + formats plateformes</li>
+      <li>Réception et dérushage de vos rushs</li>
+      <li>Montage complet 5 à 10 minutes</li>
+      <li>Étalonnage colorimétrique soigné</li>
+      <li>Mix audio + sound design</li>
+      <li>Sous-titres et incrustations inclus</li>
+      <li>Miniature YouTube en option</li>
+      <li>2 tours de retours inclus</li>
+      <li>Export master prêt à publier</li>
     </ul>
     <div class="price">
-      <span>— À partir de</span>
-      <strong>€<em>—</em> / projet</strong>
+      <span>À PARTIR DE </span>
+      <strong>500<em>€</em></strong>
     </div>
   </div>
 
   <div class="offer fade-up">
-    <span class="idx">— 02 / Service</span>
-    <h3>Captation<br/>événement.</h3>
-    <p class="lede">Concerts, festivals, soirées privées, événements de marque. Captation seul ou multi-cam selon l'envergure, livraison aftermovie clé en main.</p>
+    <span class="idx">02 / PACK</span>
+    <h3>ÉVÉNEMENT<br/>AFTERMOVIE</h3>
+    <p class="lede">Pour les concerts, festivals, séminaires et soirées d'entreprise. Chaque événement mérite d'être immortalisé de la bonne façon.</p>
     <ul>
-      <li>Repérage + brief technique préalable</li>
-      <li>Tournage A7III + objectifs adaptés</li>
-      <li>Multi-cam possible sur devis</li>
-      <li>Captation son (micros canon + cravates)</li>
-      <li>Montage aftermovie 02:00 — 05:00</li>
+      <li>Repérage et brief technique en amont</li>
+      <li>Tournage Sony A7III + objectifs adaptés</li>
+      <li>Captation son professionnelle (micro canon + cravates)</li>
+      <li>1 aftermovie horizontal 5 à 10 minutes prêt à publier</li>
+      <li>3 capsules verticales pour vos réseaux sociaux</li>
+      <li>2 tours de retours inclus</li>
       <li>Livraison sous 7 à 14 jours</li>
+      <li>Frais de déplacement en sus selon la localisation</li>
     </ul>
     <div class="price">
-      <span>— À partir de</span>
-      <strong>€<em>—</em> / jour</strong>
+      <span>À PARTIR DE </span>
+      <strong>1600<em>€</em></strong>
     </div>
   </div>
 
   <div class="offer fade-up">
-    <span class="idx">— 03 / Service</span>
-    <h3>Tournage<br/>YouTube</h3>
-    <p class="lede">Cadreur dédié pour vidéastes. Focus pull, deuxième caméra, B-roll, gestion du son sur plateau. Je viens avec mon matos, vous restez focus sur le contenu.</p>
+    <span class="idx">03 / PACK</span>
+    <h3>PRODUCTION<br/>SOCIAL MÉDIA</h3>
+    <p class="lede">Pour les entreprises, commerces et restaurants qui veulent une présence vidéo professionnelle sur les réseaux sociaux.</p>
     <ul>
-      <li>Cadrage cinéma + suivi de mise au point</li>
-      <li>Setup lumière simple inclus</li>
-      <li>Captation son lavalier + canon</li>
-      <li>B-roll cinématographique en bonus</li>
-      <li>Export rushs étalonnés ou bruts</li>
-      <li>Montage optionnel en complément</li>
+      <li>1 à 2 jours de tournage sur place</li>
+      <li>5 vidéos verticales montées et prêtes à publier</li>
+      <li>Formats optimisés Instagram, TikTok, Shorts et Facebook</li>
+      <li>Mix audio &amp; sound design inclus</li>
+      <li>2 tours de retours inclus</li>
+      <li>Export dans tous les formats nécessaires</li>
+      <li>Frais de déplacement inclus sur Le Mans et agglomération</li>
     </ul>
     <div class="price">
-      <span>— À partir de</span>
-      <strong>€<em>—</em> / jour</strong>
-    </div>
-  </div>
-</section>
-
-<!-- ════ MATOS ════ -->
-<section class="matos" data-screen-label="04 Offres — Matos">
-  <div class="matos-head">
-    <div class="fade-up">
-      <p class="eyebrow" style="margin-bottom: 24px;">— Setup technique</p>
-      <h2>Le matos<br/>derrière les<br/><em>images.</em></h2>
-    </div>
-    <p class="fade-up">
-      Du gear éprouvé, choisi pour la fiabilité terrain : une caméra full-frame versatile, deux objectifs Tamron qui couvrent 24 à 300 mm, du son micro canon + cravate, et tout ce qu'il faut pour stabiliser et étalonner proprement. Maîtrise complète de la suite Adobe.
-    </p>
-  </div>
-
-  <div class="matos-grid">
-    <div class="matos-card fade-up">
-      <span class="cat">Caméra</span>
-      <div class="icon-frame">[ A7III ]</div>
-      <h3>Sony Alpha 7&nbsp;III</h3>
-      <span class="spec">Full-frame · 24 MP · 4K · low-light fiable</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Objectif</span>
-      <div class="icon-frame">[ 24-70 ]</div>
-      <h3>Tamron 24-70mm</h3>
-      <span class="spec">Zoom standard polyvalent · interviews / B-roll</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Objectif</span>
-      <div class="icon-frame">[ 70-300 ]</div>
-      <h3>Tamron 70-300mm</h3>
-      <span class="spec">Téléobjectif · live, concert, événementiel</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Filtres</span>
-      <div class="icon-frame">[ ND ]</div>
-      <h3>Jeu de filtres ND</h3>
-      <span class="spec">Densité variable · contrôle expo plein jour</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Son</span>
-      <div class="icon-frame">[ MIC ]</div>
-      <h3>Rode VideoMic</h3>
-      <span class="spec">Micro canon · prise son directionnelle plateau</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Son</span>
-      <div class="icon-frame">[ LAV ]</div>
-      <h3>DJI Mic Mini 2</h3>
-      <span class="spec">Cravate sans-fil · interviews mobiles</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Support</span>
-      <div class="icon-frame">[ TRIPOD ]</div>
-      <h3>Trépied vidéo</h3>
-      <span class="spec">Tête fluide · plans stables, panos doux</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Lumière</span>
-      <div class="icon-frame">[ LIGHT ]</div>
-      <h3>Kit éclairage LED</h3>
-      <span class="spec">Bi-couleur · setup interview portable</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Post-prod</span>
-      <div class="icon-frame">[ MAC ]</div>
-      <h3>Station Mac</h3>
-      <span class="spec">Montage / étalonnage / export 4K</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Logiciels</span>
-      <div class="icon-frame">[ ADOBE ]</div>
-      <h3>Suite Adobe</h3>
-      <span class="spec">Premiere · After Effects · Audition · Photoshop</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Couleur</span>
-      <div class="icon-frame">[ LUT ]</div>
-      <h3>Étalonnage Lumetri</h3>
-      <span class="spec">LUTs custom · look cinéma cohérent</span>
-    </div>
-    <div class="matos-card fade-up">
-      <span class="cat">Workflow</span>
-      <div class="icon-frame">[ SYNC ]</div>
-      <h3>Frame.io / Cloud</h3>
-      <span class="spec">Retours timecodés · workflow client clean</span>
+      <span>À PARTIR DE </span>
+      <strong>1200<em>€</em></strong>
     </div>
   </div>
 </section>
@@ -495,60 +456,64 @@
       Décrivez votre projet en quelques lignes&nbsp;: objectif, format, deadline, budget si vous l'avez. Je reviens vers vous sous 24h ouvrées avec un premier retour et un devis adapté.
     </p>
     <div class="channels">
-      <a href="mailto:hello@tomussproduction.fr">hello@tomussproduction.fr <span>↗ email</span></a>
-      <a href="#">@tomuss.prod <span>↗ instagram</span></a>
-      <a href="#">/tomussproduction <span>↗ youtube</span></a>
-      <a href="#">+33 6 — — — — — <span>↗ téléphone</span></a>
-      <a href="#">Le Mans, France <span>↗ déplacements possibles</span></a>
+      <a href="mailto:tomussproduction@gmail.com" target="_blank">tomussproduction@gmail.com<span>↗ email</span></a>
+      <a href="https://www.instagram.com/tomussprod/?hl=fr" target="_blank" rel="noopener">@tomussprod <span>↗ instagram</span></a>
+      <a href="https://www.youtube.com/@t0muss" target="_blank" rel="noopener">@t0muss <span>↗ youtube</span></a>
+      <a href="tel:+33637712176">+33 6 37 71 21 76 <span>↗ téléphone</span></a>
+      <a href="https://www.google.com/maps/place/Le+Mans" target="_blank" rel="noopener">Le Mans, France <span>↗ déplacements possibles</span></a>
     </div>
   </div>
 
-  <form class="fade-up" onsubmit="event.preventDefault(); alert('Démo · message envoyé !');">
+  <form id="contact-form" class="fade-up">
     <div class="row2">
       <div class="field">
-        <label>Nom complet <span class="req">✕</span></label>
-        <input type="text" placeholder="Jean Dupont" required />
+        <label for="contact-name">Nom complet <span class="req">✕</span></label>
+        <input id="contact-name" name="name" type="text" placeholder="Jean Dupont" required />
       </div>
       <div class="field">
-        <label>Email <span class="req">✕</span></label>
-        <input type="email" placeholder="jean@studio.com" required />
+        <label for="contact-email">Email <span class="req">✕</span></label>
+        <input id="contact-email" name="email" type="email" placeholder="jean@studio.com" required />
       </div>
     </div>
 
     <div class="field">
       <label>Type de projet <span class="req">✕</span></label>
       <div class="project-types">
-        <span class="ptype on">Montage vidéo</span>
-        <span class="ptype">Captation événement</span>
-        <span class="ptype">Tournage YouTube</span>
-        <span class="ptype">Autre</span>
+        <span class="ptype on" data-value="Montage vidéo">Montage vidéo</span>
+        <span class="ptype" data-value="Captation événement">Captation événement</span>
+        <span class="ptype" data-value="Tournage YouTube">Tournage YouTube</span>
+        <span class="ptype" data-value="Autre">Autre</span>
       </div>
+      <input id="contact-project-type" name="projectType" type="hidden" value="Montage vidéo" />
     </div>
 
     <div class="row2">
       <div class="field">
-        <label>Budget approximatif</label>
-        <select>
-          <option>— Je ne sais pas encore</option>
-          <option>&lt; 500 €</option>
-          <option>500 — 1 500 €</option>
-          <option>1 500 — 5 000 €</option>
-          <option>5 000 € +</option>
+        <label for="contact-budget">Budget approximatif</label>
+        <select id="contact-budget" name="budget">
+          <option value="Je ne sais pas encore">— Je ne sais pas encore</option>
+          <option value="< 500 €">&lt; 500 €</option>
+          <option value="500 — 1 500 €">500 — 1 500 €</option>
+          <option value="1 500 — 5 000 €">1 500 — 5 000 €</option>
+          <option value="5 000 € +">5 000 € +</option>
         </select>
       </div>
       <div class="field">
-        <label>Deadline souhaitée</label>
-        <input type="text" placeholder="ex: fin juin 2026" />
+        <label for="contact-deadline">Deadline souhaitée</label>
+        <input id="contact-deadline" name="deadline" type="text" placeholder="ex: fin juin 2026" />
       </div>
     </div>
 
     <div class="field">
-      <label>Votre message <span class="req">✕</span></label>
-      <textarea placeholder="Parlez-moi du projet : contexte, format, durée, livrables, références éventuelles…" required></textarea>
+      <label for="contact-message">Votre message <span class="req">✕</span></label>
+      <textarea id="contact-message" name="message" placeholder="Parlez-moi du projet : contexte, format, durée, livrables, références éventuelles…" required></textarea>
     </div>
 
     <div class="submit-bar">
-      <p class="terms">— En envoyant ce message, vous acceptez que vos infos soient utilisées uniquement pour vous répondre. Aucune newsletter, jamais.</p>
+      <div>
+        <p class="terms">— En envoyant ce message, vous acceptez que vos infos soient utilisées uniquement pour vous répondre. Aucune newsletter, jamais.</p>
+        <p id="contact-status" class="form-status"></p>
+      </div>
       <button class="submit" type="submit">Envoyer le brief ↗</button>
     </div>
   </form>
@@ -560,12 +525,60 @@
 <script src="assets/shared.js"></script>
 <script>
   window.injectChrome('offers');
-  // Project type toggle
-  document.querySelectorAll('.ptype').forEach(p => {
+
+  const projectTypeButtons = document.querySelectorAll('.ptype');
+  const projectTypeField = document.getElementById('contact-project-type');
+  const contactForm = document.getElementById('contact-form');
+  const statusEl = document.getElementById('contact-status');
+
+  const setStatus = (text, type) => {
+    statusEl.textContent = text;
+    statusEl.classList.remove('success', 'error');
+    statusEl.classList.add(type);
+  };
+
+  projectTypeButtons.forEach(p => {
     p.addEventListener('click', () => {
-      document.querySelectorAll('.ptype').forEach(x => x.classList.remove('on'));
+      projectTypeButtons.forEach(x => x.classList.remove('on'));
       p.classList.add('on');
+      projectTypeField.value = p.dataset.value || p.textContent.trim();
     });
+  });
+
+  contactForm.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const name = document.getElementById('contact-name').value.trim();
+    const email = document.getElementById('contact-email').value.trim();
+    const projectType = projectTypeField.value.trim();
+    const budget = document.getElementById('contact-budget').value.trim();
+    const deadline = document.getElementById('contact-deadline').value.trim();
+    const message = document.getElementById('contact-message').value.trim();
+
+    if (!name || !email || !message) {
+      setStatus('Merci de renseigner votre nom, votre email et votre message.', 'error');
+      return;
+    }
+
+    const subject = `Brief Tomuss Production - ${name}`;
+    const bodyLines = [
+      `Nom : ${name}`,
+      `Email : ${email}`,
+      `Type de projet : ${projectType}`,
+      `Budget approximatif : ${budget}`,
+      `Deadline souhaitée : ${deadline || 'Non précisée'}`,
+      '',
+      'Message :',
+      message,
+      '',
+      'Envoyé depuis tomussproduction.fr'
+    ];
+
+    const mailtoLink = `mailto:tomussproduction@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
+    setStatus('Préparation du message... votre client mail va s’ouvrir.', 'success');
+    setTimeout(() => {
+      window.location.href = mailtoLink;
+    }, 100);
   });
 </script>
 </body>

@@ -4,6 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Projets — Tomuss Production</title>
+<meta name="description" content="Découvrez les projets de Tomuss : montage vidéo YouTube, captation événementielle, cadreur. 12M+ vues cumulées sur des vidéos montées pour Pitch Addict, Hairtist, Camille LV et plus." />
+<meta property="og:title" content="Projets — Tomuss Production" />
+<meta property="og:description" content="Montage vidéo, captation événementielle, YouTube. 12M+ vues. Pitch Addict, Hairtist, Camille LV…" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tomussproduction.fr/projets.html" />
+<meta property="og:image" content="https://tomussproduction.fr/uploads/miniadvlp.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="uploads/Plan de travail 5logotest.png" />
 <link rel="stylesheet" href="assets/shared.css" />
 <style>
   .page-head {
@@ -186,7 +194,7 @@
   </div>
   <div class="right">
     <p>
-      Depuis 3 ans je monte exclusivement pour des créateurs YouTube. Des vidéos qui divertissent, qui racontent, qui captivent et qui font des chiffres.
+      Depuis 3 ans je monte, je filme et je livre. Des créateurs YouTube, des marques, des événements. Le montage reste mon cœur de métier — les chiffres le prouvent.
     </p>
     <div class="meta">
       <span>Des millions de vues, Du storytelling, du rythme, une image maîtrisée.</span>
@@ -203,7 +211,10 @@
 
 <div class="filter-bar" data-screen-label="02 Projets — Filtres">
   <div class="filters" id="filters">
-    <button class="filter active" data-filter="all">Tous <span class="count">24</span></button>
+    <button class="filter active" data-filter="all">Tous <span class="count">—</span></button>
+    <button class="filter" data-filter="montage">Montage <span class="count">—</span></button>
+    <button class="filter" data-filter="captation">Captation <span class="count">—</span></button>
+    <button class="filter" data-filter="tournage">Tournage <span class="count">—</span></button>
   </div>
   <div class="sort">
     <span>— Trier par</span>
@@ -241,18 +252,36 @@
   };
 
   const fallbackProjects = [
-    { idx: 1, type: 'montage',   title: 'Documentaire long format',   creator: 'Créateur X', views: '2,4 M',  date: 'Mars 2026', dur: '14:32', feat: true, thumbnail: '', avatar: '', url: '#' },
-    { idx: 2, type: 'youtube',   title: 'Challenge format viral',      creator: 'Créateur Y', views: '3,8 M',  date: 'Janv. 2026', dur: '08:11', thumbnail: '', avatar: '', url: '#' },
-    { idx: 3, type: 'captation', title: 'Aftermovie événement privé',  creator: 'Marque Z',   views: '720 k',  date: 'Déc. 2025', dur: '03:48', thumbnail: '', avatar: '', url: '#' },
-    { idx: 4, type: 'montage',   title: 'Récit immersif voyage',        creator: 'Créateur W', views: '1,1 M',  date: 'Nov. 2025', dur: '11:07', thumbnail: '', avatar: '', url: '#' },
-    { idx: 5, type: 'youtube',   title: 'Vlog cinématographique',      creator: 'Créateur V', views: '2,9 M',  date: 'Oct. 2025', dur: '17:22', thumbnail: '', avatar: '', url: '#' },
-    { idx: 6, type: 'captation', title: 'Festival multi-cam',          creator: 'Festival U', views: '1,2 M',  date: 'Sept. 2025', dur: '05:54', thumbnail: '', avatar: '', url: '#' },
-    { idx: 7, type: 'montage',   title: 'Best-of saison',              creator: 'Créateur T', views: '1,8 M',  date: 'Août 2025', dur: '09:18', thumbnail: '', avatar: '', url: '#' },
-    { idx: 8, type: 'youtube',   title: 'Format interview',            creator: 'Créateur S', views: '480 k',  date: 'Juil. 2025', dur: '22:04', thumbnail: '', avatar: '', url: '#' },
-    { idx: 9, type: 'montage',   title: 'Brand film court',            creator: 'Marque R',   views: '310 k',  date: 'Juin 2025', dur: '02:46', thumbnail: '', avatar: '', url: '#' },
-    { idx: 10,type: 'captation', title: 'Concert live indoor',         creator: 'Artiste Q',  views: '860 k',  date: 'Mai 2025',  dur: '04:22', thumbnail: '', avatar: '', url: '#' },
-    { idx: 11,type: 'youtube',   title: 'Mini-série format hebdo',     creator: 'Créateur P', views: '950 k',  date: 'Avril 2025', dur: '12:41', thumbnail: '', avatar: '', url: '#' },
-    { idx: 12,type: 'montage',   title: 'Récap année',                 creator: 'Créateur O', views: '1,4 M',  date: 'Janv. 2025', dur: '07:33', thumbnail: '', avatar: '', url: '#' }
+    { idx: 1, type: 'montage', feat: true,
+      title: 'QUI EST LE JOUEUR PRO ?! (ft. Gradur & Redouane Bougheraba)',
+      creator: 'Pitch Addict', views: '552 k', date: 'Mai 2026', dur: '—',
+      thumbnail: 'uploads/miniadvlp.jpg', avatar: 'uploadS/channels4_profile.png',
+      url: 'https://youtu.be/r0zvh0ElcnM' },
+    { idx: 2, type: 'montage',
+      title: 'LE MEILLEUR BARBER D\'INTERNET ! (ft Inoxtag Joyca Nico & Cocotte)',
+      creator: 'Hairtist', views: '552 k', date: 'Août 2025', dur: '—',
+      thumbnail: 'uploads/maxresdefault (1).jpg', avatar: 'uploadS/unnamed.jpg',
+      url: 'https://youtu.be/UqYMpBAAEA8' },
+    { idx: 3, type: 'montage',
+      title: 'J\'ai acheté 10 VALISES PERDUES (c\'est trop RENTABLE)',
+      creator: 'Camille LV', views: '766 k', date: 'Févr. 2024', dur: '—',
+      thumbnail: 'uploads/maxresdefault (2).jpg', avatar: 'uploadS/channels4_profile (2).jpg',
+      url: 'https://youtu.be/-YiWp9Usmr0' },
+    { idx: 4, type: 'montage',
+      title: 'On goûte les 20 aliments préférés des français',
+      creator: 'Pierre Croce', views: '135 k', date: 'Nov. 2025', dur: '—',
+      thumbnail: 'uploads/maxresdefault (3).jpg', avatar: 'uploadS/channels4_profile (3).jpg',
+      url: 'https://youtu.be/Tnw8BUV8Y8s' },
+    { idx: 5, type: 'montage',
+      title: 'CACHE CACHE DANS UNE BIBLIOTHÈQUE (MAIS fais pas de bruit)',
+      creator: 'Guizzi', views: '532 k', date: 'Sept. 2024', dur: '—',
+      thumbnail: 'uploads/maxresdefault (4).jpg', avatar: 'uploadS/channels4_profile (4).jpg',
+      url: 'https://youtu.be/F77U_yuUb5s' },
+    { idx: 6, type: 'montage',
+      title: 'MATHIS DUMAS ME DÉVOILE LES SECRETS DE L\'EVEREST AVEC INOXTAG !',
+      creator: 'Hairtist', views: '610 k', date: 'Sept. 2024', dur: '—',
+      thumbnail: 'uploads/maxresdefault (5).jpg', avatar: 'uploadS/unnamed.jpg',
+      url: 'https://youtu.be/es62U2hFlA4' }
   ];
 
   const grid = document.getElementById('grid');
@@ -303,10 +332,15 @@
   function updateCounts(projects) {
     const counts = projects.reduce((acc, p) => {
       acc.all += 1;
+      acc[p.type] = (acc[p.type] || 0) + 1;
       return acc;
     }, { all: 0 });
 
-    document.querySelector('[data-filter="all"] .count').textContent = counts.all;
+    document.querySelectorAll('.filter').forEach(btn => {
+      const f = btn.dataset.filter;
+      const el = btn.querySelector('.count');
+      if (el) el.textContent = counts[f] || 0;
+    });
   }
 
   let currentProjects = [];

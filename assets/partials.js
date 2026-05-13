@@ -1,14 +1,14 @@
 // Reusable nav + footer injection
 window.renderNav = function(active) {
   const items = [
-    { key: 'home',     label: 'Showreel',    href: 'index.html' },
+    { key: 'home',     label: 'Showreel',    href: '/' },
     { key: 'projects', label: 'Projets',     href: 'projets.html' },
     { key: 'about',    label: 'Studio',      href: 'about.html' },
     { key: 'offers',   label: 'Prestations', href: 'offres.html' },
   ];
   return `
     <nav class="nav">
-      <a class="logo" href="index.html">
+      <a class="logo" href="/">
         <img src="uploads/Plan de travail 5logotomussprod.svg" alt="Tomuss Production" class="logo-img" />
       </a>
       <ul class="nav-links">
@@ -41,7 +41,7 @@ window.renderFooter = function() {
       <div>
         <h4>Navigation</h4>
         <ul>
-          <li><a href="index.html">SHOWREEL</a></li>
+          <li><a href="/">SHOWREEL</a></li>
           <li><a href="projets.html">PROJETS</a></li>
           <li><a href="about.html">STUDIO</a></li>
           <li><a href="offres.html">PRESTATIONS</a></li>

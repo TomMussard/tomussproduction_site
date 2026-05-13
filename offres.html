@@ -369,6 +369,26 @@
     .contact { grid-template-columns: 1fr; }
     .row2 { grid-template-columns: 1fr; }
   }
+
+  @media (max-width: 880px) {
+    .page-head   { padding: 110px var(--gutter) 36px; }
+    .offers      { padding: 56px var(--gutter); gap: 20px; }
+    .offer       { padding: 28px 24px; }
+    .offer.flagship::before { font-size: 9px; padding: 3px 10px; left: 24px; }
+    .matos       { padding: 64px var(--gutter); }
+    .contact     { padding: 64px var(--gutter); }
+    .contact-left h2 { font-size: clamp(44px, 10vw, 100px); }
+    .submit-bar  { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .submit      { width: 100%; justify-content: center; }
+    .project-types { gap: 8px; }
+    .ptype       { padding: 10px 14px; font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .matos-grid  { grid-template-columns: 1fr; }
+    .page-head h1 { font-size: clamp(56px, 14vw, 120px); }
+    .offer h3    { font-size: clamp(28px, 8vw, 48px); }
+  }
 </style>
 </head>
 <body>

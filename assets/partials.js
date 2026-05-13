@@ -1,9 +1,9 @@
 // Reusable nav + footer injection
 window.renderNav = function(active) {
   const items = [
-    { key: 'home',     label: 'Showreel', href: 'index.html' },
-    { key: 'projects', label: 'Projets', href: 'projets.html' },
-    { key: 'about',    label: 'Studio',   href: 'about.html' },
+    { key: 'home',     label: 'Showreel',    href: 'index.html' },
+    { key: 'projects', label: 'Projets',     href: 'projets.html' },
+    { key: 'about',    label: 'Studio',      href: 'about.html' },
     { key: 'offers',   label: 'Prestations', href: 'offres.html' },
   ];
   return `
@@ -14,8 +14,20 @@ window.renderNav = function(active) {
       <ul class="nav-links">
         ${items.map(i => `<li><a href="${i.href}" class="${i.key===active?'active':''}">${i.label}</a></li>`).join('')}
       </ul>
-      <a class="nav-cta" href="offres.html#contact">Contact ↗</a>
+      <div class="nav-end">
+        <a class="nav-cta" href="offres.html#contact">Contact ↗</a>
+        <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
     </nav>
+    <div class="nav-drawer" aria-hidden="true">
+      <ul>
+        ${items.map(i => `<li><a href="${i.href}" class="${i.key===active?'active':''}">${i.label}</a></li>`).join('')}
+      </ul>
+      <a class="nav-drawer-cta" href="offres.html#contact">Contact ↗</a>
+    </div>
+    <div class="nav-overlay"></div>
   `;
 };
 
@@ -39,8 +51,8 @@ window.renderFooter = function() {
         <h4>Contact</h4>
         <ul>
           <li><a href="mailto:tomussproduction@gmail.com" target="_blank">tomussproduction@gmail.com</a></li>
-          <li><a href="tel:+33637712176" target="_blank">+33 6 37 71 21 76</a></li>
-          <li><a href="https://www.google.com/maps/place/Le+Mans/@48.006449,0.199582,13z/data=!4m5!3m4!1s0x47e8b8b8b8b8b8b8:0x47e8b8b8b8b8b8b8!8m2!3d48.006449!4d0.199582" target="_blank">Le Mans, France</a></li>
+          <li><a href="tel:+33637712176">+33 6 37 71 21 76</a></li>
+          <li><a href="https://www.google.com/maps/place/Le+Mans" target="_blank">Le Mans, France</a></li>
         </ul>
       </div>
       <div>
@@ -62,8 +74,44 @@ window.renderFooter = function() {
 };
 
 window.injectChrome = function(active) {
-  const navMount = document.getElementById('nav-mount');
+  const navMount    = document.getElementById('nav-mount');
   const footerMount = document.getElementById('footer-mount');
-  if (navMount) navMount.outerHTML = window.renderNav(active);
+  if (navMount)    navMount.outerHTML    = window.renderNav(active);
   if (footerMount) footerMount.outerHTML = window.renderFooter();
+
+  // ── Mobile nav toggle ──────────────────────────────────────────────────────
+  const toggle  = document.querySelector('.nav-toggle');
+  const drawer  = document.querySelector('.nav-drawer');
+  const overlay = document.querySelector('.nav-overlay');
+  if (!toggle || !drawer || !overlay) return;
+
+  function openMenu() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    toggle.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    drawer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('nav-open');
+  }
+  function closeMenu() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    toggle.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    drawer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('nav-open');
+  }
+
+  toggle.addEventListener('click', () =>
+    toggle.classList.contains('open') ? closeMenu() : openMenu()
+  );
+  overlay.addEventListener('click', closeMenu);
+
+  // Ferme le menu si on clique un lien du drawer
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+  // Ferme sur Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && drawer.classList.contains('open')) closeMenu();
+  });
 };

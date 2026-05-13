@@ -176,10 +176,28 @@
   .bottom-cta .pill:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 
   @media (max-width: 880px) {
-    .page-head { grid-template-columns: 1fr; gap: 40px; padding-top: 130px; }
+    .page-head  { grid-template-columns: 1fr; gap: 40px; padding-top: 130px; }
     .stats-line { grid-template-columns: repeat(2, 1fr); }
     .stats-line .stat:nth-child(2) { border-right: none; }
     .stats-line .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+
+    /* Paddings */
+    .page-head  { padding: 110px var(--gutter) 36px; }
+    .stats-line .stat { padding: 36px var(--gutter); }
+    .filter-bar { padding: 40px var(--gutter) 16px; gap: 16px; }
+    .grid       { padding: 20px var(--gutter) 80px; gap: 32px 24px; }
+    .bottom-cta { padding: 72px var(--gutter); }
+    .bottom-cta h2 { font-size: clamp(40px, 10vw, 100px); }
+
+    /* Filtres scrollables horizontalement sur mobile */
+    .filter-bar { flex-direction: column; align-items: flex-start; }
+    .filters    { overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; width: 100%; }
+    .filters::-webkit-scrollbar { height: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .page-head h1 { font-size: clamp(52px, 13vw, 120px); }
+    .stats-line .num { font-size: clamp(36px, 10vw, 60px); }
   }
 </style>
 </head>

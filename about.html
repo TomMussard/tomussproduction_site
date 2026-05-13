@@ -252,6 +252,25 @@
     .num-cell:last-child { border-bottom: none; }
     .collab-grid { grid-template-columns: repeat(2, 1fr); }
   }
+
+  @media (max-width: 880px) {
+    .about-hero  { padding: 120px var(--gutter) 32px; }
+    .bio         { padding: 48px var(--gutter) 64px; }
+    .approach    { padding: 64px var(--gutter); }
+    .collab      { padding: 64px var(--gutter); }
+    .num-cell    { padding: 48px var(--gutter); }
+    .num-cell .big { font-size: clamp(72px, 18vw, 160px); }
+    .approach-row { grid-template-columns: 40px 1fr; gap: 20px; }
+    .approach-row .desc { grid-column: 1 / -1; padding-left: 60px; margin-top: -12px; }
+    .collab-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 480px) {
+    .collab-grid { grid-template-columns: 1fr; }
+    .portrait    { max-width: 100%; }
+    .bio-text h2 { font-size: clamp(36px, 10vw, 60px); }
+    .collab h2   { font-size: clamp(32px, 9vw, 56px); }
+  }
 </style>
 </head>
 <body>

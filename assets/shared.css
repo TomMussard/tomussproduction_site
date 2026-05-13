@@ -487,11 +487,118 @@ img { display: block; max-width: 100%; }
 /* Selection */
 ::selection { background: var(--accent); color: var(--bg); }
 
+/* ── NAVIGATION MOBILE ── */
+.nav-end {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 200;
+  position: relative;
+  flex-shrink: 0;
+}
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--fg);
+  transition: transform .35s var(--ease), opacity .25s;
+  transform-origin: center;
+}
+.nav-toggle.open span:first-child { transform: translateY(3.5px) rotate(45deg); }
+.nav-toggle.open span:last-child  { transform: translateY(-3.5px) rotate(-45deg); }
+
+/* Drawer plein-écran */
+.nav-drawer {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 100px var(--gutter) 60px;
+  transform: translateX(100%);
+  transition: transform .55s var(--ease);
+  overflow-y: auto;
+}
+.nav-drawer.open { transform: translateX(0); }
+
+.nav-drawer ul {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.nav-drawer ul li a {
+  font-family: var(--f-display);
+  font-size: clamp(44px, 12vw, 80px);
+  text-transform: uppercase;
+  color: var(--fg);
+  opacity: .45;
+  display: block;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.05;
+  transition: opacity .2s, color .2s, padding-left .3s var(--ease);
+}
+.nav-drawer ul li a:hover,
+.nav-drawer ul li a.active { opacity: 1; color: var(--accent); padding-left: 16px; }
+
+.nav-drawer-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  padding: 16px 28px;
+  border: 1px solid var(--fg);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  color: var(--fg);
+  width: fit-content;
+  transition: background .3s, color .3s, border-color .3s;
+}
+.nav-drawer-cta:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  z-index: 94;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s;
+}
+.nav-overlay.open { opacity: 1; pointer-events: auto; }
+
+body.nav-open { overflow: hidden; }
+
 /* Mobile collapse */
 @media (max-width: 880px) {
   .nav-links { display: none; }
+  .nav-cta   { display: none; }
+  .nav-toggle { display: flex; }
   .footer { grid-template-columns: 1fr 1fr; }
   .footer .big { font-size: 48px; }
+}
+
+/* Petits téléphones */
+@media (max-width: 480px) {
+  .footer { grid-template-columns: 1fr; }
+  .footer .big { font-size: 36px; }
+  .footer h4 { margin-top: 8px; }
 }
 
 /* ── CURSEUR PERSONNALISÉ — style Premiere Pro ── */

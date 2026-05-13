@@ -681,15 +681,55 @@
   .big-cta .pill:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 
   @media (max-width: 880px) {
+    /* Grilles */
     .gallery-intro, .services-teaser { grid-template-columns: 1fr; gap: 40px; }
     .stats { grid-template-columns: repeat(2, 1fr); }
     .stat:nth-child(2) { border-right: none; }
     .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-    .showcase-slide { grid-template-columns: 1fr; }
-    .showcase-right { display: none; }
-    .showcase-left { padding: 60px var(--gutter) 100px; border-right: none; }
     .service-row { grid-template-columns: 32px 1fr; }
     .service-row .desc, .service-row .arr { display: none; }
+
+    /* Paddings réduits */
+    .gallery-intro  { padding: 60px var(--gutter) 32px; }
+    .services-teaser { padding: 72px var(--gutter); }
+    .big-cta        { padding: 72px var(--gutter); }
+    .testimonials   { padding: 72px var(--gutter); }
+    .stats .stat    { padding: 40px var(--gutter); }
+
+    /* Hero meta masqués sur mobile */
+    .hero-meta.tl, .hero-meta.tr { display: none; }
+    .hero-meta.bl, .hero-meta.br { font-size: 11px; }
+
+    /* Showcase → stack verticale (plus de scroll-pin) */
+    .showcase-wrap  { height: auto !important; }
+    .showcase-sticky {
+      position: relative !important;
+      height: auto !important;
+      overflow: visible;
+    }
+    .showcase-slide {
+      position: relative !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      grid-template-columns: 1fr;
+      border-bottom: 1px solid var(--line);
+    }
+    .showcase-right { display: none; }
+    .showcase-left  { padding: 48px var(--gutter) 56px; border-right: none; }
+    .slide-idx-bg   { font-size: 120px; }
+    .showcase-ui    { display: none; }
+
+    /* Témoignages */
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .testimonial        { padding: 28px 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .big-cta h2     { font-size: clamp(44px, 12vw, 80px); }
+    .gallery-intro h2 { font-size: clamp(44px, 12vw, 100px); }
+    .services-teaser h2 { font-size: clamp(44px, 12vw, 100px); }
+    .stat .num      { font-size: clamp(40px, 12vw, 72px); }
+    .slide-title    { font-size: clamp(28px, 7vw, 52px); }
   }
 
   /* ── TÉMOIGNAGES ── */

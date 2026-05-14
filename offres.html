@@ -31,7 +31,7 @@
   .page-head h1 em { color: var(--accent); font-style: italic; }
   .page-head p {
     color: var(--fg-dim);
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.6;
     max-width: 420px;
   }
@@ -89,7 +89,7 @@
   }
   .offer .lede {
     color: var(--fg-dim);
-    font-size: 15px;
+    font-size: 17px;
     line-height: 1.55;
     min-height: 88px;
   }
@@ -116,26 +116,23 @@
     justify-content: center;
     width: 1.2em;
   }
-  .offer .price {
+  .offer-cta {
     margin-top: auto;
     padding-top: 24px;
     border-top: 1px solid var(--line);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: end;
     font-family: var(--f-mono);
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: .22em;
-    color: var(--fg-dim);
-  }
-  .offer .price strong {
-    font-family: var(--f-display);
     color: var(--fg);
-    font-size: 22px;
-    letter-spacing: 0;
+    text-decoration: none;
+    transition: color .25s var(--ease), gap .3s var(--ease);
+    gap: 12px;
   }
-  .offer .price strong em { color: var(--accent); font-style: italic; }
+  .offer-cta:hover { color: var(--accent); gap: 20px; }
 
   /* Matos */
   .matos {
@@ -159,7 +156,7 @@
   .matos-head h2 em { color: var(--accent); font-style: italic; }
   .matos-head p {
     color: var(--fg-dim);
-    font-size: 15px;
+    font-size: 17px;
     line-height: 1.6;
     max-width: 420px;
   }
@@ -233,7 +230,7 @@
   .contact-left h2 em { color: var(--accent); font-style: italic; }
   .contact-left p {
     color: var(--fg-dim);
-    font-size: 15px;
+    font-size: 17px;
     line-height: 1.55;
     margin-bottom: 24px;
     max-width: 380px;
@@ -292,10 +289,15 @@
   .field select {
     color: #000;
     background: #fff;
+    text-align: center;
+    text-align-last: center;
+    padding-left: 8px;
+    padding-right: 8px;
   }
   .field select option {
     color: #000;
     background: #fff;
+    text-align: center;
   }
   .field input:focus,
   .field textarea:focus,
@@ -390,53 +392,9 @@
     .offer h3    { font-size: clamp(28px, 8vw, 48px); }
   }
 
-  /* ── LOADING SCREEN ── */
-  .loading-screen {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-  }
-  .loading-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
-  }
-  .loading-content {
-    text-align: center;
-  }
-  .loading-logo {
-    width: 200px;
-    height: auto;
-    margin-bottom: 20px;
-  }
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--line);
-    border-top: 4px solid var(--accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
 </style>
 </head>
 <body>
-
-<!-- Loading Screen -->
-<div id="loading-screen" class="loading-screen">
-  <div class="loading-content">
-    <img src="uploads/Plan de travail 5logotomussprod.svg" alt="Tomuss Production" class="loading-logo" />
-    <div class="loading-spinner"></div>
-  </div>
-</div>
 
 <div class="curtain"></div>
 <div id="nav-mount"></div>
@@ -467,10 +425,7 @@
       <li>2 tours de retours inclus</li>
       <li>Export master prêt à publier</li>
     </ul>
-    <div class="price">
-      <span>À PARTIR DE </span>
-      <strong>500<em>€</em></strong>
-    </div>
+    <a href="#contact" class="offer-cta">Demander un devis <span>↗</span></a>
   </div>
 
   <div class="offer fade-up">
@@ -487,10 +442,7 @@
       <li>Livraison sous 7 à 14 jours</li>
       <li>Frais de déplacement en sus selon la localisation</li>
     </ul>
-    <div class="price">
-      <span>À PARTIR DE </span>
-      <strong>1600<em>€</em></strong>
-    </div>
+    <a href="#contact" class="offer-cta">Demander un devis <span>↗</span></a>
   </div>
 
   <div class="offer fade-up">
@@ -506,10 +458,7 @@
       <li>Export dans tous les formats nécessaires</li>
       <li>Frais de déplacement inclus sur Le Mans et agglomération</li>
     </ul>
-    <div class="price">
-      <span>À PARTIR DE </span>
-      <strong>1200<em>€</em></strong>
-    </div>
+    <a href="#contact" class="offer-cta">Demander un devis <span>↗</span></a>
   </div>
 </section>
 
@@ -645,13 +594,6 @@
     setTimeout(() => {
       window.location.href = mailtoLink;
     }, 100);
-  });
-
-  // Loading screen
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      document.getElementById('loading-screen').classList.add('hidden');
-    }, 500);
   });
 </script>
 </body>

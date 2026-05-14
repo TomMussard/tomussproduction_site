@@ -445,7 +445,7 @@ img { display: block; max-width: 100%; }
 .section-head p {
   max-width: 420px;
   color: var(--fg-dim);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 300;
 }
 

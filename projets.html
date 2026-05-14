@@ -31,7 +31,7 @@
   .page-head h1 em { color: var(--accent); font-style: italic; font-weight: 400; }
   .page-head .right p {
     color: var(--fg-dim);
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.6;
     max-width: 420px;
     margin-bottom: 18px;
@@ -200,53 +200,9 @@
     .stats-line .num { font-size: clamp(36px, 10vw, 60px); }
   }
 
-  /* ── LOADING SCREEN ── */
-  .loading-screen {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-  }
-  .loading-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
-  }
-  .loading-content {
-    text-align: center;
-  }
-  .loading-logo {
-    width: 200px;
-    height: auto;
-    margin-bottom: 20px;
-  }
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--line);
-    border-top: 4px solid var(--accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
 </style>
 </head>
 <body>
-
-<!-- Loading Screen -->
-<div id="loading-screen" class="loading-screen">
-  <div class="loading-content">
-    <img src="uploads/Plan de travail 5logotomussprod.svg" alt="Tomuss Production" class="loading-logo" />
-    <div class="loading-spinner"></div>
-  </div>
-</div>
 
 <div class="curtain"></div>
 <div id="nav-mount"></div>

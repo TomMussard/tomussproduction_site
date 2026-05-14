@@ -72,29 +72,6 @@
     75% { transform: translate(-2%, -3%); }
     100% { transform: translate(2%, 2%); }
   }
-  /* glitch bars */
-  .showreel-bars {
-    position: absolute; inset: 0; pointer-events: none;
-    z-index: 1;
-  }
-  .bar {
-    position: absolute;
-    left: 0; right: 0;
-    height: 2px;
-    background: rgba(244,239,230,.15);
-    mix-blend-mode: screen;
-    animation: barSlide 7s var(--ease) infinite;
-  }
-  .bar.b1 { top: 18%; animation-delay: .2s; }
-  .bar.b2 { top: 42%; height: 4px; animation-delay: 1.6s; animation-duration: 9s; }
-  .bar.b3 { top: 71%; animation-delay: 3.4s; }
-  .bar.b4 { top: 88%; height: 1px; animation-delay: 5.1s; animation-duration: 11s; }
-  @keyframes barSlide {
-    0%, 88%, 100% { opacity: 0; transform: translateX(-30%); }
-    90% { opacity: 1; transform: translateX(0); }
-    94% { opacity: .3; transform: translateX(8%); }
-    98% { opacity: 0; transform: translateX(30%); }
-  }
   /* big glitch flicker */
   .showreel-flash {
     position: absolute; inset: 0;
@@ -822,12 +799,6 @@
       <source src="uploads/head_2.mp4" type="video/mp4">
     </video>
     <div class="showreel-noise"></div>
-    <div class="showreel-bars">
-      <div class="bar b1"></div>
-      <div class="bar b2"></div>
-      <div class="bar b3"></div>
-      <div class="bar b4"></div>
-    </div>
     <div class="showreel-flash"></div>
     <div class="showreel-fade"></div>
   </div>
@@ -1198,7 +1169,7 @@
       <span class="idx">01</span>
       <div>
         <div class="name">Montage vidéo <span style="font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--accent);vertical-align:middle;margin-left:12px;">— EXPERTISE PRINCIPALE</span></div>
-        <div class="desc" style="margin-top: 6px;">YouTube formats longs, social média, brand content.</div>
+        <div class="desc" style="margin-top: 6px;">YouTube formats longs, social media, brand content.</div>
       </div>
       <span class="arr">→</span>
     </a>

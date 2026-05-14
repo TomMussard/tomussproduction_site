@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Projets — Tomuss Production</title>
-<meta name="description" content="Découvrez les projets de Tomuss : montage vidéo YouTube, captation événementielle, cadreur. 12M+ vues cumulées sur des vidéos montées pour Pitch Addict, Hairtist, Camille LV et plus." />
+<meta name="description" content="Découvrez les projets de Tomuss : montage vidéo YouTube, tournages événementiels, captation photo. 12M+ vues cumulées." />
 <meta property="og:title" content="Projets — Tomuss Production" />
-<meta property="og:description" content="Montage vidéo, captation événementielle, YouTube. 12M+ vues. Pitch Addict, Hairtist, Camille LV…" />
+<meta property="og:description" content="Montage vidéo, tournages événementiels, captation photo. 12M+ vues." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://tomussproduction.fr/projets.html" />
 <meta property="og:image" content="https://tomussproduction.fr/uploads/miniadvlp.jpg" />
@@ -14,6 +14,7 @@
 <link rel="icon" type="image/png" href="uploads/Plan de travail 5logotest.png" />
 <link rel="stylesheet" href="assets/shared.css" />
 <style>
+  /* ── PAGE HEAD ── */
   .page-head {
     padding: 160px var(--gutter) 60px;
     display: grid;
@@ -47,7 +48,7 @@
     color: var(--fg-dim);
   }
 
-  /* Stats inline */
+  /* ── STATS ── */
   .stats-line {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -73,81 +74,280 @@
     margin-top: 12px;
   }
 
-  /* Filter bar */
-  .filter-bar {
-    padding: 60px var(--gutter) 20px;
+  /* ── TAB NAVIGATION ── */
+  .cat-nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--line);
+  }
+  .cat-btn {
+    padding: 36px var(--gutter);
+    font-family: var(--f-display);
+    font-size: clamp(24px, 3.5vw, 48px);
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    color: var(--fg-dim);
+    border-right: 1px solid var(--line);
+    cursor: pointer;
+    transition: color .25s, background .25s;
+    text-align: left;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 32px;
-    flex-wrap: wrap;
+    gap: 16px;
+    position: relative;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-bottom: none;
   }
-  .filters {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .filter {
-    padding: 10px 20px;
-    border: 1px solid var(--line-strong);
+  .cat-btn:last-child { border-right: none; }
+  .cat-btn .cat-num {
     font-family: var(--f-mono);
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .2em;
-    color: var(--fg-dim);
-    cursor: pointer;
-    transition: all .25s var(--ease);
-    display: flex; align-items: center; gap: 10px;
+    letter-spacing: .25em;
+    color: var(--fg-faint);
+    flex-shrink: 0;
   }
-  .filter:hover { color: var(--fg); border-color: var(--fg); }
-  .filter .count { color: var(--fg-faint); font-size: 10px; }
-  .filter.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-  .filter.active .count { color: rgba(15,15,15,.55); }
-
-  .sort {
-    display: flex; align-items: center; gap: 14px;
+  .cat-btn .cat-count {
+    margin-left: auto;
     font-family: var(--f-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .22em;
-    color: var(--fg-dim);
+    font-size: 13px;
+    color: var(--fg-faint);
+    flex-shrink: 0;
   }
-  .sort select {
-    background: #fff;
-    color: #111;
-    border: 1px solid var(--line-strong);
-    padding: 8px 12px;
-    font-family: var(--f-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .15em;
-  }
-  .sort select option {
-    color: #111;
-    background: #fff;
+  .cat-btn:hover { color: var(--fg); background: var(--surface); }
+  .cat-btn.active { color: var(--fg); background: var(--surface); }
+  .cat-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
   }
 
-  /* Grid */
+  /* ── SECTIONS ── */
+  .cat-section { display: none; }
+  .cat-section.active { display: block; }
+
+  /* ── GRILLE MONTAGE (YouTube) ── */
   .grid {
-    padding: 30px var(--gutter) 120px;
+    padding: 60px var(--gutter) 120px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 48px 32px;
   }
-  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 640px)  { .grid { grid-template-columns: 1fr; } }
-
   .thumb.is-hidden { display: none; }
-
-  /* Featured / first */
-  .grid .thumb.featured {
-    grid-column: span 2;
-  }
+  .grid .thumb.featured { grid-column: span 2; }
   .grid .thumb.featured .thumb-frame { aspect-ratio: 21 / 9; }
-  @media (max-width: 1100px) { .grid .thumb.featured { grid-column: span 2; } }
-  @media (max-width: 640px) { .grid .thumb.featured { grid-column: span 1; } .grid .thumb.featured .thumb-frame { aspect-ratio: 16/9; } }
 
-  /* Bottom callout */
+  /* ── GRILLE TOURNAGES (vidéos locales) ── */
+  .event-grid {
+    padding: 60px var(--gutter) 120px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px 32px;
+    align-items: start;
+  }
+  .event-card { display: flex; flex-direction: column; gap: 16px; }
+  .event-thumb {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: var(--surface);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    cursor: pointer;
+    transition: border-color .3s;
+  }
+  .event-thumb:hover { border-color: var(--accent); }
+  .event-thumb video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .event-play-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0,0,0,.38);
+    transition: opacity .3s;
+  }
+  .event-thumb.playing .event-play-overlay { opacity: 0; pointer-events: none; }
+  .event-play-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    transition: transform .25s;
+  }
+  .event-thumb:hover .event-play-btn { transform: scale(1.1); }
+  .event-info { display: flex; flex-direction: column; gap: 6px; }
+  .event-tag {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .event-title {
+    font-family: var(--f-display);
+    font-size: clamp(22px, 2.8vw, 36px);
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--fg);
+  }
+  .event-desc {
+    font-size: 15px;
+    color: var(--fg-dim);
+    line-height: 1.55;
+    max-width: 480px;
+  }
+  .event-date {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .22em;
+    color: var(--fg-faint);
+    text-transform: uppercase;
+  }
+
+  /* ── GALERIE PHOTO (masonry) ── */
+  .photo-section {
+    padding: 60px var(--gutter) 120px;
+  }
+  .photo-intro {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .photo-intro h2 {
+    font-family: var(--f-display);
+    font-size: clamp(32px, 5vw, 72px);
+    text-transform: uppercase;
+    line-height: .9;
+  }
+  .photo-intro h2 em { color: var(--accent); font-style: italic; }
+  .photo-intro p {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .photo-masonry {
+    columns: 3;
+    column-gap: 10px;
+  }
+  .photo-item {
+    break-inside: avoid;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    transition: border-color .3s;
+  }
+  .photo-item:hover { border-color: var(--accent); border-width: 2px; }
+  .photo-item img {
+    width: 100%;
+    display: block;
+    transition: transform .55s var(--ease);
+  }
+  .photo-item:hover img { transform: scale(1.04); }
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 12px;
+    opacity: 0;
+    transition: opacity .3s, background .3s;
+  }
+  .photo-item:hover .photo-overlay {
+    opacity: 1;
+    background: rgba(0,0,0,.25);
+  }
+  .photo-overlay span {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(0,0,0,.65);
+    padding: 6px 10px;
+  }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,5,.96);
+    z-index: 9000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lb-img {
+    max-width: 90vw;
+    max-height: 88vh;
+    object-fit: contain;
+    display: block;
+    border: 1px solid var(--line-strong);
+  }
+  .lb-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    font-family: var(--f-mono);
+    font-size: 22px;
+    color: var(--fg-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    line-height: 1;
+    transition: color .2s;
+    z-index: 2;
+  }
+  .lb-close:hover { color: var(--accent); }
+  .lb-counter {
+    position: absolute;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    white-space: nowrap;
+  }
+  .lb-prev, .lb-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--f-display);
+    font-size: 28px;
+    color: var(--fg);
+    background: rgba(15,15,15,.75);
+    border: 1px solid var(--line-strong);
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+    line-height: 1;
+  }
+  .lb-prev { left: 20px; }
+  .lb-next { right: 20px; }
+  .lb-prev:hover, .lb-next:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── BOTTOM CTA ── */
   .bottom-cta {
     border-top: 1px solid var(--line);
     padding: 120px var(--gutter);
@@ -175,31 +375,44 @@
   }
   .bottom-cta .pill:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .grid .thumb.featured { grid-column: span 2; }
+    .event-grid { grid-template-columns: repeat(2, 1fr); }
+    .photo-masonry { columns: 2; }
+  }
   @media (max-width: 880px) {
-    .page-head  { grid-template-columns: 1fr; gap: 40px; padding-top: 130px; }
+    .page-head { grid-template-columns: 1fr; gap: 40px; padding-top: 130px; }
+    .page-head { padding: 110px var(--gutter) 36px; }
     .stats-line { grid-template-columns: repeat(2, 1fr); }
     .stats-line .stat:nth-child(2) { border-right: none; }
     .stats-line .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-
-    /* Paddings */
-    .page-head  { padding: 110px var(--gutter) 36px; }
     .stats-line .stat { padding: 36px var(--gutter); }
-    .filter-bar { padding: 40px var(--gutter) 16px; gap: 16px; }
-    .grid       { padding: 20px var(--gutter) 80px; gap: 32px 24px; }
+    .cat-nav { grid-template-columns: 1fr; }
+    .cat-btn { border-right: none; border-bottom: 1px solid var(--line); font-size: 28px; padding: 24px var(--gutter); }
+    .cat-btn:last-child { border-bottom: none; }
+    .cat-btn.active::after { bottom: -1px; }
+    .grid { padding: 40px var(--gutter) 80px; gap: 32px 20px; }
+    .event-grid { grid-template-columns: 1fr; padding: 40px var(--gutter) 80px; }
+    .photo-section { padding: 40px var(--gutter) 80px; }
     .bottom-cta { padding: 72px var(--gutter); }
     .bottom-cta h2 { font-size: clamp(40px, 10vw, 100px); }
-
-    /* Filtres scrollables horizontalement sur mobile */
-    .filter-bar { flex-direction: column; align-items: flex-start; }
-    .filters    { overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; width: 100%; }
-    .filters::-webkit-scrollbar { height: 0; }
   }
-
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .grid .thumb.featured { grid-column: span 1; }
+    .grid .thumb.featured .thumb-frame { aspect-ratio: 16/9; }
+    .photo-masonry { columns: 1; }
+    .lb-prev, .lb-next { padding: 10px 12px; font-size: 20px; }
+    .lb-prev { left: 8px; }
+    .lb-next { right: 8px; }
+  }
   @media (max-width: 480px) {
     .page-head h1 { font-size: clamp(52px, 13vw, 120px); }
     .stats-line .num { font-size: clamp(36px, 10vw, 60px); }
+    .photo-masonry { columns: 1; }
   }
-
 </style>
 </head>
 <body>
@@ -207,6 +420,7 @@
 <div class="curtain"></div>
 <div id="nav-mount"></div>
 
+<!-- ════ PAGE HEAD ════ -->
 <header class="page-head" data-screen-label="02 Projets — Head">
   <div>
     <p class="eyebrow" style="margin-bottom: 32px;">découvrez mon univers</p>
@@ -217,11 +431,12 @@
       Depuis 3 ans je monte, je filme et je livre. Des créateurs YouTube, des marques, des événements. Le montage reste mon cœur de métier — les chiffres le prouvent.
     </p>
     <div class="meta">
-      <span>Des millions de vues, Du storytelling, du rythme, une image maîtrisée.</span>
+      <span>Du storytelling, du rythme, une image maîtrisée.</span>
     </div>
   </div>
 </header>
 
+<!-- ════ STATS ════ -->
 <section class="stats-line" data-screen-label="02 Projets — Chiffres">
   <div class="stat"><div class="num">12<em>M+</em></div><div class="lbl">— Vues cumulées</div></div>
   <div class="stat"><div class="num">100<em>+</em></div><div class="lbl">— Projets livrés</div></div>
@@ -229,27 +444,56 @@
   <div class="stat"><div class="num">15<em>+</em></div><div class="lbl">— Créateurs</div></div>
 </section>
 
-<div class="filter-bar" data-screen-label="02 Projets — Filtres">
-  <div class="filters" id="filters">
-    <button class="filter active" data-filter="all">Tous <span class="count">—</span></button>
-    <button class="filter" data-filter="montage">Montage <span class="count">—</span></button>
-    <button class="filter" data-filter="captation">Captation <span class="count">—</span></button>
-    <button class="filter" data-filter="tournage">Tournage <span class="count">—</span></button>
-  </div>
-  <div class="sort">
-    <span>— Trier par</span>
-    <select id="sort">
-      <option>Plus récents</option>
-      <option>Plus vus</option>
-      <option>Ordre alphabétique</option>
-    </select>
+<!-- ════ TABS ════ -->
+<nav class="cat-nav" data-screen-label="02 Projets — Navigation">
+  <button class="cat-btn active" data-cat="montage">
+    <span class="cat-num">01</span>
+    Montage
+    <span class="cat-count" id="count-montage">6</span>
+  </button>
+  <button class="cat-btn" data-cat="tournage">
+    <span class="cat-num">02</span>
+    Tournages
+    <span class="cat-count">1</span>
+  </button>
+  <button class="cat-btn" data-cat="photo">
+    <span class="cat-num">03</span>
+    Photo
+    <span class="cat-count">18</span>
+  </button>
+</nav>
+
+<!-- ════ SECTION MONTAGE ════ -->
+<div class="cat-section active" id="cat-montage">
+  <div class="grid" id="grid" data-screen-label="02 Projets — Montage"></div>
+</div>
+
+<!-- ════ SECTION TOURNAGES ════ -->
+<div class="cat-section" id="cat-tournage">
+  <div class="event-grid" id="event-grid" data-screen-label="02 Projets — Tournages"></div>
+</div>
+
+<!-- ════ SECTION PHOTO ════ -->
+<div class="cat-section" id="cat-photo">
+  <div class="photo-section" data-screen-label="02 Projets — Photo">
+    <div class="photo-intro fade-up">
+      <h2>24H du <em>Mans</em><br/>& événements</h2>
+      <p>— 18 photos · Captation 2024</p>
+    </div>
+    <div class="photo-masonry" id="photo-masonry"></div>
   </div>
 </div>
 
-<div class="grid" id="grid" data-screen-label="02 Projets — Grille">
-  <!-- 12 projets pour la démo, mix des 3 types -->
+<!-- ════ LIGHTBOX ════ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lb-close" id="lb-close" aria-label="Fermer">✕</button>
+  <img class="lb-img" id="lb-img" src="" alt="" />
+  <button class="lb-prev" id="lb-prev" aria-label="Photo précédente">←</button>
+  <button class="lb-next" id="lb-next" aria-label="Photo suivante">→</button>
+  <span class="lb-counter" id="lb-counter">1 / 18</span>
 </div>
 
+<!-- ════ BOTTOM CTA ════ -->
 <section class="bottom-cta" data-screen-label="02 Projets — CTA">
   <p class="eyebrow fade-up" style="margin-bottom: 28px;">— Vous voulez un projet ?</p>
   <h2 class="fade-up">Faisons<br/>la <em>prochaine.</em></h2>
@@ -263,11 +507,14 @@
 <script>
   window.injectChrome('projects');
 
+  /* ══════════════════════════════════════════════
+     01 — MONTAGE (YouTube API + fallback)
+  ══════════════════════════════════════════════ */
   const CONFIG = {
     apiKey: 'AIzaSyDrxvyFZJhjZauXxcs4bU11xs3mAzeaL8M',
     playlistId: 'PL00Z1aG7rYtiV35v_4hWYZpzRZ18TuLqA',
     maxVideos: 24,
-    defaultTags: ['Montage', 'YouTube', 'Captation', 'Montage', 'YouTube', 'Captation'],
+    defaultTags: ['montage', 'montage', 'montage', 'montage', 'montage', 'montage'],
     videoTags: {}
   };
 
@@ -275,50 +522,46 @@
     { idx: 1, type: 'montage', feat: true,
       title: 'QUI EST LE JOUEUR PRO ?! (ft. Gradur & Redouane Bougheraba)',
       creator: 'Pitch Addict', views: '552 k', date: 'Mai 2026', dur: '—',
-      thumbnail: 'uploads/miniadvlp.jpg', avatar: 'uploadS/channels4_profile.png',
+      thumbnail: 'uploads/miniadvlp.jpg', avatar: 'uploads/channels4_profile.png',
       url: 'https://youtu.be/r0zvh0ElcnM' },
     { idx: 2, type: 'montage',
       title: 'LE MEILLEUR BARBER D\'INTERNET ! (ft Inoxtag Joyca Nico & Cocotte)',
       creator: 'Hairtist', views: '552 k', date: 'Août 2025', dur: '—',
-      thumbnail: 'uploads/maxresdefault (1).jpg', avatar: 'uploadS/unnamed.jpg',
+      thumbnail: 'uploads/maxresdefault (1).jpg', avatar: 'uploads/unnamed.jpg',
       url: 'https://youtu.be/UqYMpBAAEA8' },
     { idx: 3, type: 'montage',
       title: 'J\'ai acheté 10 VALISES PERDUES (c\'est trop RENTABLE)',
       creator: 'Camille LV', views: '766 k', date: 'Févr. 2024', dur: '—',
-      thumbnail: 'uploads/maxresdefault (2).jpg', avatar: 'uploadS/channels4_profile (2).jpg',
+      thumbnail: 'uploads/maxresdefault (2).jpg', avatar: 'uploads/channels4_profile (2).jpg',
       url: 'https://youtu.be/-YiWp9Usmr0' },
     { idx: 4, type: 'montage',
       title: 'On goûte les 20 aliments préférés des français',
       creator: 'Pierre Croce', views: '135 k', date: 'Nov. 2025', dur: '—',
-      thumbnail: 'uploads/maxresdefault (3).jpg', avatar: 'uploadS/channels4_profile (3).jpg',
+      thumbnail: 'uploads/maxresdefault (3).jpg', avatar: 'uploads/channels4_profile (3).jpg',
       url: 'https://youtu.be/Tnw8BUV8Y8s' },
     { idx: 5, type: 'montage',
       title: 'CACHE CACHE DANS UNE BIBLIOTHÈQUE (MAIS fais pas de bruit)',
       creator: 'Guizzi', views: '532 k', date: 'Sept. 2024', dur: '—',
-      thumbnail: 'uploads/maxresdefault (4).jpg', avatar: 'uploadS/channels4_profile (4).jpg',
+      thumbnail: 'uploads/maxresdefault (4).jpg', avatar: 'uploads/channels4_profile (4).jpg',
       url: 'https://youtu.be/F77U_yuUb5s' },
     { idx: 6, type: 'montage',
       title: 'MATHIS DUMAS ME DÉVOILE LES SECRETS DE L\'EVEREST AVEC INOXTAG !',
       creator: 'Hairtist', views: '610 k', date: 'Sept. 2024', dur: '—',
-      thumbnail: 'uploads/maxresdefault (5).jpg', avatar: 'uploadS/unnamed.jpg',
+      thumbnail: 'uploads/maxresdefault (5).jpg', avatar: 'uploads/unnamed.jpg',
       url: 'https://youtu.be/es62U2hFlA4' }
   ];
 
-  const grid = document.getElementById('grid');
-
   function fmtViews(n) {
-    if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' M';
-    if (n >= 1e3) return Math.round(n / 1e3) + ' k';
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' M';
+    if (n >= 1e3) return Math.round(n / 1e3) + ' k';
     return String(n);
   }
-
   function fmtDuration(iso) {
     const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/) || [];
     const h = +m[1] || 0, min = +m[2] || 0, sec = +m[3] || 0;
     const pad = v => String(v).padStart(2, '0');
     return h ? `${h}:${pad(min)}:${pad(sec)}` : `${min}:${pad(sec)}`;
   }
-
   function fmtDate(str) {
     const days = Math.floor((Date.now() - new Date(str)) / 86400000);
     if (days < 30) return 'ce mois-ci';
@@ -329,12 +572,13 @@
   }
 
   function makeProjectCard(p) {
-    console.log('Thumbnail for', p.title, ':', p.thumbnail);
-    const thumbContent = p.thumbnail ? `<img src="${p.thumbnail}" alt="${p.title}" loading="lazy" />` : `<span class="ph-label">[ projet ${String(p.idx).padStart(2, '0')} · placeholder ]</span>`;
+    const thumb = p.thumbnail
+      ? `<img src="${p.thumbnail}" alt="${p.title}" loading="lazy" />`
+      : `<span class="ph-label">[ projet ${String(p.idx).padStart(2, '0')} ]</span>`;
     return `
-      <a class="thumb ${p.feat ? 'featured' : ''}" data-type="${p.type}" href="${p.url || '#'}" target="_blank" rel="noopener">
+      <a class="thumb ${p.feat ? 'featured' : ''}" data-type="${p.type}" href="${p.url}" target="_blank" rel="noopener">
         <div class="thumb-frame">
-          ${thumbContent}
+          ${thumb}
           <span class="duration">${p.dur || '—'}</span>
           <div class="play"><span>▶</span></div>
         </div>
@@ -342,149 +586,206 @@
           <div class="avatar">${p.avatar ? `<img src="${p.avatar}" alt="${p.creator}" />` : ''}</div>
           <div class="info">
             <h3>${p.title}</h3>
-            <p>${p.creator}<span class="sep">·</span>${p.views} vues<span class="sep">·</span>${p.date}</p>
+            <p>${p.creator}<span class="sep">·</span>${p.views !== '—' ? p.views + ' vues<span class="sep">·</span>' : ''}${p.date}</p>
           </div>
         </div>
-      </a>
-    `;
+      </a>`;
   }
 
-  function updateCounts(projects) {
-    const counts = projects.reduce((acc, p) => {
-      acc.all += 1;
-      acc[p.type] = (acc[p.type] || 0) + 1;
-      return acc;
-    }, { all: 0 });
+  const grid = document.getElementById('grid');
 
-    document.querySelectorAll('.filter').forEach(btn => {
-      const f = btn.dataset.filter;
-      const el = btn.querySelector('.count');
-      if (el) el.textContent = counts[f] || 0;
-    });
-  }
-
-  let currentProjects = [];
-
-  function renderProjects(projects, sortBy = 'Plus récents') {
-    currentProjects = sortProjects(projects, sortBy);
-    grid.innerHTML = currentProjects.map(makeProjectCard).join('');
-    updateCounts(currentProjects);
-  }
-
-  function parseViews(viewsStr) {
-    const num = parseFloat(viewsStr.replace(',', '.').replace(' M', 'e6').replace(' k', 'e3'));
-    return isNaN(num) ? 0 : num;
-  }
-
-  function sortProjects(projects, sortBy) {
-    const sorted = [...projects];
-    switch (sortBy) {
-      case 'Plus vus':
-        sorted.sort((a, b) => parseViews(b.views) - parseViews(a.views));
-        break;
-      case 'Ordre alphabétique':
-        sorted.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'Plus récents':
-      default:
-        // Déjà trié par date dans fetch
-        break;
-    }
-    return sorted;
+  function renderProjects(projects) {
+    grid.innerHTML = projects.map(makeProjectCard).join('');
+    document.getElementById('count-montage').textContent = projects.length;
   }
 
   async function fetchPlaylistProjects() {
-    console.log('[YT projets] Démarrage fetch avec clé:', CONFIG.apiKey.substring(0, 10) + '...');
-    if (!CONFIG.apiKey || CONFIG.apiKey === 'VOTRE_CLE_API_ICI') {
-      throw new Error('YouTube API key non configurée');
-    }
-
+    if (!CONFIG.apiKey || CONFIG.apiKey === 'VOTRE_CLE_API_ICI') throw new Error('Clé API non configurée');
     const base = 'https://www.googleapis.com/youtube/v3';
-    console.log('[YT projets] Fetch playlist items...');
-    const playlistRes = await fetch(`${base}/playlistItems?part=snippet&playlistId=${CONFIG.playlistId}&maxResults=50&key=${CONFIG.apiKey}`);
-    if (!playlistRes.ok) throw new Error('playlist ' + playlistRes.status);
-    const playlistData = await playlistRes.json();
-    console.log('[YT projets] Playlist data:', playlistData);
-
-    const items = (playlistData.items || [])
+    const plRes = await fetch(`${base}/playlistItems?part=snippet&playlistId=${CONFIG.playlistId}&maxResults=50&key=${CONFIG.apiKey}`);
+    if (!plRes.ok) throw new Error('playlist ' + plRes.status);
+    const plData = await plRes.json();
+    const items = (plData.items || [])
       .filter(i => i.snippet.resourceId?.kind === 'youtube#video')
       .sort((a, b) => new Date(b.snippet.publishedAt) - new Date(a.snippet.publishedAt))
-      .map((item, index) => {
-        console.log('[YT projets] Thumbnails for', item.snippet.title, ':', item.snippet.thumbnails);
-        return {
-          idx: index + 1,
-          type: CONFIG.videoTags[item.snippet.resourceId.videoId] || CONFIG.defaultTags[index % CONFIG.defaultTags.length] || 'youtube',
-          title: item.snippet.title,
-          creator: item.snippet.videoOwnerChannelTitle || 'Tomuss Production',
-          views: '—',
-          date: fmtDate(item.snippet.publishedAt),
-          dur: '—',
-          url: `https://youtu.be/${item.snippet.resourceId.videoId}`,
-          videoId: item.snippet.resourceId.videoId,
-          thumbnail: (item.snippet.thumbnails?.maxres || item.snippet.thumbnails?.high || item.snippet.thumbnails?.medium || item.snippet.thumbnails?.default)?.url || '',
-          channelId: item.snippet.videoOwnerChannelId || ''
-        };
-      })
       .slice(0, CONFIG.maxVideos);
-
     if (!items.length) throw new Error('playlist vide');
-    console.log('[YT projets] Items filtrés:', items.length);
-
-    // Récupérer les avatars des channels
-    const channelIds = [...new Set(items.map(i => i.channelId).filter(id => id))];
+    const channelIds = [...new Set(items.map(i => i.snippet.videoOwnerChannelId).filter(Boolean))];
     let channelAvatars = {};
     if (channelIds.length) {
-      console.log('[YT projets] Fetch channels avatars...');
-      const channelsRes = await fetch(`${base}/channels?part=snippet&id=${channelIds.join(',')}&key=${CONFIG.apiKey}`);
-      if (channelsRes.ok) {
-        const channelsData = await channelsRes.json();
-        channelAvatars = Object.fromEntries((channelsData.items || []).map(c => [
-          c.id,
-          (c.snippet.thumbnails?.default?.url || '')
-        ]));
+      const chRes = await fetch(`${base}/channels?part=snippet&id=${channelIds.join(',')}&key=${CONFIG.apiKey}`);
+      if (chRes.ok) {
+        const chData = await chRes.json();
+        channelAvatars = Object.fromEntries((chData.items || []).map(c => [c.id, c.snippet.thumbnails?.default?.url || '']));
       }
     }
-
-    const ids = items.map(i => i.videoId).join(',');
-    console.log('[YT projets] Fetch videos stats...');
-    const videosRes = await fetch(`${base}/videos?part=snippet,statistics,contentDetails&id=${ids}&key=${CONFIG.apiKey}`);
-    if (!videosRes.ok) throw new Error('videos ' + videosRes.status);
-    const videosData = await videosRes.json();
-    const statsMap = Object.fromEntries((videosData.items || []).map(v => [v.id, v]));
-
-    return items.map((item, index) => {
-      const extra = statsMap[item.videoId] || {};
-      const videoThumbs = extra.snippet?.thumbnails || {};
+    const ids = items.map(i => i.snippet.resourceId.videoId).join(',');
+    const vRes = await fetch(`${base}/videos?part=snippet,statistics,contentDetails&id=${ids}&key=${CONFIG.apiKey}`);
+    if (!vRes.ok) throw new Error('videos ' + vRes.status);
+    const vData = await vRes.json();
+    const statsMap = Object.fromEntries((vData.items || []).map(v => [v.id, v]));
+    return items.map((item, i) => {
+      const vid = item.snippet.resourceId.videoId;
+      const extra = statsMap[vid] || {};
+      const thumbs = extra.snippet?.thumbnails || item.snippet.thumbnails || {};
       return {
-        ...item,
+        idx: i + 1, type: 'montage', feat: i === 0,
+        title: item.snippet.title,
+        creator: item.snippet.videoOwnerChannelTitle || 'Tomuss Production',
         views: fmtViews(+(extra.statistics?.viewCount || 0)),
         dur: extra.contentDetails ? fmtDuration(extra.contentDetails.duration) : '—',
-        idx: index + 1,
-        thumbnail: (videoThumbs.maxres || videoThumbs.high || videoThumbs.medium || videoThumbs.default)?.url || item.thumbnail,
-        avatar: channelAvatars[item.channelId] || ''
+        date: fmtDate(item.snippet.publishedAt),
+        thumbnail: (thumbs.maxres || thumbs.high || thumbs.medium || thumbs.default)?.url || '',
+        avatar: channelAvatars[item.snippet.videoOwnerChannelId] || '',
+        url: `https://youtu.be/${vid}`
       };
     });
   }
 
   fetchPlaylistProjects()
     .then(renderProjects)
-    .catch(err => {
-      console.warn('[YT projets]', err);
-      renderProjects(fallbackProjects);
-    });
+    .catch(() => renderProjects(fallbackProjects));
 
-  document.getElementById('sort').addEventListener('change', (e) => {
-    renderProjects(currentProjects, e.target.value);
+  /* ══════════════════════════════════════════════
+     02 — TOURNAGES (vidéos locales)
+     → Pour ajouter une vidéo : duplique l'objet ci-dessous
+  ══════════════════════════════════════════════ */
+  const eventVideos = [
+    {
+      src: 'uploads/VIDEOEVENEMENT/HairtistTalk_Episode1_V4_3.mp4',
+      title: 'Hairtist Talk — Épisode 1',
+      tag: 'Captation & Montage',
+      desc: 'Format talk filmé et monté pour la chaîne Hairtist. Captation plateau, réalisation et montage complet.',
+      date: '2024',
+      creator: 'Hairtist'
+    }
+    /* Ajouter ici :
+    {
+      src: 'uploads/VIDEOEVENEMENT/ton-fichier.mp4',
+      title: 'Ton titre',
+      tag: 'Captation',
+      desc: 'Description du projet.',
+      date: '2024',
+      creator: 'Client'
+    },
+    */
+  ];
+
+  const eventGrid = document.getElementById('event-grid');
+
+  function renderEventVideos() {
+    eventGrid.innerHTML = eventVideos.map((v, i) => `
+      <div class="event-card fade-up">
+        <div class="event-thumb" data-idx="${i}">
+          <video src="${v.src}" preload="metadata" muted playsinline></video>
+          <div class="event-play-overlay">
+            <div class="event-play-btn">▶</div>
+          </div>
+        </div>
+        <div class="event-info">
+          <span class="event-tag">— ${v.tag}</span>
+          <h3 class="event-title">${v.title}</h3>
+          <p class="event-desc">${v.desc}</p>
+          <span class="event-date">— ${v.date} · ${v.creator}</span>
+        </div>
+      </div>`).join('');
+
+    eventGrid.querySelectorAll('.event-thumb').forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        const video = thumb.querySelector('video');
+        thumb.classList.add('playing');
+        video.muted = false;
+        video.controls = true;
+        video.play();
+      });
+    });
+  }
+  renderEventVideos();
+
+  /* ══════════════════════════════════════════════
+     03 — PHOTO (galerie + lightbox)
+     → Pour ajouter une photo : ajoute un objet dans le tableau
+  ══════════════════════════════════════════════ */
+  const photos = [
+    { src: 'uploads/PHOTO/DSC03270.jpg',    caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC04947.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC05020.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC05054.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC05080.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC05088.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC05115.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC05399.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC07198.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC07207.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC07222.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/DSC07248.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/IMG_1746.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/IMG_1753.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/IMG_1760.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/IMG_1761.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/IMG_1763.jpeg',   caption: '24H du Mans — Captation 2024' },
+    { src: 'uploads/PHOTO/IMG_1769 2.jpeg', caption: '24H du Mans — Captation 2024' },
+  ];
+
+  const masonry = document.getElementById('photo-masonry');
+
+  function renderPhotos() {
+    masonry.innerHTML = photos.map((p, i) => `
+      <div class="photo-item fade-up" data-idx="${i}" role="button" tabindex="0" aria-label="${p.caption}">
+        <img src="${p.src}" alt="${p.caption}" loading="lazy" />
+        <div class="photo-overlay"><span>Voir ⤢</span></div>
+      </div>`).join('');
+
+    masonry.querySelectorAll('.photo-item').forEach(item => {
+      item.addEventListener('click', () => openLightbox(+item.dataset.idx));
+      item.addEventListener('keydown', e => { if (e.key === 'Enter') openLightbox(+item.dataset.idx); });
+    });
+  }
+  renderPhotos();
+
+  /* ── Lightbox ── */
+  let lbIdx = 0;
+  const lightbox = document.getElementById('lightbox');
+  const lbImg    = document.getElementById('lb-img');
+  const lbCount  = document.getElementById('lb-counter');
+
+  function openLightbox(idx) {
+    lbIdx = ((idx % photos.length) + photos.length) % photos.length;
+    lbImg.src = photos[lbIdx].src;
+    lbImg.alt = photos[lbIdx].caption;
+    lbCount.textContent = `${lbIdx + 1} / ${photos.length}`;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  document.getElementById('lb-prev').addEventListener('click', () => openLightbox(lbIdx - 1));
+  document.getElementById('lb-next').addEventListener('click', () => openLightbox(lbIdx + 1));
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowLeft')  openLightbox(lbIdx - 1);
+    if (e.key === 'ArrowRight') openLightbox(lbIdx + 1);
   });
 
-  document.getElementById('filters').addEventListener('click', (e) => {
-    const btn = e.target.closest('.filter');
-    if (!btn) return;
-    document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const f = btn.dataset.filter;
-    document.querySelectorAll('#grid .thumb').forEach(t => {
-      t.classList.toggle('is-hidden', !(f === 'all' || t.dataset.type === f));
+  /* ══════════════════════════════════════════════
+     TABS — navigation entre les sections
+  ══════════════════════════════════════════════ */
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.cat-section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('cat-' + btn.dataset.cat).classList.add('active');
+      // Relancer les fade-up dans la section qui apparaît
+      document.querySelectorAll('#cat-' + btn.dataset.cat + ' .fade-up').forEach(el => {
+        if (!el.classList.contains('in')) el.classList.add('in');
+      });
     });
   });
 </script>

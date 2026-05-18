@@ -1230,6 +1230,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>
   window.injectChrome('home');
 
+  // Force autoplay showreel sur mobile
+  (function () {
+    const v = document.querySelector('.showreel-video');
+    if (!v) return;
+    v.play().catch(() => {
+      document.addEventListener('touchstart', () => v.play(), { once: true });
+      document.addEventListener('scroll',     () => v.play(), { once: true });
+    });
+  })();
+
   // Showcase — scroll-pinned vertical fade
   (function () {
     const wrap    = document.getElementById('showcaseWrap');

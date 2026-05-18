@@ -592,6 +592,12 @@ body.nav-open { overflow: hidden; }
   .nav-toggle { display: flex; }
   .footer { grid-template-columns: 1fr 1fr; }
   .footer .big { font-size: 48px; }
+
+  /* Désactive le parallaxe fixe sur mobile — évite le zoom/pixelisation */
+  html, body {
+    background-attachment: scroll;
+    background-position: center top;
+  }
 }
 
 /* Petits téléphones */

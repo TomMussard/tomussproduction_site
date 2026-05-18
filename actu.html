@@ -2,10 +2,25 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TRVNJ7FQ');</script>
+<!-- End Google Tag Manager -->
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MW53QBWFB2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MW53QBWFB2');
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Actu — Tomuss Production</title>
+<title>Actus — Tomuss Production</title>
 <meta name="description" content="Actualités, mentions presse et collaborations de Tomuss Production — monteur vidéo & vidéaste freelance au Mans." />
-<meta property="og:title" content="Actu — Tomuss Production" />
+<meta property="og:title" content="Actus — Tomuss Production" />
 <meta property="og:description" content="Mentions, articles et collaborations autour de Tomuss Production." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://tomussproduction.fr/actu.html" />
@@ -80,17 +95,17 @@
   }
 
   /* ── ACTU GRID ── */
-  .actu-section {
+  .actus-section {
     padding: 60px var(--gutter) 0;
   }
-  .actu-grid {
+  .actus-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
   }
 
   /* ── ACTU CARD ── */
-  .actu-card {
+  .actus-card {
     background: var(--surface);
     display: flex;
     flex-direction: column;
@@ -99,8 +114,8 @@
     text-decoration: none;
     color: inherit;
   }
-  .actu-card:hover { background: #222; }
-  .actu-card:hover .card-arrow { transform: translate(3px, -3px); }
+  .actus-card:hover { background: #222; }
+  .actus-card:hover .card-arrow { transform: translate(3px, -3px); }
 
   .card-thumb {
     aspect-ratio: 16/9;
@@ -115,7 +130,7 @@
     display: block;
     transition: transform .4s var(--ease);
   }
-  .actu-card:hover .card-thumb img { transform: scale(1.04); }
+  .actus-card:hover .card-thumb img { transform: scale(1.04); }
 
   .card-thumb-placeholder {
     width: 100%;
@@ -199,7 +214,7 @@
   }
 
   /* ── EMPTY STATE ── */
-  .actu-empty {
+  .actus-empty {
     display: none;
     flex-direction: column;
     align-items: center;
@@ -208,12 +223,12 @@
     gap: 16px;
     text-align: center;
   }
-  .actu-empty.visible { display: flex; }
-  .actu-empty .empty-icon {
+  .actus-empty.visible { display: flex; }
+  .actus-empty .empty-icon {
     font-size: 48px;
     opacity: .3;
   }
-  .actu-empty p {
+  .actus-empty p {
     font-family: var(--f-mono);
     font-size: 12px;
     letter-spacing: .2em;
@@ -244,7 +259,7 @@
   }
 
   /* ── SUBMIT CTA ── */
-  .actu-submit {
+  .actus-submit {
     margin: 80px var(--gutter) 0;
     padding: 48px;
     border: 1px solid var(--line-strong);
@@ -254,20 +269,20 @@
     gap: 40px;
     flex-wrap: wrap;
   }
-  .actu-submit h3 {
+  .actus-submit h3 {
     font-family: var(--f-display);
     font-size: clamp(28px, 4vw, 52px);
     line-height: .9;
     text-transform: uppercase;
   }
-  .actu-submit p {
+  .actus-submit p {
     color: var(--fg-dim);
     font-size: 16px;
     line-height: 1.5;
     max-width: 380px;
   }
-  .actu-submit-left { display: flex; flex-direction: column; gap: 16px; }
-  .actu-submit a.cta-btn {
+  .actus-submit-left { display: flex; flex-direction: column; gap: 16px; }
+  .actus-submit a.cta-btn {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -283,11 +298,11 @@
     white-space: nowrap;
     align-self: flex-start;
   }
-  .actu-submit a.cta-btn:hover { background: var(--accent); color: #fff; }
+  .actus-submit a.cta-btn:hover { background: var(--accent); color: #fff; }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 1100px) {
-    .actu-grid { grid-template-columns: repeat(2, 1fr); }
+    .actus-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 800px) {
     .page-head {
@@ -295,8 +310,8 @@
       gap: 40px;
       padding-top: 120px;
     }
-    .actu-grid { grid-template-columns: 1fr; }
-    .actu-submit { flex-direction: column; align-items: flex-start; }
+    .actus-grid { grid-template-columns: 1fr; }
+    .actus-submit { flex-direction: column; align-items: flex-start; }
   }
   @media (max-width: 480px) {
     .filter-bar { gap: 6px; }
@@ -305,6 +320,10 @@
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRVNJ7FQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <div class="curtain"></div>
 <div id="nav-mount"></div>
@@ -312,14 +331,14 @@
 <!-- ── PAGE HEADER ── -->
 <header class="page-head fade-up">
   <div class="left">
-    <h1>ACTU<em>.</em></h1>
+    <h1>ACTUS<em>.</em></h1>
   </div>
   <div class="right">
-    <p>Mentions, collaborations, articles et vidéos — tout ce qui parle de Tomuss Production dans les médias et la communauté.</p>
+    <p>Mentions, collaborations, articles et vidéos, tout ce qui parle de Tomuss Production dans les médias et la communauté.</p>
     <div class="meta">
       <span>Presse & mentions</span>
       <span>Collaborations</span>
-      <span>Actu</span>
+      <span>Actus</span>
     </div>
   </div>
 </header>
@@ -328,28 +347,17 @@
 <div class="filter-bar">
   <button class="filter-btn active" data-filter="all">Tout voir</button>
   <button class="filter-btn" data-filter="youtube">YouTube</button>
-  <button class="filter-btn" data-filter="article">Article</button>
-  <button class="filter-btn" data-filter="collab">Collaboration</button>
-  <button class="filter-btn" data-filter="mention">Mention</button>
+  <button class="filter-btn" data-filter="article">Presse</button>
 </div>
 
 <!-- ── ACTU GRID ── -->
-<section class="actu-section">
-  <div class="actu-grid" id="actu-grid"></div>
-  <div class="actu-empty" id="actu-empty">
+<section class="actus-section">
+  <div class="actus-grid" id="actus-grid"></div>
+  <div class="actus-empty" id="actus-empty">
     <div class="empty-icon">◎</div>
     <p>Aucun contenu dans cette catégorie pour l'instant</p>
   </div>
 </section>
-
-<!-- ── SUBMIT CTA ── -->
-<div class="actu-submit fade-up">
-  <div class="actu-submit-left">
-    <h3>Vous avez<br/>parlé de moi ?</h3>
-    <p>Une vidéo, un article, une collaboration — si vous m'avez mentionné et que vous souhaitez apparaître ici, contactez-moi.</p>
-  </div>
-  <a class="cta-btn" href="offres.html#contact">Nous contacter ↗</a>
-</div>
 
 <!-- SPACER -->
 <div style="height: 100px;"></div>
@@ -359,7 +367,7 @@
 <script src="assets/partials.js"></script>
 <script src="assets/shared.js"></script>
 <script>
-  window.injectChrome('actu');
+  window.injectChrome('actus');
 
   /* ────────────────────────────────────────────────────────────────────────
      ACTU DATA
@@ -411,7 +419,7 @@
       ? `<img src="${a.thumb}" alt="${a.title}" loading="lazy"${pos} />`
       : `<div class="card-thumb-placeholder">Aucune image</div>`;
     return `
-      <a class="actu-card fade-up" href="${a.url || '#'}" target="${a.url && a.url !== '#' ? '_blank' : '_self'}" rel="noopener" data-type="${a.type}">
+      <a class="actus-card fade-up" href="${a.url || '#'}" target="${a.url && a.url !== '#' ? '_blank' : '_self'}" rel="noopener" data-type="${a.type}">
         <div class="card-thumb">
           ${thumb}
           <span class="card-badge">${badgeLabel[a.type] || a.type}</span>
@@ -432,8 +440,8 @@
 
   /* ── FILTER LOGIC ── */
   let currentFilter = 'all';
-  const grid  = document.getElementById('actu-grid');
-  const empty = document.getElementById('actu-empty');
+  const grid  = document.getElementById('actus-grid');
+  const empty = document.getElementById('actus-empty');
 
   /* ── FADE-UP OBSERVER (for dynamically rendered cards) ── */
   function observeFadeUps() {

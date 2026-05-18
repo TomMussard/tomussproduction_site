@@ -2,6 +2,21 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TRVNJ7FQ');</script>
+<!-- End Google Tag Manager -->
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MW53QBWFB2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MW53QBWFB2');
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Projets — Tomuss Production</title>
 <meta name="description" content="Découvrez les projets de Tomuss : montage vidéo YouTube, tournages événementiels, captation photo. 12M+ vues cumulées." />
@@ -65,6 +80,10 @@
     line-height: .95;
   }
   .stats-line .num em { color: var(--accent); font-style: italic; }
+  .stats-line .stat:first-child { background: var(--accent); }
+  .stats-line .stat:first-child .num { color: #0F0F0F; }
+  .stats-line .stat:first-child .num em { color: #0F0F0F; }
+  .stats-line .stat:first-child .lbl { color: rgba(15,15,15,.65); }
   .stats-line .lbl {
     font-family: var(--f-mono);
     font-size: 11px;
@@ -160,9 +179,15 @@
     transition: border-color .3s;
   }
   .event-thumb:hover { border-color: var(--accent); }
-  .event-thumb video {
+  .event-thumb video,
+  .event-thumb img {
     width: 100%; height: 100%;
     object-fit: cover;
+    display: block;
+  }
+  .event-thumb iframe {
+    width: 100%; height: 100%;
+    border: none;
     display: block;
   }
   .event-play-overlay {
@@ -182,6 +207,7 @@
     display: grid;
     place-items: center;
     font-size: 22px;
+    padding-left: 4px; /* compense le décalage optique du ▶ */
     transition: transform .25s;
   }
   .event-thumb:hover .event-play-btn { transform: scale(1.1); }
@@ -416,6 +442,10 @@
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRVNJ7FQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <div class="curtain"></div>
 <div id="nav-mount"></div>
@@ -431,7 +461,7 @@
       Depuis 3 ans je monte, je filme et je livre. Des créateurs YouTube, des marques, des événements. Le montage reste mon cœur de métier — les chiffres le prouvent.
     </p>
     <div class="meta">
-      <span>Du storytelling, du rythme, une image maîtrisée.</span>
+      <span>Des vidéos qui fonctionnent. Les chiffres le prouvent.</span>
     </div>
   </div>
 </header>
@@ -652,12 +682,21 @@
   ══════════════════════════════════════════════ */
   const eventVideos = [
     {
-      src: 'uploads/VIDEOEVENEMENT/HairtistTalk_Episode1_V4_3.mp4',
-      title: 'Hairtist Talk — Épisode 1',
+      youtube: 'u1VPHymC5c4',
+      title: 'Campagne de publicité / BZB x Association ARDI Le Mans',
       tag: 'Captation & Montage',
-      desc: 'Format talk filmé et monté pour la chaîne Hairtist. Captation plateau, réalisation et montage complet.',
-      date: '2024',
-      creator: 'Hairtist'
+      desc: "Grâce à Rachel Bois, j'ai eu la chance de collaborer avec BZB et l'association ARDI Le Mans, pour un projet super écolo et bienveillant ! Je vous laisse découvrir tout ça en images !",
+      date: '2025',
+      creator: 'BZB x ARDI Le Mans'
+    },
+
+    {
+      youtube: 'KlPo72nccf4',
+      title: 'Inauguration Nomino',
+      tag: 'Captation & Montage',
+      desc: "Nomino m'a contacté avec une mission spéciale pour leur soirée d'inauguration : capturer l'ambiance, les rires, la joie et l'amitié qui ont marqué cet événement",
+      date: '2023',
+      creator: 'Nomino'
     }
     /* Ajouter ici :
     {
@@ -674,10 +713,14 @@
   const eventGrid = document.getElementById('event-grid');
 
   function renderEventVideos() {
-    eventGrid.innerHTML = eventVideos.map((v, i) => `
+    eventGrid.innerHTML = eventVideos.map((v, i) => {
+      const media = v.youtube
+        ? `<img src="https://img.youtube.com/vi/${v.youtube}/maxresdefault.jpg" alt="${v.title}" loading="lazy">`
+        : `<video src="${v.src}" preload="metadata" muted playsinline></video>`;
+      return `
       <div class="event-card fade-up">
-        <div class="event-thumb" data-idx="${i}">
-          <video src="${v.src}" preload="metadata" muted playsinline></video>
+        <div class="event-thumb" data-idx="${i}" ${v.youtube ? `data-yt="${v.youtube}"` : ''}>
+          ${media}
           <div class="event-play-overlay">
             <div class="event-play-btn">▶</div>
           </div>
@@ -688,15 +731,22 @@
           <p class="event-desc">${v.desc}</p>
           <span class="event-date">— ${v.date} · ${v.creator}</span>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
 
     eventGrid.querySelectorAll('.event-thumb').forEach(thumb => {
       thumb.addEventListener('click', () => {
-        const video = thumb.querySelector('video');
-        thumb.classList.add('playing');
-        video.muted = false;
-        video.controls = true;
-        video.play();
+        const ytId = thumb.dataset.yt;
+        if (ytId) {
+          thumb.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+          thumb.classList.add('playing');
+        } else {
+          const video = thumb.querySelector('video');
+          thumb.classList.add('playing');
+          video.muted = false;
+          video.controls = true;
+          video.play();
+        }
       });
     });
   }

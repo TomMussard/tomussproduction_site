@@ -5,7 +5,7 @@ window.renderNav = function(active) {
     { key: 'projects', label: 'Projets',     href: 'projets.html' },
     { key: 'about',    label: 'Studio',      href: 'about.html' },
     { key: 'offers',   label: 'Prestations', href: 'offres.html' },
-    { key: 'actu',     label: 'Actu',        href: 'actu.html' },
+    { key: 'actus',    label: 'Actus',       href: 'actu.html' },
   ];
   return `
     <nav class="nav">
@@ -46,14 +46,13 @@ window.renderFooter = function() {
           <li><a href="projets.html">PROJETS</a></li>
           <li><a href="about.html">STUDIO</a></li>
           <li><a href="offres.html">PRESTATIONS</a></li>
-          <li><a href="actu.html">ACTU</a></li>
+          <li><a href="actu.html">ACTUS</a></li>
         </ul>
       </div>
       <div>
         <h4>Contact</h4>
         <ul>
           <li><a href="mailto:tomussproduction@gmail.com" target="_blank">tomussproduction@gmail.com</a></li>
-          <li><a href="tel:+33637712176">+33 6 37 71 21 76</a></li>
           <li><a href="https://www.google.com/maps/place/Le+Mans" target="_blank">Le Mans, France</a></li>
         </ul>
       </div>

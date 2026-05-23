@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Dashboard — Tomuss Production</title>
+<link rel="icon" type="image/png" href="../uploads/Plan de travail 5logotest.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="robots" content="noindex, nofollow"/>
+<style>
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:#0F0F0F; --bg2:#161616; --surface:#1A1A1A; --surface2:#222;
+  --fg:#F4EFE6; --fg-dim:rgba(244,239,230,.62); --fg-faint:rgba(244,239,230,.34);
+  --line:rgba(244,239,230,.10); --line-s:rgba(244,239,230,.22);
+  --accent:#1fa5ff; --accent-dim:rgba(31,165,255,.15);
+  --green:#22c55e; --yellow:#f59e0b; --red:#ef4444; --orange:#f97316;
+  --f-display:'Bebas Neue','Oswald',sans-serif;
+  --f-body:'Oswald','Arial Narrow',sans-serif;
+  --f-mono:'JetBrains Mono',monospace;
+  --sidebar:264px; --ease:cubic-bezier(.22,1,.36,1); --r:8px;
+}
+
+html,body{background:var(--bg);color:var(--fg);font-family:var(--f-body);
+  font-weight:300;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--line-s);border-radius:3px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);
+  font-family:var(--f-body);font-size:13px;font-weight:500;letter-spacing:.03em;
+  cursor:pointer;border:none;transition:all .18s var(--ease);}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{background:#40b8ff;transform:translateY(-1px);}
+.btn-ghost{background:transparent;border:1px solid var(--line-s);color:var(--fg-dim);}
+.btn-ghost:hover{border-color:var(--fg-faint);color:var(--fg);}
+.btn-danger{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red);}
+.btn-danger:hover{background:rgba(239,68,68,.22);}
+.btn-sm{padding:4px 11px;font-size:11px;}
+
+/* INPUTS */
+input,textarea,select{width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--r);color:var(--fg);font-family:var(--f-body);font-size:14px;
+  font-weight:300;outline:none;transition:border-color .2s;}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+input::placeholder,textarea::placeholder{color:var(--fg-faint);}
+select option{background:var(--surface);}
+textarea{resize:vertical;min-height:80px;}
+label{display:block;font-size:11px;color:var(--fg-dim);margin-bottom:5px;
+  letter-spacing:.06em;text-transform:uppercase;}
+.form-group{margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;display:flex;align-items:center;
+  justify-content:center;background:var(--bg);z-index:1000;}
+.login-card{width:360px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:44px 40px;text-align:center;}
+.login-logo{font-family:var(--f-display);font-size:30px;letter-spacing:.08em;}
+.login-sub{font-size:11px;color:var(--fg-faint);letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:36px;margin-top:3px;font-family:var(--f-mono);}
+.login-label{font-size:12px;color:var(--fg-dim);margin-bottom:14px;letter-spacing:.04em;}
+#pwd-input{text-align:center;letter-spacing:.15em;font-size:18px;background:var(--bg);margin-bottom:10px;}
+.login-error{color:var(--red);font-size:12px;margin-top:8px;min-height:18px;}
+.login-hint{font-size:11px;color:var(--fg-faint);margin-top:14px;font-family:var(--f-mono);}
+
+/* APP */
+#app{display:none;min-height:100vh;}
+
+/* SIDEBAR */
+#sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);
+  background:var(--bg2);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sidebar-brand{padding:24px 20px 18px;border-bottom:1px solid var(--line);}
+.sidebar-brand-name{font-family:var(--f-display);font-size:22px;letter-spacing:.08em;}
+.sidebar-brand-sub{font-size:10px;color:var(--fg-faint);letter-spacing:.12em;
+  text-transform:uppercase;margin-top:2px;font-family:var(--f-mono);}
+.sidebar-nav{flex:1;padding:14px 10px;}
+.nav-section-label{font-size:10px;color:var(--fg-faint);letter-spacing:.12em;
+  text-transform:uppercase;padding:10px 10px 6px;font-family:var(--f-mono);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:6px;
+  cursor:pointer;color:var(--fg-dim);font-size:13px;font-weight:400;letter-spacing:.03em;
+  transition:all .15s;margin-bottom:1px;user-select:none;text-decoration:none;}
+.nav-item:hover{background:var(--surface);color:var(--fg);}
+.nav-item.active{background:var(--accent-dim);color:var(--accent);}
+.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--accent);color:#000;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;font-family:var(--f-mono);}
+.sidebar-bottom{padding:14px 10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:2px;}
+
+/* MAIN */
+#content{margin-left:var(--sidebar);min-height:100vh;}
+.page-header{padding:26px 32px 0;border-bottom:1px solid var(--line);
+  background:var(--bg);position:sticky;top:0;z-index:10;}
+.page-header-inner{display:flex;align-items:flex-end;justify-content:space-between;
+  padding-bottom:16px;gap:16px;}
+.page-title{font-family:var(--f-display);font-size:34px;letter-spacing:.04em;line-height:1;}
+.page-subtitle{font-size:12px;color:var(--fg-faint);margin-top:5px;letter-spacing:.04em;}
+.page-body{padding:28px 32px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;transition:border-color .2s,transform .2s;}
+.stat-card:hover{border-color:var(--line-s);transform:translateY(-1px);}
+.stat-label{font-size:10px;color:var(--fg-faint);letter-spacing:.1em;text-transform:uppercase;
+  font-family:var(--f-mono);margin-bottom:10px;}
+.stat-value{font-family:var(--f-display);font-size:40px;letter-spacing:.02em;line-height:1;}
+.stat-value.blue{color:var(--accent);}
+.stat-value.green{color:var(--green);}
+.stat-value.yellow{color:var(--yellow);}
+.stat-sub{font-size:11px;color:var(--fg-faint);margin-top:4px;}
+
+/* ANALYTICS ROW */
+.analytics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.analytics-card{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);padding:18px 20px;}
+.analytics-label{font-size:10px;color:var(--fg-faint);letter-spacing:.1em;
+  text-transform:uppercase;font-family:var(--f-mono);margin-bottom:6px;
+  display:flex;align-items:center;gap:6px;}
+.analytics-label::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;}
+.analytics-value{font-family:var(--f-display);font-size:32px;
+  letter-spacing:.02em;line-height:1;color:var(--fg);}
+.analytics-sub{font-size:11px;color:var(--fg-faint);margin-top:3px;}
+.analytics-section-title{font-size:11px;color:var(--fg-faint);letter-spacing:.1em;
+  text-transform:uppercase;font-family:var(--f-mono);
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+
+.quick-links{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+.quick-link{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:6px;
+  font-size:12px;color:var(--fg-dim);cursor:pointer;transition:all .15s;text-decoration:none;}
+.quick-link:hover{border-color:var(--accent);color:var(--accent);}
+
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;}
+.card-header{padding:13px 18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--fg-dim);font-family:var(--f-mono);}
+.card-empty{padding:24px;text-align:center;color:var(--fg-faint);font-size:13px;}
+.list-item{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;border-bottom:1px solid var(--line);}
+.list-item:last-child{border-bottom:none;}
+.list-item-name{font-size:13px;font-weight:500;}
+.list-item-sub{font-size:11px;color:var(--fg-faint);margin-top:1px;}
+
+/* TABLES */
+.table-wrapper{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:10px;font-weight:500;color:var(--fg-faint);letter-spacing:.1em;
+  text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--line);
+  text-align:left;font-family:var(--f-mono);white-space:nowrap;}
+td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px;
+  color:var(--fg-dim);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
+.td-primary{font-weight:500;color:var(--fg);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
+  border-radius:999px;font-size:10px;font-weight:500;letter-spacing:.05em;
+  font-family:var(--f-mono);white-space:nowrap;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.badge-devis{background:rgba(245,158,11,.12);color:var(--yellow);}
+.badge-devis::before{background:var(--yellow);}
+.badge-en_cours{background:rgba(31,165,255,.12);color:var(--accent);}
+.badge-en_cours::before{background:var(--accent);}
+.badge-livre{background:rgba(34,197,94,.12);color:var(--green);}
+.badge-livre::before{background:var(--green);}
+.badge-archive{background:rgba(244,239,230,.06);color:var(--fg-faint);}
+.badge-archive::before{background:var(--fg-faint);}
+.badge-prospect{background:rgba(249,115,22,.12);color:var(--orange);}
+.badge-prospect::before{background:var(--orange);}
+.badge-client{background:rgba(34,197,94,.12);color:var(--green);}
+.badge-client::before{background:var(--green);}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.toolbar-search{flex:1;min-width:180px;max-width:300px;}
+.toolbar-search input{margin:0;}
+.toolbar-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:5px 13px;border-radius:999px;font-size:11px;font-weight:500;
+  letter-spacing:.05em;cursor:pointer;border:1px solid var(--line);
+  background:transparent;color:var(--fg-dim);transition:all .15s;font-family:var(--f-mono);}
+.filter-btn:hover{border-color:var(--line-s);color:var(--fg);}
+.filter-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.row-actions{display:flex;gap:5px;align-items:center;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:64px 20px;color:var(--fg-faint);}
+.empty-icon{font-size:32px;margin-bottom:12px;opacity:.5;}
+.empty-text{font-size:13px;margin-bottom:18px;}
+
+/* NOTES */
+.notes-list{display:flex;flex-direction:column;gap:12px;}
+.note-card{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);padding:18px 20px;transition:border-color .15s;}
+.note-card:hover{border-color:var(--line-s);}
+.note-card.editing{border-color:var(--accent);}
+.note-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.note-date{font-size:11px;color:var(--fg-faint);font-family:var(--f-mono);}
+.note-content{font-size:14px;color:var(--fg-dim);white-space:pre-wrap;line-height:1.65;}
+.note-textarea{width:100%;background:transparent;border:none;color:var(--fg);
+  font-family:var(--f-body);font-size:14px;resize:none;min-height:80px;
+  outline:none;line-height:1.65;}
+
+/* MODAL */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);
+  backdrop-filter:blur(5px);display:none;align-items:center;
+  justify-content:center;z-index:500;padding:20px;}
+#modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--line-s);border-radius:12px;
+  width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px 16px;border-bottom:1px solid var(--line);}
+.modal-title{font-family:var(--f-display);font-size:24px;letter-spacing:.04em;}
+.modal-close{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;color:var(--fg-dim);cursor:pointer;
+  transition:all .15s;font-size:22px;line-height:1;}
+.modal-close:hover{background:var(--surface2);color:var(--fg);}
+.modal-body{padding:20px 24px;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--line);
+  display:flex;justify-content:flex-end;gap:8px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface);
+  border:1px solid var(--line-s);border-radius:8px;padding:11px 18px;
+  font-size:13px;color:var(--fg);transform:translateY(16px);opacity:0;
+  transition:all .3s var(--ease);z-index:9999;pointer-events:none;font-family:var(--f-mono);}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.success{border-color:var(--green);color:var(--green);}
+#toast.error{border-color:var(--red);color:var(--red);}
+
+/* LOADING */
+.loading{display:inline-block;width:14px;height:14px;border:2px solid var(--line-s);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay{position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;background:rgba(15,15,15,.6);}
+#global-loading{position:fixed;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  z-index:9998;display:none;}
+#global-loading.on{display:block;animation:loading-bar 1.5s ease infinite;}
+@keyframes loading-bar{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.section{display:none;}
+.section.active{display:block;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  #sidebar{transform:translateX(-264px);width:264px;transition:transform .3s var(--ease);}
+  #sidebar.open{transform:translateX(0);}
+  #content{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .analytics-row{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .page-body{padding:20px 16px;}
+  .page-header{padding:20px 16px 0;}
+  .menu-toggle{display:flex!important;}
+}
+.menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;
+  width:38px;height:38px;border-radius:8px;background:var(--surface);
+  border:1px solid var(--line);align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;color:var(--fg-dim);}
+</style>
+</head>
+<body>
+
+<div id="global-loading"></div>
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- ════ LOGIN ════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">TOMUSS</div>
+    <div class="login-sub">Dashboard · Privé</div>
+    <div class="login-label" id="login-label">Entrez votre mot de passe</div>
+    <input type="password" id="pwd-input" placeholder="••••••••"
+           onkeydown="if(event.key==='Enter')handleLogin()"/>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px"
+            onclick="handleLogin()">Accéder →</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-hint"  id="login-hint"></div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div id="app">
+
+  <div id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-name">TOMUSS</div>
+      <div class="sidebar-brand-sub">Dashboard · Privé</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Navigation</div>
+      <div class="nav-item active" onclick="goTo('overview',this)">
+        <span class="nav-icon">◈</span> Vue d'ensemble
+      </div>
+      <div class="nav-item" onclick="goTo('projets',this)">
+        <span class="nav-icon">◫</span> Projets
+        <span class="nav-badge" id="badge-projets" style="display:none">0</span>
+      </div>
+      <div class="nav-item" onclick="goTo('contacts',this)">
+        <span class="nav-icon">◎</span> Contacts
+      </div>
+      <div class="nav-item" onclick="goTo('notes',this)">
+        <span class="nav-icon">◉</span> Notes
+      </div>
+      <div class="nav-section-label" style="margin-top:12px">Liens</div>
+      <a class="nav-item" href="https://analytics.google.com" target="_blank" rel="noopener">
+        <span class="nav-icon">↗</span> Google Analytics
+      </a>
+      <a class="nav-item" href="https://vercel.com/dashboard" target="_blank" rel="noopener">
+        <span class="nav-icon">↗</span> Vercel Dashboard
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" onclick="exportData()" style="font-size:12px">
+        <span class="nav-icon">⬇</span> Exporter données
+      </div>
+      <div class="nav-item" onclick="changePassword()" style="font-size:12px">
+        <span class="nav-icon">🔑</span> Changer mot de passe
+      </div>
+      <div class="nav-item" onclick="logout()" style="color:var(--fg-faint);font-size:12px">
+        <span class="nav-icon">←</span> Déconnexion
+      </div>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- ── OVERVIEW ── -->
+    <section id="section-overview" class="section active">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div>
+            <div class="page-title">Vue d'ensemble</div>
+            <div class="page-subtitle" id="today-date">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="page-body">
+
+        <!-- Projets stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Projets actifs</div>
+            <div class="stat-value blue" id="stat-actifs">—</div>
+            <div class="stat-sub">en cours</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Livrés</div>
+            <div class="stat-value green" id="stat-livres">—</div>
+            <div class="stat-sub">total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Devis en attente</div>
+            <div class="stat-value yellow" id="stat-devis">—</div>
+            <div class="stat-sub">à convertir</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Contacts</div>
+            <div class="stat-value" id="stat-contacts">—</div>
+            <div class="stat-sub">total</div>
+          </div>
+        </div>
+
+        <!-- GA4 analytics (30 derniers jours) -->
+        <div id="analytics-section" style="display:none;margin-bottom:20px">
+          <div class="analytics-section-title">Analytics site — 30 derniers jours</div>
+          <div class="analytics-row">
+            <div class="analytics-card">
+              <div class="analytics-label">Sessions</div>
+              <div class="analytics-value" id="ana-sessions">—</div>
+              <div class="analytics-sub">visites</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-label">Utilisateurs</div>
+              <div class="analytics-value" id="ana-users">—</div>
+              <div class="analytics-sub">visiteurs uniques</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-label">Pages vues</div>
+              <div class="analytics-value" id="ana-views">—</div>
+              <div class="analytics-sub">pages consultées</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liens rapides -->
+        <div class="quick-links">
+          <a class="quick-link" href="https://analytics.google.com" target="_blank" rel="noopener">
+            📊 Google Analytics
+          </a>
+          <a class="quick-link" href="https://vercel.com/dashboard" target="_blank" rel="noopener">
+            ▲ Vercel Dashboard
+          </a>
+          <a class="quick-link" href="/" target="_blank" rel="noopener">
+            🌐 Voir le site
+          </a>
+        </div>
+
+        <!-- Listes récentes -->
+        <div class="overview-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Projets récents</span>
+              <button class="btn btn-ghost btn-sm" onclick="goTo('projets',document.querySelectorAll('.nav-item')[1])">Voir tout</button>
+            </div>
+            <div id="recent-projets"><div class="card-empty">Chargement…</div></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Contacts récents</span>
+              <button class="btn btn-ghost btn-sm" onclick="goTo('contacts',document.querySelectorAll('.nav-item')[2])">Voir tout</button>
+            </div>
+            <div id="recent-contacts"><div class="card-empty">Chargement…</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROJETS ── -->
+    <section id="section-projets" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div>
+            <div class="page-title">Projets</div>
+            <div class="page-subtitle" id="projets-sub">—</div>
+          </div>
+          <button class="btn btn-primary" onclick="openProjectModal(null)">+ Nouveau projet</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <input type="text" id="search-projets" placeholder="Rechercher…" oninput="renderProjects()"/>
+          </div>
+          <div class="toolbar-filters" id="pfilters">
+            <button class="filter-btn active" data-f="all"      onclick="setFilter(this,'p')">Tous</button>
+            <button class="filter-btn"        data-f="devis"    onclick="setFilter(this,'p')">Devis</button>
+            <button class="filter-btn"        data-f="en_cours" onclick="setFilter(this,'p')">En cours</button>
+            <button class="filter-btn"        data-f="livre"    onclick="setFilter(this,'p')">Livrés</button>
+            <button class="filter-btn"        data-f="archive"  onclick="setFilter(this,'p')">Archivés</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Projet</th><th>Client</th><th>Statut</th><th>Budget</th><th>Deadline</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="projects-tbody"></tbody>
+            </table>
+          </div>
+          <div id="projects-empty" class="empty-state" style="display:none">
+            <div class="empty-icon">◫</div>
+            <div class="empty-text">Aucun projet pour l'instant</div>
+            <button class="btn btn-primary" onclick="openProjectModal(null)">+ Créer un projet</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACTS ── -->
+    <section id="section-contacts" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div>
+            <div class="page-title">Contacts</div>
+            <div class="page-subtitle" id="contacts-sub">—</div>
+          </div>
+          <button class="btn btn-primary" onclick="openContactModal(null)">+ Nouveau contact</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <input type="text" id="search-contacts" placeholder="Rechercher…" oninput="renderContacts()"/>
+          </div>
+          <div class="toolbar-filters" id="cfilters">
+            <button class="filter-btn active" data-f="all"      onclick="setFilter(this,'c')">Tous</button>
+            <button class="filter-btn"        data-f="prospect" onclick="setFilter(this,'c')">Prospects</button>
+            <button class="filter-btn"        data-f="client"   onclick="setFilter(this,'c')">Clients</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Nom</th><th>Contact</th><th>Type</th><th>Source</th><th>Date</th><th>Notes</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="contacts-tbody"></tbody>
+            </table>
+          </div>
+          <div id="contacts-empty" class="empty-state" style="display:none">
+            <div class="empty-icon">◎</div>
+            <div class="empty-text">Aucun contact pour l'instant</div>
+            <button class="btn btn-primary" onclick="openContactModal(null)">+ Ajouter un contact</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── NOTES ── -->
+    <section id="section-notes" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div>
+            <div class="page-title">Notes</div>
+            <div class="page-subtitle">Bloc-notes privé</div>
+          </div>
+          <button class="btn btn-primary" onclick="addNote()">+ Nouvelle note</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div id="notes-list" class="notes-list"></div>
+        <div id="notes-empty" class="empty-state" style="display:none">
+          <div class="empty-icon">◉</div>
+          <div class="empty-text">Aucune note</div>
+          <button class="btn btn-primary" onclick="addNote()">+ Nouvelle note</button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-close" onclick="closeModal()">×</div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  ⚠️  REMPLACE CES DEUX VALEURS APRÈS SETUP SUPABASE
+// ════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
+// ════════════════════════════════════════════════════════
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ─── AUTH (localStorage — ne change pas) ────────────────
+const HASH_KEY    = 'tp_hash';
+const SESSION_KEY = 'tp_session';
+
+function loadLS(k)     { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
+function saveLS(k, v)  { localStorage.setItem(k, JSON.stringify(v)); }
+
+async function sha256(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function handleLogin() {
+  const pwd = $('pwd-input').value.trim();
+  if (!pwd) return;
+  const stored = loadLS(HASH_KEY);
+  const hash   = await sha256(pwd);
+  if (!stored) {
+    if (pwd.length < 6) { $('login-error').textContent = 'Minimum 6 caractères.'; return; }
+    saveLS(HASH_KEY, hash);
+    saveLS(SESSION_KEY, Date.now());
+    startApp();
+  } else {
+    if (hash === stored) { saveLS(SESSION_KEY, Date.now()); startApp(); }
+    else { $('login-error').textContent = 'Mot de passe incorrect.'; $('pwd-input').value = ''; $('pwd-input').focus(); }
+  }
+}
+
+function sessionOk() {
+  const s = loadLS(SESSION_KEY);
+  return s && (Date.now() - s) < 8 * 3600 * 1000;
+}
+
+function logout() { localStorage.removeItem(SESSION_KEY); location.reload(); }
+
+async function changePassword() {
+  $('modal-title').textContent = 'Changer le mot de passe';
+  $('modal-body').innerHTML = `
+    <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="f-old" placeholder="••••••••"/></div>
+    <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="f-new" placeholder="Minimum 6 caractères"/></div>
+    <div class="form-group"><label>Confirmer</label><input type="password" id="f-confirm" placeholder="••••••••"/></div>
+    <div id="pwd-err" style="color:var(--red);font-size:12px;min-height:16px"></div>`;
+  $('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+    <button class="btn btn-primary" onclick="doChangePwd()">Changer</button>`;
+  $('modal-overlay').classList.add('open');
+  setTimeout(() => $('f-old')?.focus(), 50);
+}
+
+async function doChangePwd() {
+  const old_ = $('f-old').value, nw = $('f-new').value, cf = $('f-confirm').value;
+  if (await sha256(old_) !== loadLS(HASH_KEY)) { $('pwd-err').textContent = 'Mot de passe actuel incorrect.'; return; }
+  if (nw.length < 6)  { $('pwd-err').textContent = 'Minimum 6 caractères.'; return; }
+  if (nw !== cf)       { $('pwd-err').textContent = 'Les mots de passe ne correspondent pas.'; return; }
+  saveLS(HASH_KEY, await sha256(nw));
+  closeModal(); toast('Mot de passe modifié', 'success');
+}
+
+// ─── APP INIT ────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (!loadLS(HASH_KEY)) {
+    $('login-label').textContent = 'Créez votre mot de passe (première connexion)';
+    $('login-hint').textContent  = 'Choisissez un mot de passe de 6 caractères minimum.';
+  }
+  if (sessionOk()) startApp(); else $('pwd-input').focus();
+});
+
+async function startApp() {
+  $('login-screen').style.display = 'none';
+  $('app').style.display = 'block';
+
+  const now = new Date();
+  $('today-date').textContent = now.toLocaleDateString('fr-FR',{
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+
+  loading(true);
+  await loadAll();
+  loading(false);
+
+  renderAll();
+  loadAnalytics(); // en parallèle, sans bloquer
+}
+
+// ─── STATE ───────────────────────────────────────────────
+const DB = { projects: [], contacts: [], notes: [] };
+
+async function loadAll() {
+  const [p, c, n] = await Promise.all([
+    sb.from('projects').select('*').order('updated_at', { ascending: false }),
+    sb.from('contacts').select('*').order('created_at', { ascending: false }),
+    sb.from('notes').select('*').order('updated_at', { ascending: false })
+  ]);
+  DB.projects = p.data || [];
+  DB.contacts = c.data || [];
+  DB.notes    = n.data || [];
+}
+
+function renderAll() {
+  renderStats();
+  renderRecentProjects();
+  renderRecentContacts();
+  renderProjects();
+  renderContacts();
+  renderNotes();
+  updateBadge();
+}
+
+// ─── ANALYTICS (GA4) ─────────────────────────────────────
+async function loadAnalytics() {
+  try {
+    const res  = await fetch('/api/analytics');
+    const data = await res.json();
+    if (data.unavailable || data.error) return;
+
+    let sessions = 0, users = 0, views = 0;
+    (data.rows || []).forEach(row => {
+      sessions += parseInt(row.metricValues[0].value) || 0;
+      users    += parseInt(row.metricValues[1].value) || 0;
+      views    += parseInt(row.metricValues[2].value) || 0;
+    });
+
+    $('ana-sessions').textContent = sessions.toLocaleString('fr-FR');
+    $('ana-users').textContent    = users.toLocaleString('fr-FR');
+    $('ana-views').textContent    = views.toLocaleString('fr-FR');
+    $('analytics-section').style.display = '';
+  } catch (_) {
+    // env vars pas encore configurés — on cache juste la section
+  }
+}
+
+// ─── UTILS ───────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const F  = { p: 'all', c: 'all' };
+const today = () => new Date().toISOString().split('T')[0];
+
+function loading(on) { $('global-loading').className = on ? 'on' : ''; }
+
+function toast(msg, type = '') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = '', 2600);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────
+function goTo(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $('section-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  $('sidebar').classList.remove('open');
+}
+function toggleSidebar() { $('sidebar').classList.toggle('open'); }
+
+// ─── STATS ───────────────────────────────────────────────
+function renderStats() {
+  $('stat-actifs').textContent   = DB.projects.filter(x => x.status === 'en_cours').length;
+  $('stat-livres').textContent   = DB.projects.filter(x => x.status === 'livre').length;
+  $('stat-devis').textContent    = DB.projects.filter(x => x.status === 'devis').length;
+  $('stat-contacts').textContent = DB.contacts.length;
+}
+
+function updateBadge() {
+  const n = DB.projects.filter(x => x.status === 'en_cours').length;
+  const b = $('badge-projets');
+  b.textContent = n; b.style.display = n > 0 ? '' : 'none';
+}
+
+// ─── RECENT ──────────────────────────────────────────────
+function renderRecentProjects() {
+  const list = DB.projects.slice(0, 5);
+  const el   = $('recent-projets');
+  if (!list.length) { el.innerHTML = '<div class="card-empty">Aucun projet</div>'; return; }
+  el.innerHTML = list.map(p => `
+    <div class="list-item">
+      <div>
+        <div class="list-item-name">${esc(p.name)}</div>
+        <div class="list-item-sub">${esc(p.client || '—')}</div>
+      </div>
+      ${badge(p.status)}
+    </div>`).join('');
+}
+
+function renderRecentContacts() {
+  const list = DB.contacts.slice(0, 5);
+  const el   = $('recent-contacts');
+  if (!list.length) { el.innerHTML = '<div class="card-empty">Aucun contact</div>'; return; }
+  el.innerHTML = list.map(c => `
+    <div class="list-item">
+      <div>
+        <div class="list-item-name">${esc(c.name)}</div>
+        <div class="list-item-sub">${esc(c.email || c.phone || '—')}</div>
+      </div>
+      <span class="badge badge-${c.type}">${c.type === 'client' ? 'Client' : 'Prospect'}</span>
+    </div>`).join('');
+}
+
+// ─── FILTER ──────────────────────────────────────────────
+function setFilter(btn, section) {
+  const id = section === 'p' ? 'pfilters' : 'cfilters';
+  document.querySelectorAll(`#${id} .filter-btn`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  F[section] = btn.dataset.f;
+  section === 'p' ? renderProjects() : renderContacts();
+}
+
+// ─── STATUS HELPERS ──────────────────────────────────────
+const STATUS_LABEL = { devis:'Devis', en_cours:'En cours', livre:'Livré', archive:'Archivé' };
+const SOURCE_LABEL = { site:'Site web', reseaux:'Réseaux', bouche:'Bouche à oreille', autre:'Autre' };
+const badge = s => `<span class="badge badge-${s}">${STATUS_LABEL[s] || s}</span>`;
+
+// ─── PROJECTS ────────────────────────────────────────────
+function renderProjects() {
+  const q = ($('search-projets')?.value || '').toLowerCase();
+  let p = [...DB.projects];
+  if (F.p !== 'all') p = p.filter(x => x.status === F.p);
+  if (q)             p = p.filter(x => x.name.toLowerCase().includes(q) || (x.client||'').toLowerCase().includes(q));
+
+  $('projets-sub').textContent = `${DB.projects.length} projet${DB.projects.length > 1 ? 's' : ''}`;
+
+  const tbody = $('projects-tbody');
+  const empty = $('projects-empty');
+  if (!p.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = p.map(x => `
+    <tr>
+      <td class="td-primary">${esc(x.name)}</td>
+      <td>${esc(x.client || '—')}</td>
+      <td>${badge(x.status)}</td>
+      <td style="font-family:var(--f-mono);font-size:12px">${x.budget ? Number(x.budget).toLocaleString('fr-FR') + ' €' : '—'}</td>
+      <td style="font-family:var(--f-mono);font-size:12px">${fmtDate(x.deadline)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openProjectModal('${x.id}')">Éditer</button>
+          <button class="btn btn-danger btn-sm" onclick="delProject('${x.id}')">Suppr.</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openProjectModal(id) {
+  const x = id ? DB.projects.find(p => p.id === id) : null;
+  $('modal-title').textContent = x ? 'Modifier le projet' : 'Nouveau projet';
+  $('modal-body').innerHTML = `
+    <div class="form-group"><label>Nom du projet *</label>
+      <input type="text" id="f-name" value="${esc(x?.name)}" placeholder="Ex: Clip YouTube — Chaîne"/></div>
+    <div class="form-group"><label>Client</label>
+      <input type="text" id="f-client" value="${esc(x?.client)}" placeholder="Nom du client"/></div>
+    <div class="form-row">
+      <div class="form-group"><label>Statut</label>
+        <select id="f-status">
+          ${['devis','en_cours','livre','archive'].map(s =>
+            `<option value="${s}" ${x?.status===s?'selected':''}>${STATUS_LABEL[s]}</option>`).join('')}
+        </select></div>
+      <div class="form-group"><label>Budget (€)</label>
+        <input type="number" id="f-budget" value="${esc(x?.budget)}" placeholder="0" min="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date de début</label>
+        <input type="date" id="f-start" value="${esc(x?.start_date)}"/></div>
+      <div class="form-group"><label>Deadline</label>
+        <input type="date" id="f-deadline" value="${esc(x?.deadline)}"/></div>
+    </div>
+    <div class="form-group"><label>Notes</label>
+      <textarea id="f-notes" placeholder="Détails, demandes, liens drive…">${esc(x?.notes)}</textarea></div>`;
+  $('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+    <button class="btn btn-primary" onclick="saveProject('${id||''}')">${x ? 'Sauvegarder' : 'Créer'}</button>`;
+  $('modal-overlay').classList.add('open');
+  setTimeout(() => $('f-name')?.focus(), 50);
+}
+
+async function saveProject(id) {
+  const name = $('f-name').value.trim();
+  if (!name) { toast('Le nom est requis', 'error'); return; }
+
+  const data = {
+    name, client: $('f-client').value.trim(), status: $('f-status').value,
+    budget: parseFloat($('f-budget').value) || null,
+    start_date: $('f-start').value || null, deadline: $('f-deadline').value || null,
+    notes: $('f-notes').value.trim(), updated_at: new Date().toISOString()
+  };
+
+  loading(true);
+  let err;
+  if (id) {
+    ({ error: err } = await sb.from('projects').update(data).eq('id', id));
+  } else {
+    ({ error: err } = await sb.from('projects').insert(data));
+  }
+  if (err) { loading(false); toast('Erreur : ' + err.message, 'error'); return; }
+
+  await loadAll();
+  loading(false);
+  closeModal();
+  renderProjects(); renderStats(); renderRecentProjects(); updateBadge();
+  toast(id ? 'Projet mis à jour' : 'Projet créé', 'success');
+}
+
+async function delProject(id) {
+  if (!confirm('Supprimer ce projet définitivement ?')) return;
+  loading(true);
+  await sb.from('projects').delete().eq('id', id);
+  await loadAll();
+  loading(false);
+  renderProjects(); renderStats(); renderRecentProjects(); updateBadge();
+  toast('Projet supprimé');
+}
+
+// ─── CONTACTS ────────────────────────────────────────────
+function renderContacts() {
+  const q = ($('search-contacts')?.value || '').toLowerCase();
+  let c = [...DB.contacts];
+  if (F.c !== 'all') c = c.filter(x => x.type === F.c);
+  if (q) c = c.filter(x =>
+    x.name.toLowerCase().includes(q) ||
+    (x.email||'').toLowerCase().includes(q) ||
+    (x.phone||'').toLowerCase().includes(q)
+  );
+
+  $('contacts-sub').textContent = `${DB.contacts.length} contact${DB.contacts.length > 1 ? 's' : ''}`;
+  const tbody = $('contacts-tbody');
+  const empty = $('contacts-empty');
+  if (!c.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = c.map(x => `
+    <tr>
+      <td class="td-primary">${esc(x.name)}</td>
+      <td>
+        ${x.email ? `<div style="font-size:12px">${esc(x.email)}</div>` : ''}
+        ${x.phone ? `<div style="font-size:11px;color:var(--fg-faint)">${esc(x.phone)}</div>` : ''}
+        ${!x.email && !x.phone ? '—' : ''}
+      </td>
+      <td><span class="badge badge-${x.type}">${x.type === 'client' ? 'Client' : 'Prospect'}</span></td>
+      <td style="font-size:12px;color:var(--fg-faint)">${SOURCE_LABEL[x.source] || '—'}</td>
+      <td style="font-family:var(--f-mono);font-size:12px">${fmtDate(x.contact_date)}</td>
+      <td style="max-width:160px;font-size:12px;color:var(--fg-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        ${esc(x.notes) || '—'}
+      </td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openContactModal('${x.id}')">Éditer</button>
+          <button class="btn btn-danger btn-sm" onclick="delContact('${x.id}')">Suppr.</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openContactModal(id) {
+  const x = id ? DB.contacts.find(c => c.id === id) : null;
+  $('modal-title').textContent = x ? 'Modifier le contact' : 'Nouveau contact';
+  $('modal-body').innerHTML = `
+    <div class="form-group"><label>Nom *</label>
+      <input type="text" id="f-name" value="${esc(x?.name)}" placeholder="Prénom Nom"/></div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label>
+        <input type="email" id="f-email" value="${esc(x?.email)}" placeholder="contact@exemple.com"/></div>
+      <div class="form-group"><label>Téléphone</label>
+        <input type="tel" id="f-phone" value="${esc(x?.phone)}" placeholder="06 XX XX XX XX"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Type</label>
+        <select id="f-type">
+          <option value="prospect" ${!x||x.type==='prospect'?'selected':''}>Prospect</option>
+          <option value="client"   ${x?.type==='client'?'selected':''}>Client</option>
+        </select></div>
+      <div class="form-group"><label>Source</label>
+        <select id="f-source">
+          <option value="site"    ${x?.source==='site'?'selected':''}>Site web</option>
+          <option value="reseaux" ${x?.source==='reseaux'?'selected':''}>Réseaux sociaux</option>
+          <option value="bouche"  ${x?.source==='bouche'?'selected':''}>Bouche à oreille</option>
+          <option value="autre"   ${!x||x.source==='autre'?'selected':''}>Autre</option>
+        </select></div>
+    </div>
+    <div class="form-group"><label>Date de contact</label>
+      <input type="date" id="f-date" value="${esc(x?.contact_date) || today()}"/></div>
+    <div class="form-group"><label>Notes</label>
+      <textarea id="f-notes" placeholder="Projet demandé, contexte, suivi…">${esc(x?.notes)}</textarea></div>`;
+  $('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+    <button class="btn btn-primary" onclick="saveContact('${id||''}')">${x ? 'Sauvegarder' : 'Ajouter'}</button>`;
+  $('modal-overlay').classList.add('open');
+  setTimeout(() => $('f-name')?.focus(), 50);
+}
+
+async function saveContact(id) {
+  const name = $('f-name').value.trim();
+  if (!name) { toast('Le nom est requis', 'error'); return; }
+
+  const data = {
+    name, email: $('f-email').value.trim(), phone: $('f-phone').value.trim(),
+    type: $('f-type').value, source: $('f-source').value,
+    contact_date: $('f-date').value || null,
+    notes: $('f-notes').value.trim(), updated_at: new Date().toISOString()
+  };
+
+  loading(true);
+  let err;
+  if (id) {
+    ({ error: err } = await sb.from('contacts').update(data).eq('id', id));
+  } else {
+    ({ error: err } = await sb.from('contacts').insert(data));
+  }
+  if (err) { loading(false); toast('Erreur : ' + err.message, 'error'); return; }
+
+  await loadAll();
+  loading(false);
+  closeModal();
+  renderContacts(); renderStats(); renderRecentContacts();
+  toast(id ? 'Contact mis à jour' : 'Contact ajouté', 'success');
+}
+
+async function delContact(id) {
+  if (!confirm('Supprimer ce contact définitivement ?')) return;
+  loading(true);
+  await sb.from('contacts').delete().eq('id', id);
+  await loadAll();
+  loading(false);
+  renderContacts(); renderStats(); renderRecentContacts();
+  toast('Contact supprimé');
+}
+
+// ─── NOTES ───────────────────────────────────────────────
+function renderNotes() {
+  const notes = [...DB.notes].sort((a,b) => b.updated_at.localeCompare(a.updated_at));
+  const list  = $('notes-list');
+  const empty = $('notes-empty');
+  if (!notes.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  list.innerHTML = notes.map(n => `
+    <div class="note-card" id="nc-${n.id}">
+      <div class="note-meta">
+        <span class="note-date">${new Date(n.updated_at).toLocaleDateString('fr-FR',{
+          day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+        })}</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="editNote('${n.id}')">Éditer</button>
+          <button class="btn btn-danger btn-sm" onclick="delNote('${n.id}')">Suppr.</button>
+        </div>
+      </div>
+      <div class="note-content" id="ntxt-${n.id}">${esc(n.content) || '<em style="color:var(--fg-faint)">Note vide — cliquez sur Éditer</em>'}</div>
+    </div>`).join('');
+}
+
+async function addNote() {
+  loading(true);
+  const { error } = await sb.from('notes').insert({ content: '' });
+  if (error) { loading(false); toast('Erreur : ' + error.message, 'error'); return; }
+  await loadAll();
+  loading(false);
+  renderNotes();
+  // Focus last added note (first in list after sort)
+  const first = DB.notes.sort((a,b) => b.created_at.localeCompare(a.created_at))[0];
+  if (first) editNote(first.id);
+}
+
+function editNote(id) {
+  const n = DB.notes.find(x => x.id === id);
+  if (!n) return;
+  const card   = $('nc-' + id);
+  const txtDiv = $('ntxt-' + id);
+  if (!card || !txtDiv) return;
+  card.classList.add('editing');
+
+  const ta = document.createElement('textarea');
+  ta.className = 'note-textarea';
+  ta.value     = n.content;
+  ta.rows      = Math.max(4, (n.content.match(/\n/g) || []).length + 3);
+  txtDiv.replaceWith(ta);
+  ta.focus();
+
+  async function persist() {
+    loading(true);
+    await sb.from('notes').update({
+      content: ta.value, updated_at: new Date().toISOString()
+    }).eq('id', id);
+    await loadAll();
+    loading(false);
+    renderNotes();
+  }
+
+  ta.addEventListener('blur', persist);
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Escape') ta.blur();
+    if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); ta.blur(); }
+  });
+}
+
+async function delNote(id) {
+  if (!confirm('Supprimer cette note ?')) return;
+  loading(true);
+  await sb.from('notes').delete().eq('id', id);
+  await loadAll();
+  loading(false);
+  renderNotes();
+  toast('Note supprimée');
+}
+
+// ─── MODAL ───────────────────────────────────────────────
+function closeModal() { $('modal-overlay').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ─── EXPORT ──────────────────────────────────────────────
+function exportData() {
+  const data = {
+    exportedAt: new Date().toISOString(),
+    projects:   DB.projects,
+    contacts:   DB.contacts,
+    notes:      DB.notes
+  };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type:'application/json' }));
+  a.download = `tomuss-dashboard-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  toast('Données exportées', 'success');
+}
+</script>
+</body>
+</html>

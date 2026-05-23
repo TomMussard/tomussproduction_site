@@ -282,13 +282,12 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
   <div class="login-card">
     <div class="login-logo">TOMUSS</div>
     <div class="login-sub">Dashboard · Privé</div>
-    <div class="login-label" id="login-label">Entrez votre mot de passe</div>
+    <div class="login-label">Mot de passe</div>
     <input type="password" id="pwd-input" placeholder="••••••••"
            onkeydown="if(event.key==='Enter')handleLogin()"/>
     <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px"
             onclick="handleLogin()">Accéder →</button>
     <div class="login-error" id="login-error"></div>
-    <div class="login-hint"  id="login-hint"></div>
   </div>
 </div>
 
@@ -327,10 +326,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       <div class="nav-item" onclick="exportData()" style="font-size:12px">
         <span class="nav-icon">⬇</span> Exporter données
       </div>
-      <div class="nav-item" onclick="changePassword()" style="font-size:12px">
-        <span class="nav-icon">🔑</span> Changer mot de passe
-      </div>
-      <div class="nav-item" onclick="logout()" style="color:var(--fg-faint);font-size:12px">
+<div class="nav-item" onclick="logout()" style="color:var(--fg-faint);font-size:12px">
         <span class="nav-icon">←</span> Déconnexion
       </div>
     </div>
@@ -559,71 +555,37 @@ const SUPABASE_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ─── AUTH (localStorage — ne change pas) ────────────────
-const HASH_KEY    = 'tp_hash';
-const SESSION_KEY = 'tp_session';
-
-function loadLS(k)     { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }
-function saveLS(k, v)  { localStorage.setItem(k, JSON.stringify(v)); }
-
-async function sha256(s) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
+// ─── AUTH (Supabase) ─────────────────────────────────────
+const DASHBOARD_EMAIL = 'tomussproduction@gmail.com';
 
 async function handleLogin() {
   const pwd = $('pwd-input').value.trim();
   if (!pwd) return;
-  const stored = loadLS(HASH_KEY);
-  const hash   = await sha256(pwd);
-  if (!stored) {
-    if (pwd.length < 6) { $('login-error').textContent = 'Minimum 6 caractères.'; return; }
-    saveLS(HASH_KEY, hash);
-    saveLS(SESSION_KEY, Date.now());
-    startApp();
+  $('login-error').textContent = '';
+
+  const { error } = await sb.auth.signInWithPassword({
+    email:    DASHBOARD_EMAIL,
+    password: pwd
+  });
+
+  if (error) {
+    $('login-error').textContent = 'Mot de passe incorrect.';
+    $('pwd-input').value = '';
+    $('pwd-input').focus();
   } else {
-    if (hash === stored) { saveLS(SESSION_KEY, Date.now()); startApp(); }
-    else { $('login-error').textContent = 'Mot de passe incorrect.'; $('pwd-input').value = ''; $('pwd-input').focus(); }
+    startApp();
   }
 }
 
-function sessionOk() {
-  const s = loadLS(SESSION_KEY);
-  return s && (Date.now() - s) < 8 * 3600 * 1000;
-}
-
-function logout() { localStorage.removeItem(SESSION_KEY); location.reload(); }
-
-async function changePassword() {
-  $('modal-title').textContent = 'Changer le mot de passe';
-  $('modal-body').innerHTML = `
-    <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="f-old" placeholder="••••••••"/></div>
-    <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="f-new" placeholder="Minimum 6 caractères"/></div>
-    <div class="form-group"><label>Confirmer</label><input type="password" id="f-confirm" placeholder="••••••••"/></div>
-    <div id="pwd-err" style="color:var(--red);font-size:12px;min-height:16px"></div>`;
-  $('modal-footer').innerHTML = `
-    <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-    <button class="btn btn-primary" onclick="doChangePwd()">Changer</button>`;
-  $('modal-overlay').classList.add('open');
-  setTimeout(() => $('f-old')?.focus(), 50);
-}
-
-async function doChangePwd() {
-  const old_ = $('f-old').value, nw = $('f-new').value, cf = $('f-confirm').value;
-  if (await sha256(old_) !== loadLS(HASH_KEY)) { $('pwd-err').textContent = 'Mot de passe actuel incorrect.'; return; }
-  if (nw.length < 6)  { $('pwd-err').textContent = 'Minimum 6 caractères.'; return; }
-  if (nw !== cf)       { $('pwd-err').textContent = 'Les mots de passe ne correspondent pas.'; return; }
-  saveLS(HASH_KEY, await sha256(nw));
-  closeModal(); toast('Mot de passe modifié', 'success');
+async function logout() {
+  await sb.auth.signOut();
+  location.reload();
 }
 
 // ─── APP INIT ────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  if (!loadLS(HASH_KEY)) {
-    $('login-label').textContent = 'Créez votre mot de passe (première connexion)';
-    $('login-hint').textContent  = 'Choisissez un mot de passe de 6 caractères minimum.';
-  }
-  if (sessionOk()) startApp(); else $('pwd-input').focus();
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data } = await sb.auth.getSession();
+  if (data.session) startApp(); else $('pwd-input').focus();
 });
 
 async function startApp() {

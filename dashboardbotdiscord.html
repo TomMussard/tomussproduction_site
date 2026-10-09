@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>TOMUSS PRODUCTION — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fond:#0a0a0c; --carte:#131317; --bord:#222228;
+    --texte:#f2f2f4; --doux:#8b8b96; --accent:#5865f2;
+    --vert:#3ba55d; --rouge:#ed4245; --or:#f1c40f;
+    --rayon:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--fond); color:var(--texte);
+    font-family:'Poppins',system-ui,-apple-system,sans-serif;
+    font-weight:300; min-height:100vh; padding:0 16px 60px;
+  }
+  .shell{max-width:1120px;margin:0 auto}
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;padding:28px 0 22px;
+    border-bottom:1px solid var(--bord);margin-bottom:28px;
+  }
+  .marque{display:flex;align-items:center;gap:12px}
+  .pastille{
+    width:38px;height:38px;border-radius:10px;flex:none;
+    background:linear-gradient(135deg,#fff,#9a9aa8);
+    display:grid;place-items:center;color:#000;font-weight:600;font-size:15px;
+  }
+  h1{font-size:17px;font-weight:500;letter-spacing:.14em}
+  .sous{font-size:11px;color:var(--doux);letter-spacing:.1em}
+  .etat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--doux)}
+  .point{width:8px;height:8px;border-radius:50%;background:var(--doux)}
+  .point.on{background:var(--vert);box-shadow:0 0 10px var(--vert)}
+  .point.off{background:var(--rouge)}
+
+  /* --- écran de connexion --- */
+  #connexion{max-width:430px;margin:12vh auto;text-align:center}
+  #connexion h2{font-weight:400;font-size:20px;margin-bottom:10px}
+  #connexion p{color:var(--doux);font-size:13px;margin-bottom:24px;line-height:1.6}
+
+  input,textarea,select{
+    width:100%;background:var(--carte);border:1px solid var(--bord);
+    color:var(--texte);padding:13px 15px;border-radius:10px;
+    font-family:inherit;font-size:14px;font-weight:300;
+  }
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+  textarea{resize:vertical;min-height:96px;line-height:1.55}
+  label{display:block;font-size:11px;color:var(--doux);margin:0 0 7px;letter-spacing:.07em;text-transform:uppercase}
+
+  button{
+    background:var(--accent);color:#fff;border:0;padding:13px 20px;
+    border-radius:10px;font-family:inherit;font-size:14px;font-weight:400;
+    cursor:pointer;transition:filter .15s,opacity .15s;
+  }
+  button:hover{filter:brightness(1.12)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button.sobre{background:var(--carte);border:1px solid var(--bord)}
+  button.large{width:100%}
+
+  /* --- grille de stats --- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:26px}
+  .stat{background:var(--carte);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px}
+  .stat .val{font-size:30px;font-weight:500;line-height:1.15;font-variant-numeric:tabular-nums}
+  .stat .lib{font-size:11px;color:var(--doux);margin-top:5px;letter-spacing:.06em;text-transform:uppercase}
+
+  .colonnes{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media(max-width:860px){.colonnes{grid-template-columns:1fr}}
+
+  .bloc{background:var(--carte);border:1px solid var(--bord);border-radius:var(--rayon);padding:20px;margin-bottom:18px}
+  .bloc h3{font-size:13px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;color:var(--doux)}
+
+  .ligne{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+  .ligne:last-child{border:0}
+  .rang{width:22px;font-size:12px;color:var(--doux);font-variant-numeric:tabular-nums;flex:none}
+  .av{width:30px;height:30px;border-radius:50%;flex:none;background:var(--bord);object-fit:cover}
+  .nom{flex:1;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meta{font-size:11.5px;color:var(--doux);flex:none;text-align:right}
+  .badge{font-size:10px;padding:3px 9px;border-radius:99px;background:rgba(88,101,242,.14);color:#aab2ff;letter-spacing:.04em}
+  .zero{color:var(--rouge)}
+
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:520px){.actions{grid-template-columns:1fr}}
+  .champ{margin-bottom:14px}
+
+  .vide{color:var(--doux);font-size:13px;padding:14px 0;text-align:center}
+  .err{color:var(--rouge);font-size:12.5px;margin-top:10px;line-height:1.5}
+
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,260%);opacity:0;
+    background:var(--carte);border:1px solid var(--bord);color:var(--texte);
+    padding:13px 22px;border-radius:11px;font-size:13.5px;
+    transition:transform .28s cubic-bezier(.2,.8,.3,1),opacity .2s;z-index:50;
+    box-shadow:0 10px 36px rgba(0,0,0,.55);max-width:88vw;text-align:center;
+  }
+  #toast.vu{transform:translate(-50%,0);opacity:1}
+  #toast.ko{border-color:var(--rouge)}
+
+  .onglets{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+  .onglet{
+    background:transparent;border:1px solid var(--bord);color:var(--doux);
+    padding:8px 15px;font-size:12.5px;border-radius:99px;
+  }
+  .onglet.actif{background:var(--texte);color:#000;border-color:var(--texte)}
+  .vue{display:none}
+  .vue.actif{display:block}
+  .note{font-size:11.5px;color:var(--doux);margin-top:9px;line-height:1.55}
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN DE CONNEXION -->
+<div id="connexion">
+  <div class="pastille" style="margin:0 auto 20px">TP</div>
+  <h2>Dashboard</h2>
+  <p>Entre l'adresse de ton bot et ta clé d'accès.<br>Elles restent sur cet appareil.</p>
+  <div class="champ" style="text-align:left">
+    <label for="url">Adresse du bot</label>
+    <input id="url" placeholder="https://xxx.up.railway.app" autocomplete="off">
+  </div>
+  <div class="champ" style="text-align:left">
+    <label for="cle">Clé d'accès</label>
+    <input id="cle" type="password" placeholder="DASHBOARD_TOKEN" autocomplete="off">
+  </div>
+  <button class="large" onclick="connecter()">Se connecter</button>
+  <div class="err" id="errConnexion"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="shell" id="app" style="display:none">
+  <header>
+    <div class="marque">
+      <div class="pastille">TP</div>
+      <div>
+        <h1>TOMUSS PRODUCTION</h1>
+        <div class="sous">DASHBOARD DISCORD</div>
+      </div>
+    </div>
+    <div class="etat">
+      <span class="point" id="point"></span>
+      <span id="etatTexte">connexion…</span>
+      <button class="sobre" style="padding:7px 13px;font-size:12px" onclick="tout()">Rafraîchir</button>
+      <button class="sobre" style="padding:7px 13px;font-size:12px" onclick="deconnecter()">Quitter</button>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="onglets">
+    <button class="onglet actif" onclick="vue('niveaux',this)">Niveaux</button>
+    <button class="onglet" onclick="vue('salons',this)">Salons</button>
+    <button class="onglet" onclick="vue('membres',this)">Membres</button>
+    <button class="onglet" onclick="vue('actions',this)">Actions</button>
+  </div>
+
+  <div class="vue actif" id="v-niveaux">
+    <div class="bloc">
+      <h3>Classement des niveaux</h3>
+      <div id="classement"><div class="vide">chargement…</div></div>
+    </div>
+  </div>
+
+  <div class="vue" id="v-salons">
+    <div class="bloc">
+      <h3>Activité par salon — 30 derniers jours</h3>
+      <div id="salons"><div class="vide">chargement…</div></div>
+      <div class="note">Tout ce qui est à 0 depuis un mois mérite d'être fusionné ou archivé.</div>
+    </div>
+  </div>
+
+  <div class="vue" id="v-membres">
+    <div class="colonnes">
+      <div class="bloc">
+        <h3>Podium du mois</h3>
+        <div id="podium"><div class="vide">chargement…</div></div>
+        <div class="note">À croiser avec la qualité des posts avant de désigner ton Boss du Mois.</div>
+      </div>
+      <div class="bloc">
+        <h3>Les plus anciens</h3>
+        <div id="anciens"><div class="vide">chargement…</div></div>
+        <div class="note">Attention : la date est celle de la dernière arrivée. Quelqu'un parti puis revenu perd son ancienneté.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vue" id="v-actions">
+    <div class="colonnes">
+      <div class="bloc">
+        <h3>Envoyer une annonce</h3>
+        <div class="champ">
+          <label for="salonAnnonce">Salon</label>
+          <select id="salonAnnonce"></select>
+        </div>
+        <div class="champ">
+          <label for="texteAnnonce">Message</label>
+          <textarea id="texteAnnonce" placeholder="Ton message…"></textarea>
+        </div>
+        <button class="large" onclick="envoyerAnnonce()">Envoyer sur le serveur</button>
+        <div class="note">Le message part immédiatement et ne peut pas être annulé depuis ici.</div>
+      </div>
+
+      <div class="bloc">
+        <h3>Lancer un rituel</h3>
+        <div class="actions">
+          <button class="sobre" onclick="rituel(0)">Lundi — on bosse sur quoi</button>
+          <button class="sobre" onclick="rituel(2)">Mercredi — le défi</button>
+          <button class="sobre" onclick="rituel(4)">Vendredi — feedback</button>
+          <button class="sobre" onclick="rituel(6)">Dimanche — ressource</button>
+        </div>
+        <div class="note">Poste le message du jour choisi, maintenant, dans son salon habituel.</div>
+
+        <h3 style="margin-top:26px">Publier le classement</h3>
+        <div class="champ">
+          <label for="salonClassement">Salon</label>
+          <select id="salonClassement"></select>
+        </div>
+        <button class="large sobre" onclick="publierClassement()">Publier le top 10</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let API = localStorage.getItem('tp_url') || '';
+let CLE = localStorage.getItem('tp_cle') || '';
+
+const $ = s => document.querySelector(s);
+const echap = t => String(t ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(msg, ko) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'vu' + (ko ? ' ko' : '');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.className = '', 3400);
+}
+
+async function appel(route, options = {}) {
+  const r = await fetch(API + route, {
+    ...options,
+    headers: {
+      'Authorization': 'Bearer ' + CLE,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (r.status === 401) throw new Error("Clé d'accès refusée");
+  if (!r.ok) {
+    let d = {};
+    try { d = await r.json(); } catch (e) {}
+    throw new Error(d.erreur || ('erreur ' + r.status));
+  }
+  return r.json();
+}
+
+async function connecter() {
+  const url = $('#url').value.trim().replace(/\/+$/, '');
+  const cle = $('#cle').value.trim();
+  if (!url || !cle) { $('#errConnexion').textContent = 'Remplis les deux champs.'; return; }
+  API = url; CLE = cle;
+  try {
+    await appel('/api/stats');
+    localStorage.setItem('tp_url', API);
+    localStorage.setItem('tp_cle', CLE);
+    $('#connexion').style.display = 'none';
+    $('#app').style.display = 'block';
+    tout();
+  } catch (e) {
+    $('#errConnexion').textContent = e.message +
+      ". Vérifie l'adresse, la clé, et que le bot tourne bien sur Railway.";
+  }
+}
+
+function deconnecter() {
+  localStorage.removeItem('tp_url');
+  localStorage.removeItem('tp_cle');
+  location.reload();
+}
+
+function vue(nom, bouton) {
+  document.querySelectorAll('.vue').forEach(v => v.classList.remove('actif'));
+  document.querySelectorAll('.onglet').forEach(o => o.classList.remove('actif'));
+  $('#v-' + nom).classList.add('actif');
+  bouton.classList.add('actif');
+}
+
+function etat(ok, texte) {
+  $('#point').className = 'point ' + (ok ? 'on' : 'off');
+  $('#etatTexte').textContent = texte;
+}
+
+async function chargerStats() {
+  const s = await appel('/api/stats?jours=7');
+  $('#stats').innerHTML = [
+    ['Membres', s.membres],
+    ['Messages — 7 j', s.messages],
+    ['Ont parlé', s.actifs],
+    ['Arrivées', '+' + s.arrivees],
+    ['Départs', '−' + s.departs],
+    ['En vocal', s.en_vocal]
+  ].map(([lib, val]) =>
+    `<div class="stat"><div class="val">${echap(val)}</div><div class="lib">${lib}</div></div>`
+  ).join('');
+  etat(true, 'en ligne');
+}
+
+async function chargerClassement() {
+  const d = await appel('/api/classement');
+  $('#classement').innerHTML = d.length ? d.map(m => `
+    <div class="ligne">
+      <span class="rang">${m.rang}</span>
+      ${m.avatar ? `<img class="av" src="${echap(m.avatar)}" alt="">` : '<span class="av"></span>'}
+      <span class="nom">${echap(m.pseudo)}</span>
+      <span class="badge">${echap(m.grade)}</span>
+      <span class="meta">niv. ${m.niveau}</span>
+    </div>`).join('') : '<div class="vide">Personne n\'a encore d\'xp.</div>';
+}
+
+async function chargerSalons() {
+  const d = await appel('/api/salons?jours=30');
+  $('#salons').innerHTML = d.length ? d.map(s => `
+    <div class="ligne">
+      <span class="nom">#${echap(s.nom)}</span>
+      <span class="meta ${s.messages === 0 ? 'zero' : ''}">${s.messages} msg</span>
+    </div>`).join('') : '<div class="vide">Aucun salon.</div>';
+}
+
+async function chargerMembres() {
+  const [p, a] = await Promise.all([appel('/api/podium'), appel('/api/anciens')]);
+  $('#podium').innerHTML = p.length ? p.map(m => `
+    <div class="ligne">
+      <span class="rang">${m.rang}</span>
+      <span class="nom">${echap(m.pseudo)}</span>
+      <span class="meta">${m.messages} msg</span>
+    </div>`).join('') : '<div class="vide">Rien ce mois-ci.</div>';
+  $('#anciens').innerHTML = a.length ? a.map(m => `
+    <div class="ligne">
+      <span class="rang">${m.rang}</span>
+      <span class="nom">${echap(m.pseudo)}</span>
+      <span class="meta">${echap(m.depuis)}</span>
+    </div>`).join('') : '<div class="vide">Aucun membre.</div>';
+}
+
+async function chargerListeSalons() {
+  const d = await appel('/api/liste-salons');
+  const html = d.map(s => `<option value="${echap(s.id)}">#${echap(s.nom)}</option>`).join('');
+  $('#salonAnnonce').innerHTML = html;
+  $('#salonClassement').innerHTML = html;
+}
+
+async function tout() {
+  try {
+    await Promise.all([
+      chargerStats(), chargerClassement(), chargerSalons(),
+      chargerMembres(), chargerListeSalons()
+    ]);
+  } catch (e) {
+    etat(false, 'hors ligne');
+    toast(e.message, true);
+  }
+}
+
+async function envoyerAnnonce() {
+  const texte = $('#texteAnnonce').value.trim();
+  const salon = $('#salonAnnonce').value;
+  if (!texte) { toast('Écris un message.', true); return; }
+  if (!confirm("Envoyer ce message sur le serveur ? C'est immédiat.")) return;
+  try {
+    const r = await appel('/api/annonce', {
+      method: 'POST',
+      body: JSON.stringify({ salon, texte })
+    });
+    $('#texteAnnonce').value = '';
+    toast('Envoyé dans #' + r.salon);
+  } catch (e) { toast(e.message, true); }
+}
+
+async function rituel(jour) {
+  const noms = { 0: 'du lundi', 2: 'du mercredi', 4: 'du vendredi', 6: 'du dimanche' };
+  if (!confirm('Lancer le rituel ' + noms[jour] + ' maintenant ?')) return;
+  try {
+    const r = await appel('/api/rituel', {
+      method: 'POST',
+      body: JSON.stringify({ jour })
+    });
+    toast('Rituel lancé dans #' + r.salon);
+  } catch (e) { toast(e.message, true); }
+}
+
+async function publierClassement() {
+  const salon = $('#salonClassement').value;
+  if (!confirm('Publier le top 10 sur le serveur ?')) return;
+  try {
+    const r = await appel('/api/publier-classement', {
+      method: 'POST',
+      body: JSON.stringify({ salon })
+    });
+    toast('Classement publié dans #' + r.salon);
+  } catch (e) { toast(e.message, true); }
+}
+
+// Reconnexion automatique si la clé est déjà enregistrée
+if (API && CLE) {
+  $('#connexion').style.display = 'none';
+  $('#app').style.display = 'block';
+  tout();
+}
+</script>
+</body>
+</html>

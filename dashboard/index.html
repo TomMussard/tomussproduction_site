@@ -911,11 +911,11 @@ async function loadShopStats() {
 
     const fmt = n => Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    $('s-today-count').textContent = d.today_count  ?? '0';
-    $('s-today-rev').textContent   = fmt(d.today_revenue  ?? 0) + ' €';
-    $('s-month-count').textContent = d.month_count  ?? '0';
-    $('s-month-rev').textContent   = fmt(d.month_revenue  ?? 0) + ' €';
-    $('s-revenue').textContent     = fmt(d.month_revenue  ?? 0) + ' €';
+    $('s-today-count').textContent = d.today?.count  ?? '0';
+    $('s-today-rev').textContent   = fmt(d.today?.revenue  ?? 0) + ' €';
+    $('s-month-count').textContent = d.month?.count  ?? '0';
+    $('s-month-rev').textContent   = (d.month?.count ?? 0) + ' vente' + (d.month?.count !== 1 ? 's' : '');
+    $('s-revenue').textContent     = fmt(d.month?.revenue ?? 0) + ' €';
 
     const list = $('shop-sales-list');
     if (!d.recent || d.recent.length === 0) {
@@ -929,10 +929,10 @@ async function loadShopStats() {
         <th style="padding:8px 12px;font-weight:500">Montant</th>
         <th style="padding:8px 12px;font-weight:500">Email</th>
       </tr></thead>
-      <tbody>${d.recent.map(t => `<tr style="border-top:1px solid var(--border)">
-        <td style="padding:9px 12px;color:var(--fg-dim);white-space:nowrap">${new Date(t.date * 1000).toLocaleDateString('fr-FR')}</td>
+      <tbody>${d.recent.map(t => `<tr style="border-top:1px solid var(--line)">
+        <td style="padding:9px 12px;color:var(--fg-dim);white-space:nowrap">${t.date || '—'}</td>
         <td style="padding:9px 12px">${t.product || '—'}</td>
-        <td style="padding:9px 12px;color:#22c55e;font-family:var(--f-mono)">${fmt(t.amount / 100)} €</td>
+        <td style="padding:9px 12px;color:#22c55e;font-family:var(--f-mono)">${fmt(t.amount)} €</td>
         <td style="padding:9px 12px;color:var(--fg-dim);font-size:12px">${t.email || '—'}</td>
       </tr>`).join('')}</tbody>
     </table>`;

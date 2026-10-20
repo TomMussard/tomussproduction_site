@@ -26,6 +26,10 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   background: var(--bg) url("../uploads/bg-hero.jpg") center/cover fixed no-repeat;
   color: var(--fg);
@@ -281,10 +285,10 @@ img { display: block; max-width: 100%; }
   background: var(--bg);
   pointer-events: none;
   transform-origin: top;
-  animation: curtain 1s var(--ease) forwards;
+  animation: curtain .65s var(--ease) forwards;
 }
 @keyframes curtain {
-  0% { transform: scaleY(1); }
+  0%   { transform: scaleY(1); }
   100% { transform: scaleY(0); }
 }
 
@@ -607,7 +611,7 @@ body.nav-open { overflow: hidden; }
   .footer h4 { margin-top: 8px; }
 }
 
-/* ── CURSEUR PERSONNALISÉ — style Premiere Pro ── */
+/* ── CURSEUR — timecode montage ── */
 @media (hover: hover) and (pointer: fine) {
   body, a, button, input, textarea, select, label, [role="button"] {
     cursor: none !important;
@@ -618,79 +622,79 @@ body.nav-open { overflow: hidden; }
 .cursor-ring {
   position: fixed;
   top: 0; left: 0;
-  border-radius: 50%;
   pointer-events: none;
   will-change: transform;
   opacity: 0;
+  z-index: 10001;
 }
 
-/* Le point central + crosshair */
+/* Crosshair fin */
 .cursor-dot {
-  width: 5px;
-  height: 5px;
-  background: var(--accent);
-  z-index: 10001;
+  width: 4px; height: 4px;
+  background: var(--fg);
   transform: translate(calc(var(--cx, -200px) - 50%), calc(var(--cy, -200px) - 50%));
-  transition: background .15s, width .15s var(--ease), height .15s var(--ease), opacity .3s;
+  transition: background .15s, opacity .3s;
 }
 .cursor-dot::before,
 .cursor-dot::after {
   content: '';
   position: absolute;
   top: 50%; left: 50%;
-  background: rgba(31, 165, 255, .45);
+  background: rgba(244, 239, 230, .28);
 }
 .cursor-dot::before {
-  width: 1px;
-  height: 18px;
+  width: 1px; height: 16px;
   transform: translate(-50%, -50%);
 }
 .cursor-dot::after {
-  width: 18px;
-  height: 1px;
+  width: 16px; height: 1px;
   transform: translate(-50%, -50%);
 }
 
-/* L'anneau qui suit en retard */
+/* Label timecode */
 .cursor-ring {
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(31, 165, 255, .55);
   z-index: 10000;
-  transform: translate(calc(var(--rx, -200px) - 50%), calc(var(--ry, -200px) - 50%));
-  box-shadow: 0 0 8px rgba(31, 165, 255, .18);
-  transition:
-    width   .28s var(--ease),
-    height  .28s var(--ease),
-    border-color .28s,
-    box-shadow   .28s,
-    opacity .3s;
+  transform: translate(calc(var(--rx, -200px) + 14px), calc(var(--ry, -200px) + 14px));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  transition: opacity .3s;
+}
+.cursor-lbl {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1;
+  min-height: 11px;
+  transition: color .15s;
+}
+.cursor-tc {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: .06em;
+  color: rgba(244, 239, 230, .38);
+  line-height: 1;
+  transition: color .15s;
 }
 
-/* Hover sur éléments interactifs */
-body.cursor-hover .cursor-dot {
-  background: #fff;
-  width: 7px;
-  height: 7px;
-}
-body.cursor-hover .cursor-ring {
-  width: 56px;
-  height: 56px;
-  border-color: var(--accent);
-  box-shadow:
-    0 0 0 0 rgba(31, 165, 255, .3),
-    0 0 20px rgba(31, 165, 255, .4),
-    0 0 40px rgba(31, 165, 255, .12),
-    inset 0 0 10px rgba(31, 165, 255, .07);
-}
+/* Hover */
+body.cursor-hover .cursor-dot { background: var(--accent); }
+body.cursor-hover .cursor-dot::before,
+body.cursor-hover .cursor-dot::after { background: rgba(31, 165, 255, .35); }
+body.cursor-hover .cursor-tc { color: rgba(31, 165, 255, .55); }
 
-/* Pulse au clic */
-.cursor-ring.is-clicking {
-  animation: cursorPulse .45s ease-out forwards;
+/* Pulse clic */
+.cursor-dot.is-clicking {
+  animation: dotPulse .3s ease-out forwards;
 }
-@keyframes cursorPulse {
-  0%   { box-shadow: 0 0 0 0px  rgba(31, 165, 255, .6), 0 0 8px rgba(31, 165, 255, .2); }
-  100% { box-shadow: 0 0 0 22px rgba(31, 165, 255, 0),  0 0 8px rgba(31, 165, 255, .2); }
+@keyframes dotPulse {
+  0%   { transform: translate(calc(var(--cx, -200px) - 50%), calc(var(--cy, -200px) - 50%)) scale(1); }
+  50%  { transform: translate(calc(var(--cx, -200px) - 50%), calc(var(--cy, -200px) - 50%)) scale(2.5); }
+  100% { transform: translate(calc(var(--cx, -200px) - 50%), calc(var(--cy, -200px) - 50%)) scale(1); }
 }
 
 /* Désactivé sur mobile / touch */

@@ -298,69 +298,46 @@
 
 <div id="footer-mount"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="assets/partials.js"></script>
 <script src="assets/shared.js"></script>
 <script>
 window.injectChrome('shop');
 
-/* ══════════════════════════════════════════════
-   PRODUITS — Ajoute tes produits ici
+const SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
+const SB_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
 
-   Format:
-   {
-     id:          'slug-unique',         // identifiant URL
-     name:        'Nom du Pack',
-     category:    'sfx' | 'preset' | 'template',
-     description: 'Description courte.',
-     tags:        ['WAV', 'MP3', '120+ sons'],
-     cover:       'uploads/shop/cover.jpg',  // null si pas d'image
-     price:       29,                    // null = gratuit
-     priceId:     'price_xxx',           // ID Stripe (null si gratuit)
-     fileUrl:     null,                  // URL directe si gratuit
-     badge:       'BEST-SELLER',         // optionnel
-   }
-══════════════════════════════════════════════ */
-const PRODUCTS = [
-  // Exemple (décommente et modifie) :
-  //
-  // {
-  //   id: 'sfx-pack-vol1',
-  //   name: 'SFX Pack Vol.1',
-  //   category: 'sfx',
-  //   description: '120 sons originaux pour le montage YouTube et social media. Whooshes, impacts, transitions.',
-  //   tags: ['WAV', 'MP3', '120+ sons', 'YouTube'],
-  //   cover: 'uploads/shop/sfx-pack-vol1.jpg',
-  //   price: 29,
-  //   priceId: 'price_METTRE_ICI',
-  //   badge: 'BEST-SELLER',
-  // },
-  // {
-  //   id: 'sfx-starter',
-  //   name: 'SFX Starter',
-  //   category: 'sfx',
-  //   description: '20 sons essentiels pour démarrer. 100% gratuit.',
-  //   tags: ['WAV', '20 sons'],
-  //   cover: null,
-  //   price: null,
-  //   priceId: null,
-  //   fileUrl: 'uploads/shop/sfx-starter.zip',
-  //   badge: 'GRATUIT',
-  // },
-];
+let PRODUCTS = [];
+let activeFilter = 'all';
+
+/* ── Fetch products from Supabase ── */
+async function loadProducts() {
+  const { data, error } = await sb
+    .from('products')
+    .select('*')
+    .eq('active', true)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error(error); return; }
+  PRODUCTS = data || [];
+  renderProducts(activeFilter);
+}
 
 /* ── Rendering ── */
 function renderProducts(filter = 'all') {
+  activeFilter = filter;
   const grid = document.getElementById('shopGrid');
   const visible = filter === 'all' ? PRODUCTS
     : filter === 'free' ? PRODUCTS.filter(p => !p.price)
     : PRODUCTS.filter(p => p.category === filter);
 
-  // Counts
-  document.getElementById('cnt-all').textContent    = PRODUCTS.length;
-  document.getElementById('cnt-sfx').textContent     = PRODUCTS.filter(p => p.category === 'sfx').length;
-  document.getElementById('cnt-preset').textContent  = PRODUCTS.filter(p => p.category === 'preset').length;
-  document.getElementById('cnt-template').textContent= PRODUCTS.filter(p => p.category === 'template').length;
-  document.getElementById('cnt-free').textContent    = PRODUCTS.filter(p => !p.price).length;
+  document.getElementById('cnt-all').textContent      = PRODUCTS.length;
+  document.getElementById('cnt-sfx').textContent      = PRODUCTS.filter(p => p.category === 'sfx').length;
+  document.getElementById('cnt-preset').textContent   = PRODUCTS.filter(p => p.category === 'preset').length;
+  document.getElementById('cnt-template').textContent = PRODUCTS.filter(p => p.category === 'template').length;
+  document.getElementById('cnt-free').textContent     = PRODUCTS.filter(p => !p.price).length;
 
   if (PRODUCTS.length === 0) {
     grid.innerHTML = `
@@ -384,12 +361,11 @@ function renderProducts(filter = 'all') {
 
   grid.innerHTML = visible.map(p => {
     const isFree = !p.price;
-    const coverHtml = p.cover
-      ? `<img src="${p.cover}" alt="${p.name}" loading="lazy" />`
+    const coverHtml = p.image_url
+      ? `<img src="${p.image_url}" alt="${p.name}" loading="lazy" />`
       : `<div class="product-cover-ph">${p.name.split(' ')[0]}</div>`;
-
     return `
-    <article class="product-card" data-id="${p.id}">
+    <article class="product-card" data-id="${p.slug}">
       <div class="product-cover">
         ${coverHtml}
         ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
@@ -398,12 +374,12 @@ function renderProducts(filter = 'all') {
       <div class="product-body">
         <span class="product-cat">${p.category.toUpperCase()}</span>
         <h2 class="product-name">${p.name}</h2>
-        <p class="product-desc">${p.description}</p>
+        <p class="product-desc">${p.description || ''}</p>
         ${p.tags?.length ? `<div class="product-tags">${p.tags.map(t => `<span class="product-tag">${t}</span>`).join('')}</div>` : ''}
       </div>
       <div class="product-footer">
         <div class="product-price ${isFree ? 'free' : ''}">${isFree ? 'Gratuit' : `${p.price}<span> €</span>`}</div>
-        <button class="product-btn ${isFree ? 'free-btn' : ''}" onclick="handleBuy('${p.id}')" id="btn-${p.id}">
+        <button class="product-btn ${isFree ? 'free-btn' : ''}" onclick="handleBuy('${p.slug}')" id="btn-${p.slug}">
           ${isFree ? 'Télécharger ↓' : 'Acheter ↗'}
         </button>
       </div>
@@ -412,43 +388,36 @@ function renderProducts(filter = 'all') {
 }
 
 /* ── Buy / Download ── */
-async function handleBuy(id) {
-  const p = PRODUCTS.find(x => x.id === id);
+async function handleBuy(slug) {
+  const p = PRODUCTS.find(x => x.slug === slug);
   if (!p) return;
-  const btn = document.getElementById('btn-' + id);
+  const btn = document.getElementById('btn-' + slug);
 
-  // Free product → direct download
   if (!p.price) {
-    if (p.fileUrl) {
+    if (p.download_url) {
       const a = document.createElement('a');
-      a.href = p.fileUrl;
+      a.href = p.download_url;
       a.download = '';
       a.click();
     }
     return;
   }
 
-  // Paid product → Stripe checkout
   btn.disabled = true;
   btn.textContent = 'Chargement…';
-
   try {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: p.priceId, productSlug: p.id, productName: p.name })
+      body: JSON.stringify({ productSlug: p.slug, productName: p.name })
     });
     const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      throw new Error(data.error || 'Erreur');
-    }
+    if (data.url) { window.location.href = data.url; }
+    else throw new Error(data.error || 'Erreur');
   } catch (err) {
     btn.disabled = false;
     btn.textContent = 'Acheter ↗';
     alert('Une erreur est survenue, réessaie.');
-    console.error(err);
   }
 }
 
@@ -457,7 +426,6 @@ function submitNotify() {
   const email = document.getElementById('notifyEmail')?.value;
   if (!email) return;
   document.getElementById('notifySuccess').style.display = 'block';
-  // Tu peux brancher ici une API (Mailchimp, Brevo, etc.)
 }
 
 /* ── Category tabs ── */
@@ -469,7 +437,7 @@ document.getElementById('catBar').addEventListener('click', e => {
   renderProducts(btn.dataset.cat);
 });
 
-renderProducts();
+loadProducts();
 </script>
 </body>
 </html>

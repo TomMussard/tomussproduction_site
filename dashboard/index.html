@@ -460,33 +460,124 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
     <section id="section-shop" class="section">
       <div class="page-header">
         <div class="page-header-inner">
-          <div><div class="page-title">Shop</div><div class="page-subtitle">Ventes & téléchargements</div></div>
-          <a class="btn btn-primary" href="../shop.html" target="_blank">Voir la shop ↗</a>
+          <div><div class="page-title">Shop</div><div class="page-subtitle">Produits & ventes</div></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="openProductForm()">+ Nouveau produit</button>
+            <a class="btn btn-ghost" href="../shop.html" target="_blank">Voir la shop ↗</a>
+          </div>
         </div>
       </div>
       <div class="page-body">
-        <div class="stats-grid" id="shop-stats-grid">
+
+        <!-- Stats Stripe -->
+        <div class="stats-grid">
           <div class="stat-card"><div class="stat-label">Ventes aujourd'hui</div><div class="stat-value blue" id="s-today-count">—</div><div class="stat-sub" id="s-today-rev">— €</div></div>
-          <div class="stat-card"><div class="stat-label">Ventes ce mois</div><div class="stat-value green" id="s-month-count">—</div><div class="stat-sub" id="s-month-rev">— €</div></div>
-          <div class="stat-card"><div class="stat-label">Revenus du mois</div><div class="stat-value" id="s-revenue">— €</div><div class="stat-sub">Stripe (net avant frais)</div></div>
-          <div class="stat-card"><div class="stat-label">Stripe Dashboard</div><div class="stat-value" style="font-size:22px;margin-top:8px"><a href="https://dashboard.stripe.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:14px;font-family:var(--f-mono);letter-spacing:.1em;">Ouvrir ↗</a></div></div>
+          <div class="stat-card"><div class="stat-label">Revenus ce mois</div><div class="stat-value green" id="s-revenue">— €</div><div class="stat-sub" id="s-month-rev">— ventes</div></div>
+          <div class="stat-card"><div class="stat-label">Stripe Dashboard</div><div class="stat-value" style="margin-top:8px"><a href="https://dashboard.stripe.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:14px;font-family:var(--f-mono);letter-spacing:.1em;">Ouvrir ↗</a></div></div>
         </div>
+
+        <!-- Liste des produits -->
+        <div class="card" style="margin-top:14px">
+          <div class="card-header"><span class="card-title">Mes produits</span><button class="btn btn-ghost btn-sm" onclick="loadShopProducts()">↻ Actualiser</button></div>
+          <div id="products-list"><div class="card-empty">Chargement…</div></div>
+        </div>
+
+        <!-- Dernières ventes -->
         <div class="card" style="margin-top:14px">
           <div class="card-header"><span class="card-title">Dernières ventes</span><button class="btn btn-ghost btn-sm" onclick="loadShopStats()">↻ Actualiser</button></div>
           <div id="shop-sales-list"><div class="card-empty">Chargement…</div></div>
         </div>
-        <div class="card" style="margin-top:14px">
-          <div class="card-header"><span class="card-title">Notifications iPhone (ntfy)</span></div>
-          <div style="padding:18px 20px;color:var(--fg-dim);font-size:13px;line-height:1.7">
-            <p>Pour recevoir des notifs sur iPhone quand quelqu'un achète :</p>
-            <ol style="margin:10px 0 10px 18px;display:flex;flex-direction:column;gap:6px;">
-              <li>Télécharge <strong style="color:var(--fg)">ntfy</strong> sur l'App Store (gratuit)</li>
-              <li>Ouvre l'app → clique <strong style="color:var(--fg)">+</strong> → entre ton topic privé</li>
-              <li>Ajoute <code style="background:var(--surface2);padding:2px 6px;font-family:var(--f-mono);font-size:12px;">NTFY_TOPIC</code> dans les variables d'env Vercel</li>
-            </ol>
-            <p style="color:var(--fg-faint);font-size:12px">Le topic est une chaîne secrète que tu inventes (ex: <code style="background:var(--surface2);padding:1px 5px;font-family:var(--f-mono)">tomuss-shop-2026-xyz</code>). Plus c'est aléatoire, mieux c'est.</p>
+
+        <!-- Formulaire produit (inline, caché par défaut) -->
+        <div id="product-form-wrap" style="display:none;margin-top:14px">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" id="pf-title">Nouveau produit</span>
+              <button class="btn btn-ghost btn-sm" onclick="closeProductForm()">✕ Fermer</button>
+            </div>
+            <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px" id="pf-body">
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Nom du produit *</label>
+                <input id="pf-name" type="text" placeholder="SFX Pack Vol.1" oninput="autoSlug()" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Slug (identifiant URL) *</label>
+                <input id="pf-slug" type="text" placeholder="sfx-pack-vol1" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-mono);font-size:13px;border-radius:var(--r);outline:none"/>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Description</label>
+                <textarea id="pf-desc" rows="3" placeholder="Description courte du produit…" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none;resize:vertical"></textarea>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Catégorie *</label>
+                <select id="pf-cat" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none">
+                  <option value="sfx">SFX</option>
+                  <option value="preset">Preset</option>
+                  <option value="template">Template</option>
+                  <option value="free">Gratuit</option>
+                </select>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Prix (€) — vide = gratuit</label>
+                <input id="pf-price" type="number" min="0" step="1" placeholder="29" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Stripe Price ID</label>
+                <input id="pf-stripe" type="text" placeholder="price_xxxxx" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-mono);font-size:12px;border-radius:var(--r);outline:none"/>
+                <span style="font-size:11px;color:var(--fg-faint)">Stripe Dashboard → Products → ton produit → Price ID</span>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Badge (ex: BEST-SELLER)</label>
+                <input id="pf-badge" type="text" placeholder="BEST-SELLER" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Tags (séparés par des virgules)</label>
+                <input id="pf-tags" type="text" placeholder="WAV, MP3, 120+ sons, YouTube" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Lien de téléchargement *</label>
+                <input id="pf-dl" type="text" placeholder="https://drive.google.com/… ou lien direct .zip" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+                <span style="font-size:11px;color:var(--fg-faint)">Google Drive (lien direct), Dropbox, ou n'importe quel lien vers le fichier</span>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Image du produit</label>
+                <input id="pf-img-file" type="file" accept="image/*" onchange="previewImg(this)" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:13px;border-radius:var(--r);outline:none"/>
+                <img id="pf-img-preview" src="" alt="" style="display:none;max-height:160px;max-width:320px;object-fit:cover;border-radius:var(--r);margin-top:8px;border:1px solid var(--line)"/>
+                <input id="pf-img-url" type="hidden"/>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Ordre d'affichage</label>
+                <input id="pf-order" type="number" min="0" placeholder="0" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;padding-top:18px">
+                <input id="pf-active" type="checkbox" checked style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer"/>
+                <label for="pf-active" style="font-size:13px;color:var(--fg);cursor:pointer">Produit visible sur la shop</label>
+              </div>
+
+              <input id="pf-id" type="hidden"/>
+
+              <div style="grid-column:1/-1;display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--line);margin-top:4px">
+                <button class="btn btn-primary" onclick="saveProduct()" id="pf-save-btn" style="min-width:160px">Enregistrer</button>
+                <button class="btn btn-ghost" onclick="closeProductForm()">Annuler</button>
+                <span id="pf-status" style="font-size:13px;color:var(--fg-dim);align-self:center;margin-left:8px"></span>
+              </div>
+
+            </div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -589,7 +680,185 @@ function goTo(name, el) {
   $('section-' + name).classList.add('active');
   if (el) el.classList.add('active');
   $('sidebar').classList.remove('open');
-  if (name === 'shop') loadShopStats();
+  if (name === 'shop') { loadShopProducts(); loadShopStats(); }
+}
+
+// ─── SHOP PRODUCTS ────────────────────────────────────────
+async function loadShopProducts() {
+  const { data, error } = await sb.from('products').select('*').order('sort_order').order('created_at', { ascending: false });
+  const list = $('products-list');
+  if (error || !data) { list.innerHTML = '<div class="card-empty" style="color:var(--red)">Erreur de chargement.</div>'; return; }
+  if (data.length === 0) { list.innerHTML = '<div class="card-empty">Aucun produit. Clique sur "+ Nouveau produit" pour commencer.</div>'; return; }
+
+  list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr style="color:var(--fg-dim)">
+      <th style="padding:10px 12px;font-weight:500;text-align:left">Image</th>
+      <th style="padding:10px 12px;font-weight:500;text-align:left">Nom</th>
+      <th style="padding:10px 12px;font-weight:500;text-align:left">Catégorie</th>
+      <th style="padding:10px 12px;font-weight:500;text-align:left">Prix</th>
+      <th style="padding:10px 12px;font-weight:500;text-align:left">Statut</th>
+      <th style="padding:10px 12px;font-weight:500;text-align:right">Actions</th>
+    </tr></thead>
+    <tbody>${data.map(p => `<tr style="border-top:1px solid var(--line)">
+      <td style="padding:8px 12px"><img src="${p.image_url||''}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:4px;background:var(--surface2);display:block"/></td>
+      <td style="padding:8px 12px"><strong>${p.name}</strong><div style="font-size:11px;color:var(--fg-faint);font-family:var(--f-mono)">${p.slug}</div></td>
+      <td style="padding:8px 12px;color:var(--fg-dim);text-transform:uppercase;font-size:11px;font-family:var(--f-mono)">${p.category}</td>
+      <td style="padding:8px 12px;font-family:var(--f-mono)">${p.price ? p.price+' €' : '<span style="color:var(--green)">Gratuit</span>'}</td>
+      <td style="padding:8px 12px"><span style="font-size:11px;padding:3px 8px;border-radius:20px;font-family:var(--f-mono);background:${p.active?'rgba(34,197,94,.15)':'rgba(239,68,68,.12)'};color:${p.active?'var(--green)':'var(--red)'}">${p.active?'Visible':'Masqué'}</span></td>
+      <td style="padding:8px 12px;text-align:right;white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick='editProduct(${JSON.stringify(p)})' style="margin-right:6px">✎ Modifier</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}','${p.name.replace(/'/g,"\\'")}')">✕</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+let pfEditId = null;
+
+function openProductForm(reset = true) {
+  pfEditId = null;
+  if (reset) {
+    $('pf-title').textContent = 'Nouveau produit';
+    $('pf-id').value = '';
+    $('pf-name').value = '';
+    $('pf-slug').value = '';
+    $('pf-desc').value = '';
+    $('pf-cat').value = 'sfx';
+    $('pf-price').value = '';
+    $('pf-stripe').value = '';
+    $('pf-badge').value = '';
+    $('pf-tags').value = '';
+    $('pf-dl').value = '';
+    $('pf-order').value = '0';
+    $('pf-active').checked = true;
+    $('pf-img-url').value = '';
+    $('pf-img-preview').style.display = 'none';
+    $('pf-status').textContent = '';
+  }
+  $('product-form-wrap').style.display = 'block';
+  $('product-form-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeProductForm() {
+  $('product-form-wrap').style.display = 'none';
+}
+
+function editProduct(p) {
+  pfEditId = p.id;
+  $('pf-title').textContent = 'Modifier — ' + p.name;
+  $('pf-id').value = p.id;
+  $('pf-name').value = p.name || '';
+  $('pf-slug').value = p.slug || '';
+  $('pf-desc').value = p.description || '';
+  $('pf-cat').value = p.category || 'sfx';
+  $('pf-price').value = p.price || '';
+  $('pf-stripe').value = p.stripe_price_id || '';
+  $('pf-badge').value = p.badge || '';
+  $('pf-tags').value = (p.tags || []).join(', ');
+  $('pf-dl').value = p.download_url || '';
+  $('pf-order').value = p.sort_order ?? 0;
+  $('pf-active').checked = p.active !== false;
+  $('pf-img-url').value = p.image_url || '';
+  if (p.image_url) {
+    $('pf-img-preview').src = p.image_url;
+    $('pf-img-preview').style.display = 'block';
+  } else {
+    $('pf-img-preview').style.display = 'none';
+  }
+  $('pf-status').textContent = '';
+  openProductForm(false);
+}
+
+function autoSlug() {
+  if (pfEditId) return;
+  $('pf-slug').value = $('pf-name').value
+    .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+function previewImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    $('pf-img-preview').src = e.target.result;
+    $('pf-img-preview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadImage(file, slug) {
+  const ext  = file.name.split('.').pop();
+  const path = `${slug}-${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from('product-images').upload(path, file, { upsert: true });
+  if (error) throw new Error('Upload image : ' + error.message);
+  const { data } = sb.storage.from('product-images').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function saveProduct() {
+  const btn = $('pf-save-btn');
+  const status = $('pf-status');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+  status.textContent = '';
+
+  try {
+    const name = $('pf-name').value.trim();
+    const slug = $('pf-slug').value.trim();
+    if (!name || !slug) throw new Error('Nom et slug obligatoires.');
+
+    let image_url = $('pf-img-url').value || null;
+    const imgFile = $('pf-img-file').files[0];
+    if (imgFile) {
+      status.textContent = 'Upload de l\'image…';
+      image_url = await uploadImage(imgFile, slug);
+    }
+
+    const payload = {
+      name,
+      slug,
+      description:     $('pf-desc').value.trim() || null,
+      category:        $('pf-cat').value,
+      price:           $('pf-price').value ? parseInt($('pf-price').value) : null,
+      stripe_price_id: $('pf-stripe').value.trim() || null,
+      badge:           $('pf-badge').value.trim() || null,
+      tags:            $('pf-tags').value ? $('pf-tags').value.split(',').map(t=>t.trim()).filter(Boolean) : null,
+      download_url:    $('pf-dl').value.trim() || null,
+      sort_order:      parseInt($('pf-order').value) || 0,
+      active:          $('pf-active').checked,
+      image_url,
+    };
+
+    status.textContent = 'Sauvegarde…';
+    let err;
+    if (pfEditId) {
+      ({ error: err } = await sb.from('products').update(payload).eq('id', pfEditId));
+    } else {
+      ({ error: err } = await sb.from('products').insert(payload));
+    }
+    if (err) throw new Error(err.message);
+
+    status.textContent = '✓ Sauvegardé !';
+    status.style.color = 'var(--green)';
+    closeProductForm();
+    loadShopProducts();
+    showToast(pfEditId ? 'Produit modifié' : 'Produit créé ✓');
+  } catch (e) {
+    status.textContent = '⚠ ' + e.message;
+    status.style.color = 'var(--red)';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enregistrer';
+  }
+}
+
+async function deleteProduct(id, name) {
+  if (!confirm(`Supprimer "${name}" ? Cette action est irréversible.`)) return;
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if (error) { showToast('Erreur : ' + error.message); return; }
+  showToast('Produit supprimé');
+  loadShopProducts();
 }
 
 // ─── SHOP STATS ───────────────────────────────────────────

@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { email, source = 'website' } = req.body || {};
+  const { email, source = 'website', product_name } = req.body || {};
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
 
   const clean = email.toLowerCase().trim();
@@ -44,9 +44,17 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: sbBody || 'Erreur serveur' });
   }
 
-  // Notif iPhone pour les téléchargements gratuits (shop ou merci)
+  // Notif push style Shopify pour les téléchargements
   if (source === 'shop_gratuit' || source === 'achat_merci') {
-    await notify('📦 Nouveau téléchargement', `${clean} a téléchargé un fichier (${source})`);
+    const productLabel = product_name || 'Pack gratuit';
+    fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://tomussproduction.fr'}/api/send-push`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: '📦 Nouveau téléchargement',
+        body: `${clean}\n${productLabel} — 0,00 €`,
+      }),
+    }).catch(() => {});
   }
 
   res.json({ ok: true });

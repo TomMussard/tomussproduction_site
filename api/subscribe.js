@@ -1,18 +1,27 @@
 const SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttc2ltY2x6ZWl0bm5iYmVtZWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzc1NzYsImV4cCI6MjA5NTA1MzU3Nn0.w9uNRA5g37SBgB9wvE-iSIrWcYLIU8jcw27cEwAM7mg';
 
-async function notify(title, body) {
-  const topic = process.env.NTFY_TOPIC;
-  console.log('[ntfy] topic:', topic, '| title:', title);
-  if (!topic) { console.log('[ntfy] NTFY_TOPIC manquant'); return; }
+async function notifyEmail(productLabel, email) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) { console.log('[notify-email] RESEND_API_KEY manquant'); return; }
   try {
-    const r = await fetch(`https://ntfy.sh/${topic}`, {
+    const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: { Title: title, Tags: 'arrow_down', Priority: 'default', 'Content-Type': 'text/plain' },
-      body,
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'Tomuss Production <newsletter@tomussproduction.fr>',
+        to: ['tomussproduction@gmail.com'],
+        subject: `📦 Nouveau téléchargement — ${productLabel}`,
+        html: `<p style="font-family:monospace;font-size:15px">
+          <strong>📦 Nouveau téléchargement</strong><br><br>
+          <strong>Client :</strong> ${email}<br>
+          <strong>Produit :</strong> ${productLabel}<br>
+          <strong>Prix :</strong> 0,00 €
+        </p>`,
+      }),
     });
-    console.log('[ntfy] status:', r.status);
-  } catch (e) { console.log('[ntfy] erreur fetch:', e.message); }
+    console.log('[notify-email] status:', r.status);
+  } catch (e) { console.log('[notify-email] erreur:', e.message); }
 }
 
 module.exports = async (req, res) => {
@@ -44,10 +53,10 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: sbBody || 'Erreur serveur' });
   }
 
-  // Notif iPhone via ntfy
+  // Notif email à chaque téléchargement
   if (source === 'shop_gratuit' || source === 'achat_merci') {
     const productLabel = product_name || 'Pack gratuit';
-    await notify('📦 Nouveau téléchargement', `${clean} — ${productLabel} — 0,00 €`);
+    await notifyEmail(productLabel, clean);
   }
 
   res.json({ ok: true });

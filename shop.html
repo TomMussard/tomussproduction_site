@@ -40,12 +40,19 @@
 
 /* ── BASE ─────────────────────────────────────────────────── */
 .shop-head {
-  padding: 120px var(--gutter) 60px;
+  padding: 100px var(--gutter) 60px;
   border-bottom: 1px solid var(--line);
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 80px;
+  gap: 48px 80px;
   align-items: end;
+}
+.shop-head-top {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
 }
 .shop-head h1 {
   font-family: var(--f-display);
@@ -86,10 +93,8 @@
 
 /* ── CART BUTTON (header) ─────────────────────────────────── */
 .cart-btn {
-  position: fixed;
-  top: 76px;
-  right: var(--gutter);
-  z-index: 200;
+  position: static;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -638,7 +643,7 @@
   .shop-grid { grid-template-columns: 1fr; padding: 40px var(--gutter) 80px; }
   .product-modal { grid-template-columns: 1fr; }
   .modal-img-side { aspect-ratio: 16/9; }
-  .cart-btn { top: auto; bottom: 20px; right: 20px; }
+  .shop-head-top { flex-wrap: wrap; gap: 12px; }
 }
 </style>
 </head>
@@ -648,8 +653,15 @@
 
 <!-- ════ HEADER ════ -->
 <header class="shop-head">
+  <div class="shop-head-top">
+    <p class="eyebrow">Ressources par Tomuss</p>
+    <button class="cart-btn" onclick="openCart()" id="cart-trigger" aria-label="Ouvrir le panier">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Panier
+      <span class="cart-badge" id="cart-badge">0</span>
+    </button>
+  </div>
   <div>
-    <p class="eyebrow" style="margin-bottom:28px;">Ressources par Tomuss</p>
     <h1>Le<br/><em>Shop.</em></h1>
     <div class="shop-proof">
       <div class="proof-avatars">
@@ -666,13 +678,6 @@
     <p class="meta">Téléchargements instantanés · Paiement sécurisé Stripe · Support par email</p>
   </div>
 </header>
-
-<!-- ════ CART BUTTON ════ -->
-<button class="cart-btn" onclick="openCart()" id="cart-trigger" aria-label="Ouvrir le panier">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  Panier
-  <span class="cart-badge" id="cart-badge">0</span>
-</button>
 
 <!-- ════ SECTION TITLE + CAT BAR ════ -->
 <div class="shop-section-head">

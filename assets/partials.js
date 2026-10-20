@@ -93,8 +93,16 @@ async function injectBanner() {
     const el = document.createElement('div');
     el.id = 'site-banner';
     el.style.cssText = `background:${cfg.bg||'#1fa5ff'};color:${cfg.color||'#000'};text-align:center;padding:10px 48px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;position:relative;z-index:150;`;
-    el.innerHTML = `<span>${cfg.text}</span><button onclick="document.getElementById('site-banner').remove();sessionStorage.setItem('banner_dismissed','${cfg.text.replace(/'/g,"\\'")}');" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:inherit;opacity:.7;line-height:1;">✕</button>`;
-    document.body.insertBefore(el, document.body.firstChild);
+    el.innerHTML = `<span>${cfg.text}</span><button onclick="this.closest('#site-banner').remove();document.querySelector('.nav')&&(document.querySelector('.nav').style.top='0');sessionStorage.setItem('banner_dismissed','${cfg.text.replace(/'/g,"\\'")}');" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:inherit;opacity:.7;line-height:1;">✕</button>`;
+    // Insérer avant le nav-mount, pas avant body entier
+    const navMount = document.getElementById('nav-mount');
+    if (navMount) navMount.parentNode.insertBefore(el, navMount);
+    else document.body.insertBefore(el, document.body.firstChild);
+    // Décaler la nav fixe vers le bas
+    requestAnimationFrame(() => {
+      const nav = document.querySelector('.nav');
+      if (nav) nav.style.top = el.offsetHeight + 'px';
+    });
   } catch(_) {}
 }
 

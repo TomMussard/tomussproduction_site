@@ -730,6 +730,24 @@
   <div class="checkout-overlay-sub">🔒 Connexion sécurisée en cours</div>
 </div>
 
+<!-- ════ EMAIL GATE MODAL (téléchargement gratuit) ════ -->
+<div id="emailGateOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px" onclick="if(event.target===this)closeEmailGate()">
+  <div style="background:#161616;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;position:relative">
+    <button onclick="closeEmailGate()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;line-height:1">✕</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.06em;margin-bottom:8px">Accès gratuit</div>
+    <p style="color:rgba(244,239,230,.6);font-size:14px;line-height:1.6;margin-bottom:24px">Entre ton email pour recevoir le lien de téléchargement et rester informé des prochaines sorties.</p>
+    <form id="emailGateForm" onsubmit="submitEmailGate(event)" style="display:flex;flex-direction:column;gap:14px">
+      <input id="gate-email-shop" type="email" placeholder="ton@email.com" required style="padding:14px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#F4EFE6;font-size:15px;outline:none;font-family:inherit;width:100%;box-sizing:border-box"/>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:rgba(244,239,230,.55);line-height:1.5">
+        <input id="gate-consent-shop" type="checkbox" required style="margin-top:2px;accent-color:#1fa5ff;width:14px;height:14px;flex-shrink:0"/>
+        J'accepte de recevoir les actualités, nouveaux packs et offres exclusives de Tomuss Production. Désinscription possible à tout moment.
+      </label>
+      <button type="submit" id="gate-submit-shop" style="padding:16px;background:#1fa5ff;color:#000;border:none;border-radius:6px;font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s">Accéder au téléchargement →</button>
+      <p id="gate-err-shop" style="color:#ef4444;font-size:12px;display:none;text-align:center"></p>
+    </form>
+  </div>
+</div>
+
 <!-- ════ PRODUCT MODAL ════ -->
 <div class="product-modal-overlay" id="productModalOverlay" onclick="if(event.target===this)closeProductModal()">
   <div class="product-modal" id="productModal">
@@ -880,13 +898,8 @@ function modalAction(slug) {
   const p = PRODUCTS.find(x => x.slug === slug);
   if (!p) return;
   if (!p.price) {
-    if (p.download_url) {
-      const a = document.createElement('a'); a.href = p.download_url; a.download = ''; a.click();
-      closeProductModal();
-      showToast('Téléchargement démarré ↓', 'success');
-    } else {
-      showToast('Lien de téléchargement bientôt disponible.', 'info');
-    }
+    closeProductModal();
+    openEmailGate(p.download_url);
     return;
   }
   if (!p.stripe_price_id) {
@@ -1047,12 +1060,7 @@ function quickAction(slug) {
   const p = PRODUCTS.find(x => x.slug === slug);
   if (!p) return;
   if (!p.price) {
-    if (p.download_url) {
-      const a = document.createElement('a'); a.href = p.download_url; a.download = ''; a.click();
-      showToast('Téléchargement démarré ↓', 'success');
-    } else {
-      showToast('Lien de téléchargement bientôt disponible.', 'info');
-    }
+    openEmailGate(p.download_url);
     return;
   }
   if (!p.stripe_price_id) {
@@ -1084,6 +1092,58 @@ document.getElementById('catBar').addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeProductModal(); closeCart(); }
 });
+
+/* ══ EMAIL GATE (téléchargement gratuit) ════════════════════ */
+let _gateDownloadUrl = null;
+
+function openEmailGate(downloadUrl) {
+  _gateDownloadUrl = downloadUrl || null;
+  const overlay = document.getElementById('emailGateOverlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('gate-email-shop').focus(), 100);
+}
+
+function closeEmailGate() {
+  document.getElementById('emailGateOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('emailGateForm').reset();
+  document.getElementById('gate-err-shop').style.display = 'none';
+  _gateDownloadUrl = null;
+}
+
+async function submitEmailGate(e) {
+  e.preventDefault();
+  const email   = document.getElementById('gate-email-shop').value.trim();
+  const consent = document.getElementById('gate-consent-shop').checked;
+  const btn     = document.getElementById('gate-submit-shop');
+  const err     = document.getElementById('gate-err-shop');
+
+  if (!email || !consent) return;
+  btn.disabled = true;
+  btn.textContent = 'Inscription…';
+  err.style.display = 'none';
+
+  try {
+    await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'gratuit_shop' }),
+    });
+  } catch (_) {}
+
+  closeEmailGate();
+
+  if (_gateDownloadUrl) {
+    const a = document.createElement('a');
+    a.href = _gateDownloadUrl;
+    a.download = '';
+    a.click();
+    showToast('Téléchargement démarré ↓', 'success');
+  } else {
+    showToast('Lien de téléchargement bientôt disponible.', 'info');
+  }
+}
 
 /* ══ INIT ════════════════════════════════════════════════════ */
 updateCartUI();

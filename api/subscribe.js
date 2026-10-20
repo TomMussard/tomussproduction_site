@@ -38,9 +38,10 @@ module.exports = async (req, res) => {
     body: JSON.stringify({ email: clean, source }),
   });
 
+  const sbBody = await r.text().catch(() => '');
+  console.log('[subscribe] Supabase status:', r.status, '| body:', sbBody);
   if (!r.ok && r.status !== 409) {
-    const err = await r.json().catch(() => ({}));
-    return res.status(500).json({ error: err.message || 'Erreur serveur' });
+    return res.status(500).json({ error: sbBody || 'Erreur serveur' });
   }
 
   // Notif iPhone pour les téléchargements gratuits (shop ou merci)

@@ -1868,7 +1868,6 @@ async function activerNotifsPush() {
 
     btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives';
     btn.style.color = 'var(--green)';
-    btn.onclick = null;
     testBtn.style.display = '';
     toast('Notifications activées ! Lance un test ✅', 'success');
   } catch (e) {
@@ -1908,7 +1907,7 @@ async function testNotifPush() {
   if (sub) {
     const btn = document.getElementById('push-btn');
     const testBtn = document.getElementById('push-test-btn');
-    if (btn) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; btn.style.color = 'var(--green)'; btn.onclick = null; }
+    if (btn) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; btn.style.color = 'var(--green)'; }
     if (testBtn) testBtn.style.display = '';
   }
 })();

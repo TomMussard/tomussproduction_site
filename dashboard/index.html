@@ -1271,14 +1271,12 @@ function renderStats() {
 
 async function loadShopStats() {
   try {
-    // Abonnés newsletter (lecture depuis Supabase)
     const rSubs = await sb.from('newsletter_subscribers').select('id, source');
     const allSubs = rSubs.data || [];
     $('stat-shop-subs').textContent = allSubs.length;
     const freeCount = allSubs.filter(s => s.source === 'shop_gratuit' || s.source === 'achat_merci').length;
     $('stat-shop-free').textContent = freeCount;
 
-    // Commandes Stripe via API
     const rOrders = await fetch('/api/shop-stats');
     if (rOrders.ok) {
       const { orders, revenue } = await rOrders.json();
@@ -1287,6 +1285,16 @@ async function loadShopStats() {
     }
   } catch(e) { console.warn('shop stats', e); }
 }
+
+// Temps réel — mise à jour instantanée à chaque nouveau téléchargement
+sb.channel('realtime-downloads')
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'newsletter_subscribers' }, () => {
+    loadShopStats();
+  })
+  .subscribe();
+
+// Fallback : refresh toutes les 30s
+setInterval(loadShopStats, 30000);
 
 function updateBadge() {
   const n = DB.projects.filter(x => x.status === 'en_cours').length;

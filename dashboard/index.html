@@ -1831,11 +1831,18 @@ async function activerNotifsPush() {
   }
   try {
     btn.innerHTML = '<span class="nav-icon">⏳</span> Activation…';
-    const reg = await navigator.serviceWorker.register('/dashboard/sw.js', { scope: '/dashboard/' });
-    // Timeout 5s sur ready (iOS peut bloquer indéfiniment)
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    // Attend activation avec timeout 8s
     await Promise.race([
-      navigator.serviceWorker.ready,
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Service worker timeout')), 5000))
+      new Promise(resolve => {
+        if (reg.active) { resolve(); return; }
+        const sw = reg.installing || reg.waiting;
+        if (!sw) { resolve(); return; }
+        sw.addEventListener('statechange', function fn(e) {
+          if (e.target.state === 'activated') { sw.removeEventListener('statechange', fn); resolve(); }
+        });
+        setTimeout(resolve, 8000);
+      }),
     ]);
 
     const existing = await reg.pushManager.getSubscription();
@@ -1865,7 +1872,7 @@ async function activerNotifsPush() {
 // Vérifier si déjà abonné au chargement
 (async () => {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-  const reg = await navigator.serviceWorker.getRegistration('/dashboard/');
+  const reg = await navigator.serviceWorker.getRegistration('/');
   if (!reg) return;
   const sub = await reg.pushManager.getSubscription();
   if (sub) {

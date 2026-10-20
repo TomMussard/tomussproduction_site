@@ -1831,18 +1831,10 @@ async function activerNotifsPush() {
   }
   try {
     btn.innerHTML = '<span class="nav-icon">⏳</span> Activation…';
-    const reg = await navigator.serviceWorker.register('/sw.js');
-    // Attend activation avec timeout 8s
+    await navigator.serviceWorker.register('/sw.js');
     await Promise.race([
-      new Promise(resolve => {
-        if (reg.active) { resolve(); return; }
-        const sw = reg.installing || reg.waiting;
-        if (!sw) { resolve(); return; }
-        sw.addEventListener('statechange', function fn(e) {
-          if (e.target.state === 'activated') { sw.removeEventListener('statechange', fn); resolve(); }
-        });
-        setTimeout(resolve, 8000);
-      }),
+      navigator.serviceWorker.ready,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('SW timeout — réessaie')), 15000)),
     ]);
 
     const existing = await reg.pushManager.getSubscription();

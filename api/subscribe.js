@@ -3,14 +3,16 @@ const SB_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
 
 async function notify(title, body) {
   const topic = process.env.NTFY_TOPIC;
-  if (!topic) return;
+  console.log('[ntfy] topic:', topic, '| title:', title);
+  if (!topic) { console.log('[ntfy] NTFY_TOPIC manquant'); return; }
   try {
-    await fetch(`https://ntfy.sh/${topic}`, {
+    const r = await fetch(`https://ntfy.sh/${topic}`, {
       method: 'POST',
       headers: { Title: title, Tags: 'arrow_down', Priority: 'default', 'Content-Type': 'text/plain' },
       body,
     });
-  } catch (_) {}
+    console.log('[ntfy] status:', r.status);
+  } catch (e) { console.log('[ntfy] erreur fetch:', e.message); }
 }
 
 module.exports = async (req, res) => {

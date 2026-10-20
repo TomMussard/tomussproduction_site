@@ -1124,25 +1124,28 @@ async function submitEmailGate(e) {
   btn.textContent = 'Inscription…';
   err.style.display = 'none';
 
-  try {
-    await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, source: 'gratuit_shop' }),
-    });
-  } catch (_) {}
-
+  // Déclencher le download immédiatement (avant tout await pour éviter le blocage navigateur)
+  const urlToDownload = _gateDownloadUrl;
   closeEmailGate();
 
-  if (_gateDownloadUrl) {
+  if (urlToDownload) {
     const a = document.createElement('a');
-    a.href = _gateDownloadUrl;
+    a.href = urlToDownload;
     a.download = '';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     showToast('Téléchargement démarré ↓', 'success');
   } else {
     showToast('Lien de téléchargement bientôt disponible.', 'info');
   }
+
+  // Inscription newsletter en arrière-plan (non-bloquant)
+  fetch('/api/subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, source: 'gratuit_shop' }),
+  }).catch(() => {});
 }
 
 /* ══ INIT ════════════════════════════════════════════════════ */

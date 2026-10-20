@@ -113,18 +113,35 @@
       return;
     }
 
-    if (data.url) {
-      dlBtn.href = data.url;
-      dlBtn.style.display = 'inline-flex';
-      // Déclenche le téléchargement automatiquement
-      setTimeout(() => dlBtn.click(), 600);
-    } else {
-      // Produit configuré mais URL pas encore renseignée
+    const dlZone = document.getElementById('dl-zone');
+    const downloads = data.downloads || (data.url ? [{ slug: '', url: data.url }] : []);
+
+    if (downloads.length === 0) {
       dlBtn.textContent = 'Lien de téléchargement bientôt disponible';
       dlBtn.href = '#';
       dlBtn.style.display = 'inline-flex';
       dlBtn.style.background = 'var(--surface)';
       dlBtn.style.color = 'var(--fg-dim)';
+    } else if (downloads.length === 1) {
+      dlBtn.href = downloads[0].url;
+      dlBtn.style.display = 'inline-flex';
+      setTimeout(() => dlBtn.click(), 600);
+    } else {
+      // Plusieurs produits → un bouton par fichier
+      dlBtn.style.display = 'none';
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;';
+      downloads.forEach((d, i) => {
+        const a = document.createElement('a');
+        a.href = d.url;
+        a.download = '';
+        a.className = 'dl-btn';
+        a.style.justifyContent = 'center';
+        a.textContent = `Télécharger fichier ${i + 1} ↓`;
+        wrap.appendChild(a);
+        setTimeout(() => a.click(), 600 + i * 800);
+      });
+      dlZone.appendChild(wrap);
     }
   } catch {
     loading.style.display = 'none';

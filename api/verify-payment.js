@@ -14,9 +14,19 @@ module.exports = async (req, res) => {
       return res.status(403).json({ paid: false });
     }
 
-    // L'URL de téléchargement est stockée dans les metadata au moment du checkout
-    const url = session.metadata?.downloadUrl || null;
-    res.json({ paid: true, product: session.metadata?.productSlug, url });
+    // Les URLs de téléchargement sont stockées dans les metadata au moment du checkout
+    let downloads = [];
+    try {
+      const map = JSON.parse(session.metadata?.downloadUrls || '{}');
+      downloads = Object.entries(map).map(([slug, url]) => ({ slug, url })).filter(x => x.url);
+    } catch {}
+
+    // Compat legacy (un seul produit)
+    if (downloads.length === 0 && session.metadata?.downloadUrl) {
+      downloads = [{ slug: session.metadata.productSlug, url: session.metadata.downloadUrl }];
+    }
+
+    res.json({ paid: true, downloads });
   } catch (err) {
     console.error('[verify-payment]', err.message);
     res.status(500).json({ error: err.message });

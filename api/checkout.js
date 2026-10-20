@@ -32,6 +32,11 @@ module.exports = async (req, res) => {
     const missing = products.findIndex(p => !p);
     if (missing >= 0) return res.status(404).json({ error: `Produit introuvable : ${items[missing].productSlug}` });
 
+    const missingPrice = products.find(p => !p.stripe_price_id);
+    if (missingPrice) {
+      return res.status(400).json({ error: `Stripe Price ID manquant pour "${missingPrice.name}". Configure-le dans le dashboard.` });
+    }
+
     const line_items = products.map(p => ({
       price: p.stripe_price_id,
       quantity: 1,

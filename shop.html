@@ -496,6 +496,52 @@
 .modal-add-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .modal-secure { font-family: var(--f-mono); font-size: 10px; letter-spacing: .15em; color: var(--fg-faint); text-align: center; }
 
+/* ── TOAST ────────────────────────────────────────────────── */
+.shop-toast {
+  position: fixed;
+  bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+  z-index: 9999;
+  padding: 14px 24px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: .12em;
+  border-radius: 4px;
+  max-width: 90vw;
+  text-align: center;
+  opacity: 0;
+  transition: transform .35s var(--ease), opacity .35s;
+  pointer-events: none;
+  white-space: pre-line;
+}
+.shop-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.shop-toast.success { background: #22c55e; color: #000; }
+.shop-toast.error   { background: #ef4444; color: #fff; }
+.shop-toast.info    { background: var(--accent); color: #000; }
+
+/* ── CHECKOUT OVERLAY ─────────────────────────────────────── */
+.checkout-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 9998;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+.checkout-overlay.show { opacity: 1; pointer-events: all; }
+.checkout-overlay-text {
+  font-family: var(--f-display);
+  font-size: clamp(28px, 5vw, 48px);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+.checkout-overlay-sub {
+  font-family: var(--f-mono); font-size: 11px;
+  letter-spacing: .2em; color: var(--fg-dim); text-transform: uppercase;
+}
+
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 1100px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 880px) {
@@ -566,6 +612,15 @@
     <p class="cart-note">🔒 Paiement sécurisé via Stripe</p>
   </div>
 </aside>
+
+<!-- ════ TOAST ════ -->
+<div class="shop-toast" id="shopToast"></div>
+
+<!-- ════ CHECKOUT OVERLAY ════ -->
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-overlay-text">Redirection vers Stripe…</div>
+  <div class="checkout-overlay-sub">🔒 Connexion sécurisée en cours</div>
+</div>
 
 <!-- ════ PRODUCT MODAL ════ -->
 <div class="product-modal-overlay" id="productModalOverlay" onclick="if(event.target===this)closeProductModal()">
@@ -711,32 +766,37 @@ function modalAction(slug) {
   const p = PRODUCTS.find(x => x.slug === slug);
   if (!p) return;
   if (!p.price) {
-    if (p.download_url) { const a = document.createElement('a'); a.href = p.download_url; a.download = ''; a.click(); }
+    if (p.download_url) {
+      const a = document.createElement('a'); a.href = p.download_url; a.download = ''; a.click();
+      closeProductModal();
+      showToast('Téléchargement démarré ↓', 'success');
+    } else {
+      showToast('Lien de téléchargement bientôt disponible.', 'info');
+    }
+    return;
+  }
+  if (!p.stripe_price_id) {
+    showToast('Ce produit n\'est pas encore disponible à l\'achat.\nReviens bientôt !', 'error');
     return;
   }
   addToCart(slug);
   closeProductModal();
   openCart();
+  showToast('Ajouté au panier ✓', 'success');
 }
 
 async function buyNow(slug) {
   const p = PRODUCTS.find(x => x.slug === slug);
   if (!p || !p.price) return;
-  const btn = document.getElementById('modal-cta-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Chargement…'; }
-  try {
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: [{ productSlug: p.slug, productName: p.name }] })
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else throw new Error(data.error);
-  } catch {
-    if (btn) { btn.disabled = false; btn.textContent = 'Ajouter au panier ↗'; }
-    alert('Une erreur est survenue.');
+
+  if (!p.stripe_price_id) {
+    closeProductModal();
+    showToast('Ce produit n\'est pas encore disponible à l\'achat.\nReviens bientôt !', 'error');
+    return;
   }
+
+  closeProductModal();
+  await callCheckout([{ productSlug: p.slug, productName: p.name }]);
 }
 
 /* ══ CART ═══════════════════════════════════════════════════ */
@@ -803,26 +863,69 @@ function popBadge() {
   setTimeout(() => b.classList.remove('pop'), 300);
 }
 
+/* ══ TOAST ══════════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('shopToast');
+  t.textContent = msg;
+  t.className = `shop-toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), type === 'error' ? 5000 : 3000);
+}
+
+function showCheckoutOverlay(show) {
+  document.getElementById('checkoutOverlay').classList.toggle('show', show);
+  document.body.style.overflow = show ? 'hidden' : '';
+}
+
+/* ══ STRIPE CALL ════════════════════════════════════════════ */
+async function callCheckout(items) {
+  showCheckoutOverlay(true);
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+      // Ne pas cacher l'overlay — la page va changer
+    } else {
+      showCheckoutOverlay(false);
+      // Erreur lisible pour l'utilisateur
+      if (data.error && data.error.includes('Stripe Price ID')) {
+        showToast('Ce produit n\'a pas encore de prix Stripe configuré.\nMets à jour le produit dans le dashboard.', 'error');
+      } else {
+        showToast('Erreur paiement : ' + (data.error || 'Réessaie dans un instant.'), 'error');
+      }
+    }
+  } catch (err) {
+    showCheckoutOverlay(false);
+    showToast('Impossible de contacter le serveur.\nVérifie ta connexion et réessaie.', 'error');
+    console.error('[checkout]', err);
+  }
+}
+
 /* ══ CHECKOUT ═══════════════════════════════════════════════ */
 async function checkout() {
   if (cart.length === 0) return;
   const btn = document.getElementById('checkoutBtn');
   btn.disabled = true;
-  btn.textContent = 'Redirection…';
-  try {
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: cart.map(p => ({ productSlug: p.slug, productName: p.name })) })
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else throw new Error(data.error || 'Erreur');
-  } catch (err) {
+  btn.textContent = 'Chargement…';
+
+  // Vérification côté client avant d'appeler l'API
+  const missing = cart.filter(p => !p.stripe_price_id);
+  if (missing.length > 0) {
     btn.disabled = false;
     btn.textContent = 'Passer la commande ↗';
-    alert('Une erreur est survenue : ' + err.message);
+    showToast(`⚠ "${missing[0].name}" n'a pas de prix Stripe configuré.\nModifie le produit dans le dashboard.`, 'error');
+    return;
   }
+
+  await callCheckout(cart.map(p => ({ productSlug: p.slug, productName: p.name })));
+  btn.disabled = false;
+  btn.textContent = 'Passer la commande ↗';
 }
 
 /* ══ QUICK ACTION (card button) ═════════════════════════════ */
@@ -830,11 +933,21 @@ function quickAction(slug) {
   const p = PRODUCTS.find(x => x.slug === slug);
   if (!p) return;
   if (!p.price) {
-    if (p.download_url) { const a = document.createElement('a'); a.href = p.download_url; a.download = ''; a.click(); }
+    if (p.download_url) {
+      const a = document.createElement('a'); a.href = p.download_url; a.download = ''; a.click();
+      showToast('Téléchargement démarré ↓', 'success');
+    } else {
+      showToast('Lien de téléchargement bientôt disponible.', 'info');
+    }
+    return;
+  }
+  if (!p.stripe_price_id) {
+    showToast('Ce produit n\'est pas encore disponible à l\'achat.', 'error');
     return;
   }
   addToCart(slug);
   openCart();
+  showToast('Ajouté au panier ✓', 'success');
 }
 
 /* ══ NOTIFY ═════════════════════════════════════════════════ */

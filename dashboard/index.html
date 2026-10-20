@@ -1280,7 +1280,7 @@ async function loadShopStats() {
     const rOrders = await fetch('/api/shop-stats');
     if (rOrders.ok) {
       const { orders, revenue } = await rOrders.json();
-      $('stat-shop-orders').textContent = orders ?? '0';
+      $('stat-shop-orders').textContent = freeCount + (orders ?? 0);
       $('stat-shop-revenue').textContent = revenue != null ? revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €' : '0,00 €';
     }
   } catch(e) { console.warn('shop stats', e); }

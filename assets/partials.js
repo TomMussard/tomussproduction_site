@@ -6,6 +6,7 @@ window.renderNav = function(active) {
     { key: 'about',    label: 'Studio',      href: 'about.html' },
     { key: 'offers',   label: 'Prestations', href: 'offres.html' },
     { key: 'actus',    label: 'Actus',       href: 'actu.html' },
+    { key: 'shop',     label: 'Shop',        href: 'shop.html' },
   ];
   return `
     <nav class="nav">
@@ -47,6 +48,7 @@ window.renderFooter = function() {
           <li><a href="about.html">STUDIO</a></li>
           <li><a href="offres.html">PRESTATIONS</a></li>
           <li><a href="actu.html">ACTUS</a></li>
+          <li><a href="shop.html">SHOP</a></li>
         </ul>
       </div>
       <div>

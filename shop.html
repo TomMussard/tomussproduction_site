@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shop — Tomuss Production</title>
+<meta name="description" content="Ressources créées par Tomuss : packs SFX, presets, templates vidéo. Téléchargements gratuits et payants." />
+<meta property="og:title" content="Shop — Tomuss Production" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://tomussproduction.fr/shop.html" />
+<link rel="canonical" href="https://tomussproduction.fr/shop.html" />
+<link rel="icon" type="image/png" href="uploads/Plan de travail 5logotest.png" />
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" href="assets/shared.css" />
+<style>
+  .shop-head {
+    padding: 160px var(--gutter) 60px;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+  .shop-head h1 {
+    font-family: var(--f-display);
+    font-size: clamp(72px, 12vw, 200px);
+    line-height: .84;
+    text-transform: uppercase;
+  }
+  .shop-head h1 em { color: var(--accent); font-style: italic; font-weight: 400; }
+  .shop-head p { color: var(--fg-dim); font-size: 17px; line-height: 1.6; max-width: 400px; margin-bottom: 18px; }
+  .shop-head .meta { font-family: var(--f-mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-dim); border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* CATEGORIES */
+  .cat-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cat-bar::-webkit-scrollbar { display: none; }
+  .cat-tab {
+    padding: 20px 32px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .2s, border-color .2s;
+    flex-shrink: 0;
+  }
+  .cat-tab:hover { color: var(--fg); }
+  .cat-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .cat-count { margin-left: 8px; opacity: .5; }
+
+  /* GRID */
+  .shop-grid {
+    padding: 60px var(--gutter) 120px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 28px;
+  }
+
+  /* PRODUCT CARD */
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color .25s, transform .25s var(--ease);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .product-card:hover { border-color: var(--line-strong); transform: translateY(-4px); }
+  .product-cover {
+    aspect-ratio: 16/9;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--ease); }
+  .product-card:hover .product-cover img { transform: scale(1.04); }
+  .product-cover-ph {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--f-display);
+    font-size: clamp(40px, 8vw, 80px);
+    color: rgba(244,239,230,.06);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+  }
+  .product-badge {
+    position: absolute;
+    top: 12px; left: 12px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #000;
+    padding: 4px 10px;
+    font-weight: 700;
+  }
+  .product-free-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    background: #22c55e;
+    color: #000;
+    padding: 4px 10px;
+    font-weight: 700;
+  }
+  .product-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .product-cat {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .product-name {
+    font-family: var(--f-display);
+    font-size: clamp(22px, 2.5vw, 34px);
+    text-transform: uppercase;
+    line-height: .95;
+    color: var(--fg);
+  }
+  .product-desc {
+    font-size: 13px;
+    color: var(--fg-dim);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .product-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+  .product-tag {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+  }
+  .product-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .product-price {
+    font-family: var(--f-display);
+    font-size: 32px;
+    color: var(--fg);
+    line-height: 1;
+  }
+  .product-price.free { color: #22c55e; }
+  .product-price span { font-family: var(--f-mono); font-size: 13px; color: var(--fg-dim); vertical-align: middle; }
+  .product-btn {
+    padding: 10px 20px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .product-btn:hover { background: var(--accent); color: var(--bg); }
+  .product-btn.free-btn { background: #22c55e; color: #000; }
+  .product-btn.free-btn:hover { background: #16a34a; }
+  .product-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* EMPTY STATE */
+  .shop-empty {
+    grid-column: 1 / -1;
+    padding: 100px 40px;
+    text-align: center;
+  }
+  .shop-empty-icon {
+    font-family: var(--f-display);
+    font-size: 80px;
+    color: rgba(244,239,230,.05);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .shop-empty h3 {
+    font-family: var(--f-display);
+    font-size: clamp(32px, 5vw, 64px);
+    text-transform: uppercase;
+    color: var(--fg);
+    margin-bottom: 12px;
+    line-height: .95;
+  }
+  .shop-empty p { color: var(--fg-dim); font-size: 15px; max-width: 380px; margin: 0 auto 32px; line-height: 1.6; }
+
+  /* NOTIFY FORM */
+  .notify-form {
+    display: flex;
+    gap: 0;
+    max-width: 380px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+  }
+  .notify-form input {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: none;
+    color: var(--fg);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    outline: none;
+  }
+  .notify-form input::placeholder { color: var(--fg-faint); }
+  .notify-form button {
+    padding: 12px 18px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s;
+  }
+  .notify-form button:hover { background: #40b8ff; }
+  .notify-success { color: #22c55e; font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; margin-top: 10px; display: none; }
+
+  /* HIDDEN CATEGORY */
+  .product-card.cat-hidden { display: none; }
+
+  @media (max-width: 1100px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 880px) {
+    .shop-head { grid-template-columns: 1fr; gap: 32px; padding-top: 120px; }
+    .shop-grid { grid-template-columns: 1fr; padding: 40px var(--gutter) 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="curtain"></div>
+<div id="nav-mount"></div>
+
+<!-- ════ HEAD ════ -->
+<header class="shop-head">
+  <div>
+    <p class="eyebrow" style="margin-bottom:28px;">Ressources par Tomuss</p>
+    <h1>La<br/><em>Shop.</em></h1>
+  </div>
+  <div>
+    <p>Des packs SFX, presets et templates créés depuis mes années de montage. Tout ce qui m'a aidé à produire 12M+ vues, disponible directement.</p>
+    <p class="meta">Téléchargements instantanés · Paiement sécurisé Stripe</p>
+  </div>
+</header>
+
+<!-- ════ CAT BAR ════ -->
+<nav class="cat-bar" id="catBar">
+  <button class="cat-tab active" data-cat="all">Tout <span class="cat-count" id="cnt-all">0</span></button>
+  <button class="cat-tab" data-cat="sfx">SFX <span class="cat-count" id="cnt-sfx">0</span></button>
+  <button class="cat-tab" data-cat="preset">Presets <span class="cat-count" id="cnt-preset">0</span></button>
+  <button class="cat-tab" data-cat="template">Templates <span class="cat-count" id="cnt-template">0</span></button>
+  <button class="cat-tab" data-cat="free">Gratuits <span class="cat-count" id="cnt-free">0</span></button>
+</nav>
+
+<!-- ════ GRID ════ -->
+<main class="shop-grid" id="shopGrid"></main>
+
+<div id="footer-mount"></div>
+
+<script src="assets/partials.js"></script>
+<script src="assets/shared.js"></script>
+<script>
+window.injectChrome('shop');
+
+/* ══════════════════════════════════════════════
+   PRODUITS — Ajoute tes produits ici
+
+   Format:
+   {
+     id:          'slug-unique',         // identifiant URL
+     name:        'Nom du Pack',
+     category:    'sfx' | 'preset' | 'template',
+     description: 'Description courte.',
+     tags:        ['WAV', 'MP3', '120+ sons'],
+     cover:       'uploads/shop/cover.jpg',  // null si pas d'image
+     price:       29,                    // null = gratuit
+     priceId:     'price_xxx',           // ID Stripe (null si gratuit)
+     fileUrl:     null,                  // URL directe si gratuit
+     badge:       'BEST-SELLER',         // optionnel
+   }
+══════════════════════════════════════════════ */
+const PRODUCTS = [
+  // Exemple (décommente et modifie) :
+  //
+  // {
+  //   id: 'sfx-pack-vol1',
+  //   name: 'SFX Pack Vol.1',
+  //   category: 'sfx',
+  //   description: '120 sons originaux pour le montage YouTube et social media. Whooshes, impacts, transitions.',
+  //   tags: ['WAV', 'MP3', '120+ sons', 'YouTube'],
+  //   cover: 'uploads/shop/sfx-pack-vol1.jpg',
+  //   price: 29,
+  //   priceId: 'price_METTRE_ICI',
+  //   badge: 'BEST-SELLER',
+  // },
+  // {
+  //   id: 'sfx-starter',
+  //   name: 'SFX Starter',
+  //   category: 'sfx',
+  //   description: '20 sons essentiels pour démarrer. 100% gratuit.',
+  //   tags: ['WAV', '20 sons'],
+  //   cover: null,
+  //   price: null,
+  //   priceId: null,
+  //   fileUrl: 'uploads/shop/sfx-starter.zip',
+  //   badge: 'GRATUIT',
+  // },
+];
+
+/* ── Rendering ── */
+function renderProducts(filter = 'all') {
+  const grid = document.getElementById('shopGrid');
+  const visible = filter === 'all' ? PRODUCTS
+    : filter === 'free' ? PRODUCTS.filter(p => !p.price)
+    : PRODUCTS.filter(p => p.category === filter);
+
+  // Counts
+  document.getElementById('cnt-all').textContent    = PRODUCTS.length;
+  document.getElementById('cnt-sfx').textContent     = PRODUCTS.filter(p => p.category === 'sfx').length;
+  document.getElementById('cnt-preset').textContent  = PRODUCTS.filter(p => p.category === 'preset').length;
+  document.getElementById('cnt-template').textContent= PRODUCTS.filter(p => p.category === 'template').length;
+  document.getElementById('cnt-free').textContent    = PRODUCTS.filter(p => !p.price).length;
+
+  if (PRODUCTS.length === 0) {
+    grid.innerHTML = `
+      <div class="shop-empty">
+        <span class="shop-empty-icon">SHOP</span>
+        <h3>Bientôt<br/>disponible.</h3>
+        <p>Les ressources arrivent bientôt. Laisse ton email pour être notifié en premier.</p>
+        <div class="notify-form">
+          <input type="email" id="notifyEmail" placeholder="ton@email.com" />
+          <button onclick="submitNotify()">Notifie-moi ↗</button>
+        </div>
+        <p class="notify-success" id="notifySuccess">✓ Tu seras notifié au lancement !</p>
+      </div>`;
+    return;
+  }
+
+  if (visible.length === 0) {
+    grid.innerHTML = `<div class="shop-empty"><h3>Rien ici<br/>pour l'instant.</h3><p>Cette catégorie est vide.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = visible.map(p => {
+    const isFree = !p.price;
+    const coverHtml = p.cover
+      ? `<img src="${p.cover}" alt="${p.name}" loading="lazy" />`
+      : `<div class="product-cover-ph">${p.name.split(' ')[0]}</div>`;
+
+    return `
+    <article class="product-card" data-id="${p.id}">
+      <div class="product-cover">
+        ${coverHtml}
+        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+        ${isFree ? `<span class="product-free-badge">GRATUIT</span>` : ''}
+      </div>
+      <div class="product-body">
+        <span class="product-cat">${p.category.toUpperCase()}</span>
+        <h2 class="product-name">${p.name}</h2>
+        <p class="product-desc">${p.description}</p>
+        ${p.tags?.length ? `<div class="product-tags">${p.tags.map(t => `<span class="product-tag">${t}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="product-footer">
+        <div class="product-price ${isFree ? 'free' : ''}">${isFree ? 'Gratuit' : `${p.price}<span> €</span>`}</div>
+        <button class="product-btn ${isFree ? 'free-btn' : ''}" onclick="handleBuy('${p.id}')" id="btn-${p.id}">
+          ${isFree ? 'Télécharger ↓' : 'Acheter ↗'}
+        </button>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+/* ── Buy / Download ── */
+async function handleBuy(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const btn = document.getElementById('btn-' + id);
+
+  // Free product → direct download
+  if (!p.price) {
+    if (p.fileUrl) {
+      const a = document.createElement('a');
+      a.href = p.fileUrl;
+      a.download = '';
+      a.click();
+    }
+    return;
+  }
+
+  // Paid product → Stripe checkout
+  btn.disabled = true;
+  btn.textContent = 'Chargement…';
+
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId: p.priceId, productSlug: p.id, productName: p.name })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Erreur');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Acheter ↗';
+    alert('Une erreur est survenue, réessaie.');
+    console.error(err);
+  }
+}
+
+/* ── Notify Me ── */
+function submitNotify() {
+  const email = document.getElementById('notifyEmail')?.value;
+  if (!email) return;
+  document.getElementById('notifySuccess').style.display = 'block';
+  // Tu peux brancher ici une API (Mailchimp, Brevo, etc.)
+}
+
+/* ── Category tabs ── */
+document.getElementById('catBar').addEventListener('click', e => {
+  const btn = e.target.closest('.cat-tab');
+  if (!btn) return;
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(btn.dataset.cat);
+});
+
+renderProducts();
+</script>
+</body>
+</html>

@@ -265,6 +265,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
     </nav>
     <div class="sidebar-bottom">
       <div class="nav-item" id="push-btn" onclick="activerNotifsPush()" style="font-size:12px;color:var(--accent)"><span class="nav-icon">🔔</span> Activer les notifs</div>
+      <div class="nav-item" id="push-test-btn" onclick="testNotifPush()" style="font-size:12px;color:var(--fg-dim);display:none"><span class="nav-icon">🧪</span> Tester notif</div>
       <div class="nav-item" onclick="exportData()" style="font-size:12px"><span class="nav-icon">⬇</span> Exporter données</div>
       <div class="nav-item" onclick="logout()" style="color:var(--fg-faint);font-size:12px"><span class="nav-icon">←</span> Déconnexion</div>
     </div>
@@ -1826,37 +1827,76 @@ function urlBase64ToUint8Array(b) {
 
 async function activerNotifsPush() {
   const btn = document.getElementById('push-btn');
+  const testBtn = document.getElementById('push-test-btn');
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     toast('Notifications non supportées sur ce navigateur', 'error'); return;
   }
   try {
     btn.innerHTML = '<span class="nav-icon">⏳</span> Activation…';
+
     navigator.serviceWorker.register('/sw.js');
-    // Attend que le service worker soit prêt (fiable sur iOS)
     const reg = await navigator.serviceWorker.ready;
 
+    // Supprimer l'ancienne subscription si elle existe
     const existing = await reg.pushManager.getSubscription();
-    if (existing) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; toast('Notifs déjà activées !', 'success'); return; }
+    if (existing) await existing.unsubscribe();
 
     const permission = await Notification.requestPermission();
-    if (permission !== 'granted') { btn.innerHTML = '<span class="nav-icon">🔔</span> Activer les notifs'; toast('Permission refusée', 'error'); return; }
+    if (permission !== 'granted') {
+      btn.innerHTML = '<span class="nav-icon">🔔</span> Activer les notifs';
+      toast('Permission refusée dans les réglages iOS', 'error'); return;
+    }
 
-    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC) });
-    const keys = { p256dh: btoa(String.fromCharCode(...new Uint8Array(sub.getKey('p256dh')))), auth: btoa(String.fromCharCode(...new Uint8Array(sub.getKey('auth')))) };
-
-    await fetch('/api/push-subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoint: sub.endpoint, keys }),
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC)
     });
 
+    const p256dh = btoa(String.fromCharCode(...new Uint8Array(sub.getKey('p256dh'))));
+    const auth   = btoa(String.fromCharCode(...new Uint8Array(sub.getKey('auth'))));
+
+    const r = await fetch('/api/push-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: sub.endpoint, keys: { p256dh, auth } }),
+    });
+
+    if (!r.ok) {
+      const txt = await r.text().catch(() => r.status);
+      throw new Error('push-subscribe HTTP ' + txt);
+    }
+
     btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives';
+    btn.style.color = 'var(--green)';
     btn.onclick = null;
-    toast('Notifications activées ! 🔔', 'success');
+    testBtn.style.display = '';
+    toast('Notifications activées ! Lance un test ✅', 'success');
   } catch (e) {
     btn.innerHTML = '<span class="nav-icon">🔔</span> Activer les notifs';
-    toast('Erreur : ' + e.message, 'error');
+    toast('Erreur activation : ' + e.message, 'error');
+    console.error('[push] activation error', e);
   }
+}
+
+async function testNotifPush() {
+  const testBtn = document.getElementById('push-test-btn');
+  testBtn.innerHTML = '<span class="nav-icon">⏳</span> Envoi…';
+  try {
+    const r = await fetch('/api/send-push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: '🧪 Test Tomuss', body: 'Les notifications fonctionnent !' }),
+    });
+    const d = await r.json();
+    if (d.sent > 0) {
+      toast('Notif envoyée (' + d.sent + ') — regarde ton iPhone ! ✅', 'success');
+    } else {
+      toast('API OK mais 0 destinataire — relance "Activer les notifs"', 'error');
+    }
+  } catch(e) {
+    toast('Erreur test : ' + e.message, 'error');
+  }
+  testBtn.innerHTML = '<span class="nav-icon">🧪</span> Tester notif';
 }
 
 // Vérifier si déjà abonné au chargement
@@ -1867,7 +1907,9 @@ async function activerNotifsPush() {
   const sub = await reg.pushManager.getSubscription();
   if (sub) {
     const btn = document.getElementById('push-btn');
-    if (btn) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; btn.onclick = null; }
+    const testBtn = document.getElementById('push-test-btn');
+    if (btn) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; btn.style.color = 'var(--green)'; btn.onclick = null; }
+    if (testBtn) testBtn.style.display = '';
   }
 })();
 </script>

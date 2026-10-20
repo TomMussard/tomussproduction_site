@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
 
   // Notif iPhone pour les téléchargements gratuits (shop ou merci)
   if (source === 'shop_gratuit' || source === 'achat_merci') {
-    notify('📦 Nouveau téléchargement', `${clean} a téléchargé un fichier (${source})`).catch(() => {});
+    await notify('📦 Nouveau téléchargement', `${clean} a téléchargé un fichier (${source})`);
   }
 
   res.json({ ok: true });

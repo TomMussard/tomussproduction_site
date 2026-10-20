@@ -27,7 +27,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  background: var(--bg) url("../uploads/bg-hero.jpg") center/cover fixed no-repeat;
+  background: var(--bg);
   color: var(--fg);
   font-family: var(--f-body);
   font-weight: 300;

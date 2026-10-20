@@ -912,7 +912,10 @@ async function saveProduct() {
     status.textContent = 'Sauvegarde…';
     let err;
     if (pfEditId) {
-      ({ error: err } = await sb.from('products').update(payload).eq('id', pfEditId));
+      // Ne pas renvoyer le slug si inchangé pour éviter le conflit unique
+      const updatePayload = { ...payload };
+      delete updatePayload.slug;
+      ({ error: err } = await sb.from('products').update(updatePayload).eq('id', pfEditId));
     } else {
       ({ error: err } = await sb.from('products').insert(payload));
     }

@@ -495,7 +495,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
 
         <!-- Dernières ventes -->
         <div class="card" style="margin-top:14px">
-          <div class="card-header"><span class="card-title">Dernières ventes</span><button class="btn btn-ghost btn-sm" onclick="loadShopStats()">↻ Actualiser</button></div>
+          <div class="card-header"><span class="card-title">Dernières ventes</span><button class="btn btn-ghost btn-sm" onclick="loadShopSales()">↻ Actualiser</button></div>
           <div id="shop-sales-list"><div class="card-empty">Chargement…</div></div>
         </div>
 
@@ -714,7 +714,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
 
 <script>
 const SUPABASE_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttc2ltY2x6ZWl0bm5iYmVtZWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzc1NzYsImV4cCI6MjA5NTA1MzU3Nn0.w9uNRA5g37SBgB9wvE-iSIrWcYLIU8jcw27cEwAM7mg';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const DASHBOARD_EMAIL = 'tomussproduction@gmail.com';
 
@@ -796,7 +796,7 @@ function goTo(name, el) {
   $('section-' + name).classList.add('active');
   if (el) el.classList.add('active');
   $('sidebar').classList.remove('open');
-  if (name === 'shop') { loadShopProducts(); loadShopStats(); }
+  if (name === 'shop') { loadShopProducts(); loadShopSales(); loadShopStats(); }
   if (name === 'newsletter') { loadNewsletter(); }
   if (name === 'bandeau') { loadBanner(); }
 }
@@ -1064,7 +1064,7 @@ async function deleteProduct(id, name) {
 }
 
 // ─── SHOP STATS ───────────────────────────────────────────
-async function loadShopStats() {
+async function loadShopSales() {
   try {
     const res  = await fetch('/api/shop-stats');
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -1074,7 +1074,7 @@ async function loadShopStats() {
 
     $('s-today-count').textContent = d.today?.count  ?? '0';
     $('s-today-rev').textContent   = fmt(d.today?.revenue  ?? 0) + ' €';
-    $('s-month-count').textContent = d.month?.count  ?? '0';
+    $('s-month-count') && ($('s-month-count').textContent = d.month?.count  ?? '0');
     $('s-month-rev').textContent   = (d.month?.count ?? 0) + ' vente' + (d.month?.count !== 1 ? 's' : '');
     $('s-revenue').textContent     = fmt(d.month?.revenue ?? 0) + ' €';
 
@@ -1270,19 +1270,19 @@ function renderStats() {
 
 async function loadShopStats() {
   try {
-    // Abonnés newsletter
-    const rSubs = await supabase.from('newsletter_subscribers').select('id, source', { count: 'exact' });
+    // Abonnés newsletter (lecture depuis Supabase)
+    const rSubs = await sb.from('newsletter_subscribers').select('id, source');
     const allSubs = rSubs.data || [];
-    $('stat-shop-subs').textContent = rSubs.count ?? allSubs.length;
-    const freeCount = allSubs.filter(s => s.source === 'shop_gratuit' || s.source === 'achat_merci' || s.source === 'gratuit_shop').length;
+    $('stat-shop-subs').textContent = allSubs.length;
+    const freeCount = allSubs.filter(s => s.source === 'shop_gratuit' || s.source === 'achat_merci').length;
     $('stat-shop-free').textContent = freeCount;
 
     // Commandes Stripe via API
-    const rOrders = await fetch('/api/shop-stats', { headers: { Authorization: 'Bearer ' + DASH_PWD } });
+    const rOrders = await fetch('/api/shop-stats');
     if (rOrders.ok) {
       const { orders, revenue } = await rOrders.json();
-      $('stat-shop-orders').textContent = orders ?? '—';
-      $('stat-shop-revenue').textContent = revenue != null ? revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €' : '—';
+      $('stat-shop-orders').textContent = orders ?? '0';
+      $('stat-shop-revenue').textContent = revenue != null ? revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €' : '0,00 €';
     }
   } catch(e) { console.warn('shop stats', e); }
 }
@@ -1831,9 +1831,9 @@ async function activerNotifsPush() {
   }
   try {
     btn.innerHTML = '<span class="nav-icon">⏳</span> Activation…';
-    const reg = await navigator.serviceWorker.register('/sw.js');
-    // Attend activation (3s max, puis on tente quand même)
-    if (!reg.active) await new Promise(r => setTimeout(r, 3000));
+    navigator.serviceWorker.register('/sw.js');
+    // Attend que le service worker soit prêt (fiable sur iOS)
+    const reg = await navigator.serviceWorker.ready;
 
     const existing = await reg.pushManager.getSubscription();
     if (existing) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; toast('Notifs déjà activées !', 'success'); return; }

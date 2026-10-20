@@ -8,20 +8,23 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { subject, html, preview_text } = req.body || {};
+  const { subject, html, preview_text, test_only } = req.body || {};
   if (!subject || !html) return res.status(400).json({ error: 'Sujet et contenu requis' });
 
-  // Récupère tous les abonnés actifs
-  const sbRes = await fetch(
-    `${SB_URL}/rest/v1/newsletter_subscribers?active=eq.true&select=email`,
-    { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
-  );
-  const subscribers = await sbRes.json();
-  if (!Array.isArray(subscribers) || subscribers.length === 0) {
-    return res.status(400).json({ error: 'Aucun abonné actif' });
+  let emails;
+  if (test_only) {
+    emails = ['tomussproduction@gmail.com'];
+  } else {
+    const sbRes = await fetch(
+      `${SB_URL}/rest/v1/newsletter_subscribers?active=eq.true&select=email`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    const subscribers = await sbRes.json();
+    if (!Array.isArray(subscribers) || subscribers.length === 0) {
+      return res.status(400).json({ error: 'Aucun abonné actif' });
+    }
+    emails = subscribers.map(s => s.email);
   }
-
-  const emails = subscribers.map(s => s.email);
 
   // Envoi via Resend (batch)
   const resendRes = await fetch('https://api.resend.com/emails/batch', {

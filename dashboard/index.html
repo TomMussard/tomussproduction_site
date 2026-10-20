@@ -622,8 +622,9 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
             <label>Contenu du mail (HTML ou texte)</label>
             <textarea id="nl-html" style="min-height:200px;font-family:var(--f-mono);font-size:13px" placeholder="<h1>Nouveau pack disponible !</h1>&#10;<p>Salut,</p>&#10;<p>Mon nouveau pack est enfin disponible sur <a href='https://tomussproduction.fr/shop.html'>le shop</a>.</p>"></textarea>
           </div>
-          <div style="display:flex;gap:10px;align-items:center">
-            <button class="btn btn-primary" onclick="sendNewsletter()" id="nl-send-btn">Envoyer à tous les abonnés</button>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="sendNewsletter(true)" id="nl-test-btn">✉ Envoyer un test (moi uniquement)</button>
+            <button class="btn btn-primary" onclick="sendNewsletter(false)" id="nl-send-btn">Envoyer à tous les abonnés</button>
             <button class="btn btn-ghost" onclick="closeComposeNewsletter()">Annuler</button>
             <span id="nl-send-status" style="font-size:13px;color:var(--fg-dim);margin-left:8px"></span>
           </div>
@@ -1100,13 +1101,15 @@ function closeComposeNewsletter() {
   $('nl-send-status').textContent = '';
 }
 
-async function sendNewsletter() {
+async function sendNewsletter(testOnly = false) {
   const subject = $('nl-subject').value.trim();
   const html    = $('nl-html').value.trim();
   const preview = $('nl-preview').value.trim();
   if (!subject || !html) { showToast('Sujet et contenu requis'); return; }
 
-  const btn = $('nl-send-btn');
+  if (!testOnly && !confirm(`Envoyer à tous les abonnés actifs ? Cette action est irréversible.`)) return;
+
+  const btn = testOnly ? $('nl-test-btn') : $('nl-send-btn');
   const status = $('nl-send-status');
   btn.disabled = true;
   btn.textContent = 'Envoi en cours…';
@@ -1116,19 +1119,19 @@ async function sendNewsletter() {
     const res = await fetch('/api/send-newsletter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject, html, preview_text: preview }),
+      body: JSON.stringify({ subject, html, preview_text: preview, test_only: testOnly }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Erreur serveur');
-    status.textContent = `✓ Envoyé à ${data.count} abonné${data.count !== 1 ? 's' : ''} !`;
+    status.textContent = testOnly ? `✓ Test envoyé à tomussproduction@gmail.com !` : `✓ Envoyé à ${data.count} abonné${data.count !== 1 ? 's' : ''} !`;
     status.style.color = 'var(--green)';
-    showToast(`Newsletter envoyée à ${data.count} abonnés ✓`);
+    showToast(testOnly ? 'Mail de test envoyé ✓' : `Newsletter envoyée à ${data.count} abonnés ✓`);
   } catch (e) {
     status.textContent = '⚠ ' + e.message;
     status.style.color = 'var(--red)';
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Envoyer à tous les abonnés';
+    btn.textContent = testOnly ? '✉ Envoyer un test (moi uniquement)' : 'Envoyer à tous les abonnés';
   }
 }
 

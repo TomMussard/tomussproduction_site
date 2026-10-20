@@ -940,9 +940,13 @@ async function saveProduct() {
 
 async function deleteProduct(id, name) {
   if (!confirm(`Supprimer "${name}" ? Cette action est irréversible.`)) return;
-  const { error } = await sb.from('products').delete().eq('id', id);
-  if (error) { showToast('Erreur : ' + error.message); return; }
-  showToast('Produit supprimé');
+  const { error, status, statusText } = await sb.from('products').delete().eq('id', id);
+  if (error) {
+    console.error('[deleteProduct]', status, statusText, error);
+    showToast('Erreur suppression : ' + (error.message || error.code || JSON.stringify(error)));
+    return;
+  }
+  showToast('Produit supprimé ✓');
   loadShopProducts();
 }
 

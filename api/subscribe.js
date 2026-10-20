@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
       apikey: SB_KEY,
       Authorization: `Bearer ${SB_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: 'resolution=ignore-duplicates,return=representation',
+      Prefer: 'resolution=ignore-duplicates',
     },
     body: JSON.stringify({ email: clean, source }),
   });

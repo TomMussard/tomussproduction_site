@@ -544,9 +544,15 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
               </div>
 
               <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
-                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Lien de téléchargement *</label>
-                <input id="pf-dl" type="text" placeholder="https://drive.google.com/… ou lien direct .zip" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
-                <span style="font-size:11px;color:var(--fg-faint)">Google Drive (lien direct), Dropbox, ou n'importe quel lien vers le fichier</span>
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Fichier du produit (ZIP, RAR, WAV…)</label>
+                <input id="pf-file-input" type="file" accept=".zip,.rar,.7z,.tar,.gz,.mp3,.wav,.aiff" onchange="onProductFileSelected(this)" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:13px;border-radius:var(--r);outline:none"/>
+                <div id="pf-file-status" style="font-size:12px;color:var(--fg-faint);display:none;font-family:var(--f-mono)"></div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Lien de téléchargement * <span id="pf-dl-auto-badge" style="display:none;background:var(--accent-dim);color:var(--accent);font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px;">AUTO</span></label>
+                <input id="pf-dl" type="text" placeholder="Auto-rempli après upload — ou colle un lien Google Drive / Dropbox" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-body);font-size:14px;border-radius:var(--r);outline:none"/>
+                <span style="font-size:11px;color:var(--fg-faint)">Upload un fichier ci-dessus pour remplir automatiquement, ou colle un lien direct</span>
               </div>
 
               <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
@@ -737,6 +743,9 @@ function openProductForm(reset = true) {
     $('pf-active').checked = true;
     $('pf-img-url').value = '';
     $('pf-img-preview').style.display = 'none';
+    $('pf-file-input').value = '';
+    $('pf-file-status').style.display = 'none';
+    $('pf-dl-auto-badge').style.display = 'none';
     $('pf-status').textContent = '';
   }
   $('product-form-wrap').style.display = 'block';
@@ -802,6 +811,24 @@ async function uploadImage(file, slug) {
   return data.publicUrl;
 }
 
+function onProductFileSelected(input) {
+  const file = input.files[0];
+  const statusEl = $('pf-file-status');
+  if (!file) { statusEl.style.display = 'none'; return; }
+  statusEl.textContent = `Fichier sélectionné : ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mo) — sera uploadé à l'enregistrement`;
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--accent)';
+}
+
+async function uploadProductFile(file, slug) {
+  const ext  = file.name.split('.').pop();
+  const path = `${slug}-${Date.now()}.${ext}`;
+  const { error } = await sb.storage.from('product-files').upload(path, file, { upsert: true });
+  if (error) throw new Error('Upload fichier : ' + error.message);
+  const { data } = sb.storage.from('product-files').getPublicUrl(path);
+  return data.publicUrl;
+}
+
 async function saveProduct() {
   const btn = $('pf-save-btn');
   const status = $('pf-status');
@@ -815,6 +842,17 @@ async function saveProduct() {
     const slug  = $('pf-slug').value.trim();
     const price = $('pf-price').value ? parseInt($('pf-price').value) : null;
     if (!name || !slug) throw new Error('Nom et slug obligatoires.');
+
+    // Upload fichier produit (ZIP, etc.) si sélectionné
+    const productFile = $('pf-file-input').files[0];
+    if (productFile) {
+      status.textContent = 'Upload du fichier produit…';
+      const fileUrl = await uploadProductFile(productFile, slug);
+      $('pf-dl').value = fileUrl;
+      $('pf-dl-auto-badge').style.display = 'inline';
+      $('pf-file-status').textContent = 'Fichier uploadé avec succès ✓';
+      $('pf-file-status').style.color = 'var(--green)';
+    }
 
     // Upload image si nouveau fichier sélectionné
     let image_url = $('pf-img-url').value || null;

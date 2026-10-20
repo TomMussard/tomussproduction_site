@@ -299,6 +299,14 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
           <div class="stat-card"><div class="stat-label">Valeur moyenne</div><div class="stat-value" id="stat-avg" style="font-size:26px">—</div><div class="stat-sub">par projet livré</div></div>
         </div>
 
+        <!-- ── SHOP STATS ── -->
+        <div class="stats-grid" style="margin-bottom:20px">
+          <div class="stat-card"><div class="stat-label">Commandes shop</div><div class="stat-value blue" id="stat-shop-orders" style="font-size:32px">—</div><div class="stat-sub">total téléchargements</div></div>
+          <div class="stat-card"><div class="stat-label">CA shop</div><div class="stat-value green" id="stat-shop-revenue" style="font-size:26px">—</div><div class="stat-sub">encaissé via Stripe</div></div>
+          <div class="stat-card"><div class="stat-label">Abonnés newsletter</div><div class="stat-value" id="stat-shop-subs" style="font-size:32px">—</div><div class="stat-sub">emails collectés</div></div>
+          <div class="stat-card"><div class="stat-label">Gratuits</div><div class="stat-value" id="stat-shop-free" style="font-size:32px">—</div><div class="stat-sub">téléchargements gratuits</div></div>
+        </div>
+
         <div id="analytics-section" style="display:none">
           <div class="analytics-section-title">Analytics site — 30 derniers jours</div>
           <div class="analytics-row">
@@ -760,6 +768,7 @@ function renderAll() {
   renderRecentProjects(); renderRecentContacts();
   renderProjects(); renderContacts(); renderNotes();
   updateBadge();
+  loadShopStats();
 }
 
 // ─── UTILS ────────────────────────────────────────────────
@@ -1257,6 +1266,25 @@ function renderStats() {
     ? Math.round(avgSrc.reduce((s, x) => s + Number(x.amount_paid), 0) / avgSrc.length)
     : 0;
   $('stat-avg').textContent = avg > 0 ? avg.toLocaleString('fr-FR') + ' €' : '—';
+}
+
+async function loadShopStats() {
+  try {
+    // Abonnés newsletter
+    const rSubs = await supabase.from('newsletter_subscribers').select('id, source', { count: 'exact' });
+    const allSubs = rSubs.data || [];
+    $('stat-shop-subs').textContent = rSubs.count ?? allSubs.length;
+    const freeCount = allSubs.filter(s => s.source === 'shop_gratuit' || s.source === 'achat_merci' || s.source === 'gratuit_shop').length;
+    $('stat-shop-free').textContent = freeCount;
+
+    // Commandes Stripe via API
+    const rOrders = await fetch('/api/shop-stats', { headers: { Authorization: 'Bearer ' + DASH_PWD } });
+    if (rOrders.ok) {
+      const { orders, revenue } = await rOrders.json();
+      $('stat-shop-orders').textContent = orders ?? '—';
+      $('stat-shop-revenue').textContent = revenue != null ? revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €' : '—';
+    }
+  } catch(e) { console.warn('shop stats', e); }
 }
 
 function updateBadge() {
@@ -1804,7 +1832,11 @@ async function activerNotifsPush() {
   try {
     btn.innerHTML = '<span class="nav-icon">⏳</span> Activation…';
     const reg = await navigator.serviceWorker.register('/dashboard/sw.js', { scope: '/dashboard/' });
-    await navigator.serviceWorker.ready;
+    // Timeout 5s sur ready (iOS peut bloquer indéfiniment)
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Service worker timeout')), 5000))
+    ]);
 
     const existing = await reg.pushManager.getSubscription();
     if (existing) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; toast('Notifs déjà activées !', 'success'); return; }

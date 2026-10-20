@@ -1131,12 +1131,7 @@ async function submitEmailGate(e) {
   closeEmailGate();
 
   if (urlToDownload) {
-    const a = document.createElement('a');
-    a.href = urlToDownload;
-    a.download = '';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    window.open(urlToDownload, '_blank');
     showToast('Téléchargement démarré ↓', 'success');
   } else {
     showToast('Lien de téléchargement bientôt disponible.', 'info');

@@ -180,8 +180,9 @@
       dlBtn.style.color = 'var(--fg-dim)';
     } else if (downloads.length === 1) {
       dlBtn.href = downloads[0].url;
+      dlBtn.target = '_blank';
       dlBtn.style.display = 'inline-flex';
-      setTimeout(() => dlBtn.click(), 600);
+      setTimeout(() => window.open(downloads[0].url, '_blank'), 600);
     } else {
       dlBtn.style.display = 'none';
       downloads.forEach((d, i) => {

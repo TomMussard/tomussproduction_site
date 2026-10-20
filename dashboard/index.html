@@ -1831,11 +1831,9 @@ async function activerNotifsPush() {
   }
   try {
     btn.innerHTML = '<span class="nav-icon">⏳</span> Activation…';
-    await navigator.serviceWorker.register('/sw.js');
-    await Promise.race([
-      navigator.serviceWorker.ready,
-      new Promise((_, reject) => setTimeout(() => reject(new Error('SW timeout — réessaie')), 15000)),
-    ]);
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    // Attend activation (3s max, puis on tente quand même)
+    if (!reg.active) await new Promise(r => setTimeout(r, 3000));
 
     const existing = await reg.pushManager.getSubscription();
     if (existing) { btn.innerHTML = '<span class="nav-icon">✅</span> Notifs actives'; toast('Notifs déjà activées !', 'success'); return; }

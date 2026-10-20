@@ -916,7 +916,13 @@ async function saveProduct() {
     } else {
       ({ error: err } = await sb.from('products').insert(payload));
     }
-    if (err) throw new Error(err.message);
+    if (err) {
+      if (err.message && err.message.includes('products_slug_key')) {
+        $('pf-slug').style.borderColor = 'var(--red)';
+        throw new Error('Ce slug existe déjà — change-le (ex: ' + $('pf-slug').value.trim() + '-2)');
+      }
+      throw new Error(err.message);
+    }
 
     status.textContent = '✓ Sauvegardé !';
     status.style.color = 'var(--green)';

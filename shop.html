@@ -1143,7 +1143,7 @@ async function submitEmailGate(e) {
   fetch('/api/subscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, source: 'gratuit_shop' }),
+    body: JSON.stringify({ email, source: 'shop_gratuit' }),
   }).catch(() => {});
 }
 

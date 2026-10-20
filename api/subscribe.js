@@ -1,6 +1,18 @@
 const SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
 const SB_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
 
+async function notify(title, body) {
+  const topic = process.env.NTFY_TOPIC;
+  if (!topic) return;
+  try {
+    await fetch(`https://ntfy.sh/${topic}`, {
+      method: 'POST',
+      headers: { Title: title, Tags: 'arrow_down', Priority: 'default', 'Content-Type': 'text/plain' },
+      body,
+    });
+  } catch (_) {}
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://tomussproduction.fr');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -11,20 +23,27 @@ module.exports = async (req, res) => {
   const { email, source = 'website' } = req.body || {};
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
 
+  const clean = email.toLowerCase().trim();
+
   const r = await fetch(`${SB_URL}/rest/v1/newsletter_subscribers`, {
     method: 'POST',
     headers: {
       apikey: SB_KEY,
       Authorization: `Bearer ${SB_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: 'resolution=ignore-duplicates',
+      Prefer: 'resolution=ignore-duplicates,return=representation',
     },
-    body: JSON.stringify({ email: email.toLowerCase().trim(), source }),
+    body: JSON.stringify({ email: clean, source }),
   });
 
   if (!r.ok && r.status !== 409) {
     const err = await r.json().catch(() => ({}));
     return res.status(500).json({ error: err.message || 'Erreur serveur' });
+  }
+
+  // Notif iPhone pour les téléchargements gratuits (shop ou merci)
+  if (source === 'shop_gratuit' || source === 'achat_merci') {
+    notify('📦 Nouveau téléchargement', `${clean} a téléchargé un fichier (${source})`).catch(() => {});
   }
 
   res.json({ ok: true });

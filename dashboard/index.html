@@ -258,6 +258,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       <div class="nav-item" onclick="goTo('notes',this)"><span class="nav-icon">◉</span> Notes</div>
       <div class="nav-item" onclick="goTo('shop',this)"><span class="nav-icon">◐</span> Shop<span class="nav-badge" id="badge-shop" style="display:none;background:#22c55e;color:#000">0</span></div>
       <div class="nav-item" onclick="goTo('newsletter',this)"><span class="nav-icon">✉</span> Newsletter<span class="nav-badge" id="badge-newsletter" style="display:none;background:var(--accent);color:#000">0</span></div>
+      <div class="nav-item" onclick="goTo('bandeau',this)"><span class="nav-icon">▬</span> Bandeau</div>
       <div class="nav-section-label" style="margin-top:12px">Liens</div>
       <a class="nav-item" href="https://analytics.google.com" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Google Analytics</a>
       <a class="nav-item" href="https://vercel.com/dashboard" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Vercel Dashboard</a>
@@ -590,6 +591,53 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       </div>
     </section>
 
+    <!-- ── BANDEAU ── -->
+    <section id="section-bandeau" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div><div class="page-title">Bandeau</div><div class="page-subtitle">Visible sur toutes les pages du site</div></div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="card" style="max-width:600px">
+          <div class="card-header"><span class="card-title">Configuration du bandeau</span></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+            <div class="form-group" style="margin:0">
+              <label>Texte du bandeau</label>
+              <input id="bn-text" type="text" placeholder="🎉 Nouveau pack SFX disponible — téléchargement instantané"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="margin:0">
+                <label>Couleur de fond</label>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <input id="bn-bg" type="color" value="#1fa5ff" style="width:48px;height:40px;padding:2px;cursor:pointer;border-radius:var(--r)"/>
+                  <input id="bn-bg-hex" type="text" placeholder="#1fa5ff" style="flex:1"/>
+                </div>
+              </div>
+              <div class="form-group" style="margin:0">
+                <label>Couleur du texte</label>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <input id="bn-color" type="color" value="#000000" style="width:48px;height:40px;padding:2px;cursor:pointer;border-radius:var(--r)"/>
+                  <input id="bn-color-hex" type="text" placeholder="#000000" style="flex:1"/>
+                </div>
+              </div>
+            </div>
+            <div id="bn-preview" style="padding:10px 48px;text-align:center;font-size:13px;font-family:var(--f-mono);letter-spacing:.08em;border-radius:4px;position:relative;background:#1fa5ff;color:#000">Aperçu du bandeau</div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;text-transform:none;font-size:13px;color:var(--fg)">
+                <input id="bn-active" type="checkbox" checked style="accent-color:var(--accent);width:16px;height:16px"/>
+                Bandeau actif (visible sur le site)
+              </label>
+            </div>
+            <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--line)">
+              <button class="btn btn-primary" onclick="saveBanner()">Enregistrer</button>
+              <span id="bn-status" style="font-size:13px;color:var(--fg-dim);align-self:center"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── NEWSLETTER ── -->
     <section id="section-newsletter" class="section">
       <div class="page-header">
@@ -740,6 +788,7 @@ function goTo(name, el) {
   $('sidebar').classList.remove('open');
   if (name === 'shop') { loadShopProducts(); loadShopStats(); }
   if (name === 'newsletter') { loadNewsletter(); }
+  if (name === 'bandeau') { loadBanner(); }
 }
 
 // ─── SHOP PRODUCTS ────────────────────────────────────────
@@ -1043,6 +1092,51 @@ async function loadShopStats() {
   }
 }
 function toggleSidebar() { $('sidebar').classList.toggle('open'); }
+
+// ─── BANDEAU ──────────────────────────────────────────────
+function syncBannerPicker(id, hexId) {
+  const picker = $(id), hex = $(hexId);
+  picker.addEventListener('input', () => { hex.value = picker.value; updateBannerPreview(); });
+  hex.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) { picker.value = hex.value; updateBannerPreview(); } });
+}
+function updateBannerPreview() {
+  const p = $('bn-preview');
+  p.style.background = $('bn-bg').value;
+  p.style.color = $('bn-color').value;
+  p.textContent = $('bn-text').value || 'Aperçu du bandeau';
+}
+
+async function loadBanner() {
+  const { data } = await sb.from('site_settings').select('value').eq('key', 'announcement_banner').limit(1);
+  if (data && data[0]) {
+    const cfg = data[0].value;
+    $('bn-text').value      = cfg.text  || '';
+    $('bn-bg').value        = cfg.bg    || '#1fa5ff';
+    $('bn-bg-hex').value    = cfg.bg    || '#1fa5ff';
+    $('bn-color').value     = cfg.color || '#000000';
+    $('bn-color-hex').value = cfg.color || '#000000';
+    $('bn-active').checked  = cfg.active !== false;
+    updateBannerPreview();
+  }
+  syncBannerPicker('bn-bg', 'bn-bg-hex');
+  syncBannerPicker('bn-color', 'bn-color-hex');
+  $('bn-text').addEventListener('input', updateBannerPreview);
+}
+
+async function saveBanner() {
+  const status = $('bn-status');
+  status.textContent = 'Enregistrement…';
+  const cfg = {
+    text:   $('bn-text').value.trim(),
+    bg:     $('bn-bg').value,
+    color:  $('bn-color').value,
+    active: $('bn-active').checked,
+  };
+  const { error } = await sb.from('site_settings').upsert({ key: 'announcement_banner', value: cfg }, { onConflict: 'key' });
+  if (error) { status.textContent = '⚠ ' + error.message; status.style.color = 'var(--red)'; return; }
+  status.textContent = '✓ Sauvegardé !';
+  status.style.color = 'var(--green)';
+}
 
 // ─── NEWSLETTER ───────────────────────────────────────────
 async function loadNewsletter() {

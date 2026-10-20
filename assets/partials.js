@@ -3,10 +3,10 @@ window.renderNav = function(active) {
   const items = [
     { key: 'home',     label: 'Showreel',    href: '/' },
     { key: 'projects', label: 'Projets',     href: 'projets.html' },
+    { key: 'shop',     label: 'Shop',        href: 'shop.html' },
     { key: 'about',    label: 'Studio',      href: 'about.html' },
     { key: 'offers',   label: 'Prestations', href: 'offres.html' },
     { key: 'actus',    label: 'Actus',       href: 'actu.html' },
-    { key: 'shop',     label: 'Shop',        href: 'shop.html' },
   ];
   return `
     <nav class="nav">
@@ -76,11 +76,34 @@ window.renderFooter = function() {
   `;
 };
 
+const _SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
+const _SB_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
+
+async function injectBanner() {
+  try {
+    const res  = await fetch(`${_SB_URL}/rest/v1/site_settings?key=eq.announcement_banner&select=value&limit=1`, {
+      headers: { apikey: _SB_KEY, Authorization: `Bearer ${_SB_KEY}` }
+    });
+    const rows = await res.json();
+    if (!rows.length) return;
+    const cfg = rows[0].value;
+    if (!cfg || !cfg.text || !cfg.active) return;
+    if (sessionStorage.getItem('banner_dismissed') === cfg.text) return;
+
+    const el = document.createElement('div');
+    el.id = 'site-banner';
+    el.style.cssText = `background:${cfg.bg||'#1fa5ff'};color:${cfg.color||'#000'};text-align:center;padding:10px 48px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;position:relative;z-index:150;`;
+    el.innerHTML = `<span>${cfg.text}</span><button onclick="document.getElementById('site-banner').remove();sessionStorage.setItem('banner_dismissed','${cfg.text.replace(/'/g,"\\'")}');" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:inherit;opacity:.7;line-height:1;">✕</button>`;
+    document.body.insertBefore(el, document.body.firstChild);
+  } catch(_) {}
+}
+
 window.injectChrome = function(active) {
   const navMount    = document.getElementById('nav-mount');
   const footerMount = document.getElementById('footer-mount');
   if (navMount)    navMount.outerHTML    = window.renderNav(active);
   if (footerMount) footerMount.outerHTML = window.renderFooter();
+  injectBanner();
 
   // ── Mobile nav toggle ──────────────────────────────────────────────────────
   const toggle  = document.querySelector('.nav-toggle');

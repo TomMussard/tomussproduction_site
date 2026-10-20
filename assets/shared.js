@@ -1,22 +1,14 @@
 // Shared interactions: curtain, fade-up, nav solidify on scroll
 
-// ── Curseur timecode montage ──────────────────────────────────────────────
+// ── Curseur Premiere Pro ──────────────────────────────────────────────────────
 (function () {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
   const root = document.documentElement;
   const dot  = document.createElement('div');
   const ring = document.createElement('div');
-  const lbl  = document.createElement('span');
-  const tc   = document.createElement('span');
-
   dot.className  = 'cursor-dot';
   ring.className = 'cursor-ring';
-  lbl.className  = 'cursor-lbl';
-  tc.className   = 'cursor-tc';
-
-  ring.appendChild(lbl);
-  ring.appendChild(tc);
   document.body.appendChild(dot);
   document.body.appendChild(ring);
 
@@ -25,42 +17,38 @@
 
   function lerp(a, b, t) { return a + (b - a) * t; }
 
-  function getTimecode() {
-    const d = new Date();
-    const pad = v => String(v).padStart(2, '0');
-    const f   = pad(Math.floor(d.getMilliseconds() / 40)); // 25fps
-    return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}:${f}`;
-  }
-
+  // Suivi exact du point
   document.addEventListener('mousemove', e => {
     mx = e.clientX;
     my = e.clientY;
     root.style.setProperty('--cx', mx + 'px');
     root.style.setProperty('--cy', my + 'px');
 
+    // Hover sur éléments interactifs
     const over = !!e.target.closest(
       'a, button, [role="button"], .ptype, .filter, .collab-cell, ' +
       '.service-row, .offer, .thumb, .approach-row, .yt-card, ' +
       'input, textarea, select, .slide-cta, .pill, .submit, .nav-cta'
     );
     document.body.classList.toggle('cursor-hover', over);
-    lbl.textContent = over ? '▶ play' : '';
   });
 
+  // Anneau avec retard fluide
   (function animate() {
     rx = lerp(rx, mx, 0.1);
     ry = lerp(ry, my, 0.1);
     root.style.setProperty('--rx', rx + 'px');
     root.style.setProperty('--ry', ry + 'px');
-    tc.textContent = getTimecode();
     requestAnimationFrame(animate);
   })();
 
+  // Apparition au premier mouvement
   document.addEventListener('mousemove', () => {
     dot.style.opacity  = '1';
     ring.style.opacity = '1';
   }, { once: true });
 
+  // Disparaît quand la souris quitte la fenêtre
   document.addEventListener('mouseleave', () => {
     dot.style.opacity  = '0';
     ring.style.opacity = '0';
@@ -70,12 +58,13 @@
     ring.style.opacity = '1';
   });
 
+  // Pulse au clic
   document.addEventListener('mousedown', () => {
-    dot.classList.remove('is-clicking');
-    void dot.offsetWidth;
-    dot.classList.add('is-clicking');
+    ring.classList.remove('is-clicking');
+    void ring.offsetWidth;
+    ring.classList.add('is-clicking');
   });
-  dot.addEventListener('animationend', () => dot.classList.remove('is-clicking'));
+  ring.addEventListener('animationend', () => ring.classList.remove('is-clicking'));
 })();
 
 document.addEventListener('DOMContentLoaded', () => {

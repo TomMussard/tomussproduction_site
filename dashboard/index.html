@@ -528,9 +528,9 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
               </div>
 
               <div style="display:flex;flex-direction:column;gap:6px">
-                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Stripe Price ID</label>
-                <input id="pf-stripe" type="text" placeholder="price_xxxxx" style="background:var(--surface2);border:1px solid var(--line-s);color:var(--fg);padding:10px 12px;font-family:var(--f-mono);font-size:12px;border-radius:var(--r);outline:none"/>
-                <span style="font-size:11px;color:var(--fg-faint)">Stripe Dashboard → Products → ton produit → Price ID</span>
+                <label style="font-size:12px;color:var(--fg-dim);font-family:var(--f-mono)">Stripe Price ID <span style="color:var(--green);font-size:10px">(auto-généré)</span></label>
+                <input id="pf-stripe" type="text" readonly placeholder="Généré automatiquement" style="background:var(--surface2);border:1px solid var(--line);color:var(--fg-faint);padding:10px 12px;font-family:var(--f-mono);font-size:12px;border-radius:var(--r);outline:none;cursor:default"/>
+                <span style="font-size:11px;color:var(--fg-faint)">Créé automatiquement dans Stripe lors de l'enregistrement</span>
               </div>
 
               <div style="display:flex;flex-direction:column;gap:6px">
@@ -567,6 +567,8 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
               </div>
 
               <input id="pf-id" type="hidden"/>
+              <input id="pf-stripe-product-id" type="hidden"/>
+              <input id="pf-old-price" type="hidden"/>
 
               <div style="grid-column:1/-1;display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--line);margin-top:4px">
                 <button class="btn btn-primary" onclick="saveProduct()" id="pf-save-btn" style="min-width:160px">Enregistrer</button>
@@ -726,6 +728,8 @@ function openProductForm(reset = true) {
     $('pf-cat').value = 'sfx';
     $('pf-price').value = '';
     $('pf-stripe').value = '';
+    $('pf-stripe-product-id').value = '';
+    $('pf-old-price').value = '';
     $('pf-badge').value = '';
     $('pf-tags').value = '';
     $('pf-dl').value = '';
@@ -753,6 +757,8 @@ function editProduct(p) {
   $('pf-cat').value = p.category || 'sfx';
   $('pf-price').value = p.price || '';
   $('pf-stripe').value = p.stripe_price_id || '';
+  $('pf-stripe-product-id').value = p.stripe_product_id || '';
+  $('pf-old-price').value = p.price || '';
   $('pf-badge').value = p.badge || '';
   $('pf-tags').value = (p.tags || []).join(', ');
   $('pf-dl').value = p.download_url || '';
@@ -802,12 +808,15 @@ async function saveProduct() {
   btn.disabled = true;
   btn.textContent = 'Enregistrement…';
   status.textContent = '';
+  status.style.color = 'var(--fg-dim)';
 
   try {
-    const name = $('pf-name').value.trim();
-    const slug = $('pf-slug').value.trim();
+    const name  = $('pf-name').value.trim();
+    const slug  = $('pf-slug').value.trim();
+    const price = $('pf-price').value ? parseInt($('pf-price').value) : null;
     if (!name || !slug) throw new Error('Nom et slug obligatoires.');
 
+    // Upload image si nouveau fichier sélectionné
     let image_url = $('pf-img-url').value || null;
     const imgFile = $('pf-img-file').files[0];
     if (imgFile) {
@@ -815,18 +824,50 @@ async function saveProduct() {
       image_url = await uploadImage(imgFile, slug);
     }
 
+    // Récupère les infos Stripe existantes (si modification)
+    let stripe_price_id   = $('pf-stripe').value.trim() || null;
+    let stripe_product_id = $('pf-stripe-product-id').value.trim() || null;
+    const old_price       = $('pf-old-price').value ? parseInt($('pf-old-price').value) : null;
+
+    // Crée ou met à jour automatiquement sur Stripe si produit payant
+    if (price && price > 0) {
+      status.textContent = 'Synchronisation avec Stripe…';
+      const { data: session } = await sb.auth.getSession();
+      const token = session?.session?.access_token;
+
+      const stripeRes = await fetch('/api/create-stripe-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          name,
+          description: $('pf-desc').value.trim() || null,
+          price,
+          image_url,
+          existing_stripe_product_id: stripe_product_id,
+          existing_stripe_price_id:   stripe_price_id,
+          old_price,
+        })
+      });
+      const stripeData = await stripeRes.json();
+      if (!stripeRes.ok) throw new Error('Stripe : ' + stripeData.error);
+      stripe_price_id   = stripeData.stripe_price_id;
+      stripe_product_id = stripeData.stripe_product_id;
+      status.textContent = '✓ Stripe synchronisé';
+    }
+
     const payload = {
       name,
       slug,
-      description:     $('pf-desc').value.trim() || null,
-      category:        $('pf-cat').value,
-      price:           $('pf-price').value ? parseInt($('pf-price').value) : null,
-      stripe_price_id: $('pf-stripe').value.trim() || null,
-      badge:           $('pf-badge').value.trim() || null,
-      tags:            $('pf-tags').value ? $('pf-tags').value.split(',').map(t=>t.trim()).filter(Boolean) : null,
-      download_url:    $('pf-dl').value.trim() || null,
-      sort_order:      parseInt($('pf-order').value) || 0,
-      active:          $('pf-active').checked,
+      description:      $('pf-desc').value.trim() || null,
+      category:         $('pf-cat').value,
+      price,
+      stripe_price_id,
+      stripe_product_id,
+      badge:            $('pf-badge').value.trim() || null,
+      tags:             $('pf-tags').value ? $('pf-tags').value.split(',').map(t=>t.trim()).filter(Boolean) : null,
+      download_url:     $('pf-dl').value.trim() || null,
+      sort_order:       parseInt($('pf-order').value) || 0,
+      active:           $('pf-active').checked,
       image_url,
     };
 
@@ -843,7 +884,7 @@ async function saveProduct() {
     status.style.color = 'var(--green)';
     closeProductForm();
     loadShopProducts();
-    showToast(pfEditId ? 'Produit modifié' : 'Produit créé ✓');
+    showToast(pfEditId ? 'Produit modifié ✓' : 'Produit créé ✓ — visible sur le shop');
   } catch (e) {
     status.textContent = '⚠ ' + e.message;
     status.style.color = 'var(--red)';

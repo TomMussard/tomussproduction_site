@@ -1,5 +1,42 @@
+const webpush = require('web-push');
+
 const SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttc2ltY2x6ZWl0bm5iYmVtZWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzc1NzYsImV4cCI6MjA5NTA1MzU3Nn0.w9uNRA5g37SBgB9wvE-iSIrWcYLIU8jcw27cEwAM7mg';
+
+async function sendPushNotifications(title, body) {
+  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    console.log('[push] VAPID keys manquantes'); return;
+  }
+  webpush.setVapidDetails(
+    'mailto:tomussproduction@gmail.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+
+  const r = await fetch(`${SB_URL}/rest/v1/push_subscriptions?select=endpoint,keys`, {
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+  });
+  const subs = await r.json().catch(() => []);
+  console.log('[push] subscriptions trouvées:', Array.isArray(subs) ? subs.length : 0);
+  if (!Array.isArray(subs) || subs.length === 0) return;
+
+  const payload = JSON.stringify({ title, body, icon: '/uploads/Plan de travail 5logotest.png' });
+
+  await Promise.allSettled(subs.map(async (sub) => {
+    try {
+      await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, payload);
+      console.log('[push] envoyé à', sub.endpoint.slice(0, 60));
+    } catch (e) {
+      console.log('[push] erreur envoi:', e.statusCode, e.message);
+      if (e.statusCode === 410) {
+        await fetch(`${SB_URL}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(sub.endpoint)}`, {
+          method: 'DELETE',
+          headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
+        });
+      }
+    }
+  }));
+}
 
 async function notifyEmail(productLabel, email) {
   const key = process.env.RESEND_API_KEY;
@@ -53,20 +90,11 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: sbBody || 'Erreur serveur' });
   }
 
-  // Notif push + email à chaque téléchargement
   if (source === 'shop_gratuit' || source === 'achat_merci') {
     const productLabel = product_name || 'Pack gratuit';
-    const priceLabel = '0,00 €';
     await Promise.all([
+      sendPushNotifications('📦 Nouveau téléchargement', `${clean} — ${productLabel} — 0,00 €`),
       notifyEmail(productLabel, clean),
-      fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://tomussproduction.fr'}/api/send-push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: '📦 Nouveau téléchargement',
-          body: `${clean} — ${productLabel} — ${priceLabel}`,
-        }),
-      }).catch(e => console.log('[send-push] erreur:', e.message)),
     ]);
   }
 

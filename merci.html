@@ -181,19 +181,19 @@
     } else if (downloads.length === 1) {
       dlBtn.href = downloads[0].url;
       dlBtn.target = '_blank';
+      dlBtn.rel = 'noopener';
       dlBtn.style.display = 'inline-flex';
-      setTimeout(() => window.open(downloads[0].url, '_blank'), 600);
     } else {
       dlBtn.style.display = 'none';
       downloads.forEach((d, i) => {
         const a = document.createElement('a');
         a.href = d.url;
-        a.download = '';
+        a.target = '_blank';
+        a.rel = 'noopener';
         a.className = 'dl-btn';
         a.style.cssText = 'width:100%;justify-content:center;';
         a.textContent = `Télécharger fichier ${i + 1} ↓`;
         dlButtons.appendChild(a);
-        setTimeout(() => a.click(), 600 + i * 800);
       });
     }
   }

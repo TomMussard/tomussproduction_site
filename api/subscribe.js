@@ -44,17 +44,10 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: sbBody || 'Erreur serveur' });
   }
 
-  // Notif push style Shopify pour les téléchargements
+  // Notif iPhone via ntfy
   if (source === 'shop_gratuit' || source === 'achat_merci') {
     const productLabel = product_name || 'Pack gratuit';
-    fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://tomussproduction.fr'}/api/send-push`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: '📦 Nouveau téléchargement',
-        body: `${clean}\n${productLabel} — 0,00 €`,
-      }),
-    }).catch(() => {});
+    await notify('📦 Nouveau téléchargement', `${clean} — ${productLabel} — 0,00 €`);
   }
 
   res.json({ ok: true });

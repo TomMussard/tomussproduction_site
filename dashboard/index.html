@@ -982,7 +982,7 @@ async function saveProduct() {
     status.style.color = 'var(--green)';
     closeProductForm();
     loadShopProducts();
-    showToast(pfEditId ? 'Produit modifié ✓' : 'Produit créé ✓ — visible sur le shop');
+    toast(pfEditId ? 'Produit modifié ✓' : 'Produit créé ✓ — visible sur le shop', 'success');
   } catch (e) {
     status.textContent = '⚠ ' + e.message;
     status.style.color = 'var(--red)';
@@ -997,10 +997,10 @@ async function deleteProduct(id, name) {
   const { error, status, statusText } = await sb.from('products').delete().eq('id', id);
   if (error) {
     console.error('[deleteProduct]', status, statusText, error);
-    showToast('Erreur suppression : ' + (error.message || error.code || JSON.stringify(error)));
+    toast('Erreur suppression : ' + (error.message || error.code || JSON.stringify(error)), 'error');
     return;
   }
-  showToast('Produit supprimé ✓');
+  toast('Produit supprimé ✓', 'success');
   loadShopProducts();
 }
 
@@ -1047,7 +1047,7 @@ function toggleSidebar() { $('sidebar').classList.toggle('open'); }
 // ─── NEWSLETTER ───────────────────────────────────────────
 async function loadNewsletter() {
   const { data, error } = await sb.from('newsletter_subscribers').select('*').order('created_at', { ascending: false });
-  if (error) { showToast('Erreur newsletter : ' + error.message); return; }
+  if (error) { toast('Erreur newsletter : ' + error.message, 'error'); return; }
 
   const total = data.length;
   const achat = data.filter(s => s.source === 'achat').length;
@@ -1084,8 +1084,8 @@ async function loadNewsletter() {
 async function deleteSubscriber(id, email) {
   if (!confirm(`Désabonner ${email} ?`)) return;
   const { error } = await sb.from('newsletter_subscribers').delete().eq('id', id);
-  if (error) { showToast('Erreur : ' + error.message); return; }
-  showToast('Abonné supprimé ✓');
+  if (error) { toast('Erreur : ' + error.message, 'error'); return; }
+  toast('Abonné supprimé ✓', 'success');
   loadNewsletter();
 }
 
@@ -1105,7 +1105,7 @@ async function sendNewsletter(testOnly = false) {
   const subject = $('nl-subject').value.trim();
   const html    = $('nl-html').value.trim();
   const preview = $('nl-preview').value.trim();
-  if (!subject || !html) { showToast('Sujet et contenu requis'); return; }
+  if (!subject || !html) { toast('Sujet et contenu requis', 'error'); return; }
 
   if (!testOnly && !confirm(`Envoyer à tous les abonnés actifs ? Cette action est irréversible.`)) return;
 
@@ -1125,7 +1125,7 @@ async function sendNewsletter(testOnly = false) {
     if (!res.ok) throw new Error(data.error || 'Erreur serveur');
     status.textContent = testOnly ? `✓ Test envoyé à tomussproduction@gmail.com !` : `✓ Envoyé à ${data.count} abonné${data.count !== 1 ? 's' : ''} !`;
     status.style.color = 'var(--green)';
-    showToast(testOnly ? 'Mail de test envoyé ✓' : `Newsletter envoyée à ${data.count} abonnés ✓`);
+    toast(testOnly ? 'Mail de test envoyé ✓' : `Newsletter envoyée à ${data.count} abonnés ✓`, 'success');
   } catch (e) {
     status.textContent = '⚠ ' + e.message;
     status.style.color = 'var(--red)';

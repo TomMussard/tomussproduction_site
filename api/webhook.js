@@ -1,5 +1,26 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+const SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
+const SB_KEY = 'sb_publishable_paPXvSuTkEudJ9kjL39C4w_F3Jnt75G';
+
+async function addToNewsletter(email) {
+  if (!email) return;
+  try {
+    await fetch(`${SB_URL}/rest/v1/newsletter_subscribers`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY,
+        Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=ignore-duplicates',
+      },
+      body: JSON.stringify({ email: email.toLowerCase().trim(), source: 'achat' }),
+    });
+  } catch (e) {
+    console.warn('[webhook] addToNewsletter:', e.message);
+  }
+}
+
 // Collecte le corps brut (nécessaire pour la vérification Stripe)
 function getRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -50,11 +71,10 @@ module.exports = async (req, res) => {
     const amount  = ((s.amount_total || 0) / 100).toFixed(2);
     const email   = s.customer_details?.email || 'client anonyme';
 
-    await notify(
-      `💰 Vente — ${amount} €`,
-      `${product}\n${email}`,
-      'money_with_wings,tada'
-    );
+    await Promise.all([
+      notify(`💰 Vente — ${amount} €`, `${product}\n${email}`, 'money_with_wings,tada'),
+      addToNewsletter(s.customer_details?.email),
+    ]);
   }
 
   if (event.type === 'checkout.session.expired') {

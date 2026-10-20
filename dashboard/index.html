@@ -257,6 +257,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       <div class="nav-item" onclick="goTo('contacts',this)"><span class="nav-icon">◎</span> Contacts</div>
       <div class="nav-item" onclick="goTo('notes',this)"><span class="nav-icon">◉</span> Notes</div>
       <div class="nav-item" onclick="goTo('shop',this)"><span class="nav-icon">◐</span> Shop<span class="nav-badge" id="badge-shop" style="display:none;background:#22c55e;color:#000">0</span></div>
+      <div class="nav-item" onclick="goTo('newsletter',this)"><span class="nav-icon">✉</span> Newsletter<span class="nav-badge" id="badge-newsletter" style="display:none;background:var(--accent);color:#000">0</span></div>
       <div class="nav-section-label" style="margin-top:12px">Liens</div>
       <a class="nav-item" href="https://analytics.google.com" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Google Analytics</a>
       <a class="nav-item" href="https://vercel.com/dashboard" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Vercel Dashboard</a>
@@ -589,6 +590,54 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       </div>
     </section>
 
+    <!-- ── NEWSLETTER ── -->
+    <section id="section-newsletter" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div><div class="page-title">Newsletter</div><div class="page-subtitle" id="nl-subtitle">Chargement…</div></div>
+          <button class="btn btn-primary" onclick="openComposeNewsletter()">✉ Rédiger un mail</button>
+        </div>
+      </div>
+      <div class="page-body">
+
+        <!-- Stats abonnés -->
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
+          <div class="stat-card"><div class="stat-label">Total abonnés</div><div class="stat-value blue" id="nl-total">—</div></div>
+          <div class="stat-card"><div class="stat-label">Depuis achats</div><div class="stat-value" id="nl-achat">—</div></div>
+          <div class="stat-card"><div class="stat-label">Depuis page merci</div><div class="stat-value" id="nl-merci">—</div></div>
+        </div>
+
+        <!-- Compose email -->
+        <div id="nl-compose" style="display:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-bottom:24px">
+          <div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-dim);font-family:var(--f-mono);margin-bottom:16px">Rédiger un email</div>
+          <div class="form-group">
+            <label>Objet de l'email</label>
+            <input id="nl-subject" type="text" placeholder="Nouveau pack SFX disponible 🎉"/>
+          </div>
+          <div class="form-group">
+            <label>Aperçu (texte visible dans la boîte mail avant d'ouvrir)</label>
+            <input id="nl-preview" type="text" placeholder="Découvre mon nouveau pack de sons…"/>
+          </div>
+          <div class="form-group">
+            <label>Contenu du mail (HTML ou texte)</label>
+            <textarea id="nl-html" style="min-height:200px;font-family:var(--f-mono);font-size:13px" placeholder="<h1>Nouveau pack disponible !</h1>&#10;<p>Salut,</p>&#10;<p>Mon nouveau pack est enfin disponible sur <a href='https://tomussproduction.fr/shop.html'>le shop</a>.</p>"></textarea>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <button class="btn btn-primary" onclick="sendNewsletter()" id="nl-send-btn">Envoyer à tous les abonnés</button>
+            <button class="btn btn-ghost" onclick="closeComposeNewsletter()">Annuler</button>
+            <span id="nl-send-status" style="font-size:13px;color:var(--fg-dim);margin-left:8px"></span>
+          </div>
+        </div>
+
+        <!-- Liste abonnés -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">Liste des abonnés</span><button class="btn btn-ghost btn-sm" onclick="loadNewsletter()">↻ Actualiser</button></div>
+          <div id="nl-list"><div class="card-empty">Chargement…</div></div>
+        </div>
+
+      </div>
+    </section>
+
   </div>
 </div>
 
@@ -689,6 +738,7 @@ function goTo(name, el) {
   if (el) el.classList.add('active');
   $('sidebar').classList.remove('open');
   if (name === 'shop') { loadShopProducts(); loadShopStats(); }
+  if (name === 'newsletter') { loadNewsletter(); }
 }
 
 // ─── SHOP PRODUCTS ────────────────────────────────────────
@@ -992,6 +1042,95 @@ async function loadShopStats() {
   }
 }
 function toggleSidebar() { $('sidebar').classList.toggle('open'); }
+
+// ─── NEWSLETTER ───────────────────────────────────────────
+async function loadNewsletter() {
+  const { data, error } = await sb.from('newsletter_subscribers').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Erreur newsletter : ' + error.message); return; }
+
+  const total = data.length;
+  const achat = data.filter(s => s.source === 'achat').length;
+  const merci = data.filter(s => s.source === 'achat_merci' || s.source === 'website').length;
+
+  $('nl-total').textContent = total;
+  $('nl-achat').textContent = achat;
+  $('nl-merci').textContent = merci;
+  $('nl-subtitle').textContent = `${total} abonné${total !== 1 ? 's' : ''}`;
+  $('badge-newsletter').textContent = total;
+  $('badge-newsletter').style.display = total > 0 ? 'inline-flex' : 'none';
+
+  if (data.length === 0) {
+    $('nl-list').innerHTML = '<div class="card-empty">Aucun abonné pour l\'instant.</div>';
+    return;
+  }
+
+  $('nl-list').innerHTML = `<table style="width:100%;border-collapse:collapse">
+    <thead><tr style="border-bottom:1px solid var(--line)">
+      <th style="padding:10px 18px;text-align:left;font-size:11px;color:var(--fg-faint);font-family:var(--f-mono);font-weight:400;text-transform:uppercase;letter-spacing:.06em">Email</th>
+      <th style="padding:10px 18px;text-align:left;font-size:11px;color:var(--fg-faint);font-family:var(--f-mono);font-weight:400;text-transform:uppercase;letter-spacing:.06em">Source</th>
+      <th style="padding:10px 18px;text-align:left;font-size:11px;color:var(--fg-faint);font-family:var(--f-mono);font-weight:400;text-transform:uppercase;letter-spacing:.06em">Date</th>
+      <th style="padding:10px 18px;text-align:right;font-size:11px;color:var(--fg-faint);font-family:var(--f-mono);font-weight:400;text-transform:uppercase;letter-spacing:.06em"></th>
+    </tr></thead>
+    <tbody>${data.map(s => `<tr style="border-bottom:1px solid var(--line)">
+      <td style="padding:10px 18px;font-size:13px">${s.email}</td>
+      <td style="padding:10px 18px"><span style="font-size:11px;padding:2px 8px;border-radius:20px;font-family:var(--f-mono);background:${s.source==='achat'?'rgba(34,197,94,.15)':'rgba(31,165,255,.15)'};color:${s.source==='achat'?'var(--green)':'var(--accent)'}">${s.source === 'achat' ? '💰 Achat' : '✉ Inscription'}</span></td>
+      <td style="padding:10px 18px;font-size:12px;color:var(--fg-faint);font-family:var(--f-mono)">${new Date(s.created_at).toLocaleDateString('fr-FR')}</td>
+      <td style="padding:10px 18px;text-align:right"><button class="btn btn-danger btn-sm" onclick="deleteSubscriber('${s.id}','${s.email.replace(/'/g,"\\'")}')">✕</button></td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+async function deleteSubscriber(id, email) {
+  if (!confirm(`Désabonner ${email} ?`)) return;
+  const { error } = await sb.from('newsletter_subscribers').delete().eq('id', id);
+  if (error) { showToast('Erreur : ' + error.message); return; }
+  showToast('Abonné supprimé ✓');
+  loadNewsletter();
+}
+
+function openComposeNewsletter() {
+  $('nl-compose').style.display = 'block';
+  $('nl-compose').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function closeComposeNewsletter() {
+  $('nl-compose').style.display = 'none';
+  $('nl-subject').value = '';
+  $('nl-preview').value = '';
+  $('nl-html').value = '';
+  $('nl-send-status').textContent = '';
+}
+
+async function sendNewsletter() {
+  const subject = $('nl-subject').value.trim();
+  const html    = $('nl-html').value.trim();
+  const preview = $('nl-preview').value.trim();
+  if (!subject || !html) { showToast('Sujet et contenu requis'); return; }
+
+  const btn = $('nl-send-btn');
+  const status = $('nl-send-status');
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+  status.textContent = '';
+
+  try {
+    const res = await fetch('/api/send-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject, html, preview_text: preview }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+    status.textContent = `✓ Envoyé à ${data.count} abonné${data.count !== 1 ? 's' : ''} !`;
+    status.style.color = 'var(--green)';
+    showToast(`Newsletter envoyée à ${data.count} abonnés ✓`);
+  } catch (e) {
+    status.textContent = '⚠ ' + e.message;
+    status.style.color = 'var(--red)';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Envoyer à tous les abonnés';
+  }
+}
 
 // ─── STATS ────────────────────────────────────────────────
 function renderStats() {

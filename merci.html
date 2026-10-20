@@ -81,7 +81,22 @@
 
   <div id="dl-zone">
     <p class="merci-loading" id="loading">Vérification du paiement…</p>
-    <a class="dl-btn" id="dl-btn" href="#" download style="display:none;">Télécharger mon pack ↓</a>
+
+    <!-- Gate email avant download -->
+    <form id="email-gate" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:400px;">
+      <p style="color:var(--fg-dim);font-size:14px;line-height:1.6;text-align:center;">Entre ton email pour recevoir ton lien de téléchargement et rester informé des prochaines sorties.</p>
+      <input id="gate-email" type="email" placeholder="ton@email.com" required style="width:100%;padding:14px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:var(--fg);font-size:15px;outline:none;text-align:center;font-family:inherit;"/>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:var(--fg-dim);line-height:1.5;text-align:left;">
+        <input id="gate-consent" type="checkbox" required style="margin-top:2px;accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;"/>
+        J'accepte de recevoir les actualités, nouveaux packs et offres exclusives de Tomuss Production. Désinscription possible à tout moment.
+      </label>
+      <button type="submit" class="dl-btn" style="width:100%;justify-content:center;" id="gate-btn">Accéder à mon téléchargement →</button>
+      <p id="gate-error" style="color:#ef4444;font-size:12px;display:none;"></p>
+    </form>
+
+    <div id="dl-buttons" style="display:none;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:400px;">
+      <a class="dl-btn" id="dl-btn" href="#" download style="display:none;width:100%;justify-content:center;">Télécharger mon pack ↓</a>
+    </div>
     <p class="merci-error" id="error-msg">Une erreur est survenue. Contacte-moi à tomussproduction@gmail.com en précisant ton numéro de commande.</p>
   </div>
   <a class="merci-back" href="shop.html">← Retour au shop</a>
@@ -93,14 +108,17 @@
   const sid     = params.get('sid');
   const p       = params.get('p');
   const loading = document.getElementById('loading');
-  const dlBtn   = document.getElementById('dl-btn');
   const errMsg  = document.getElementById('error-msg');
+  const emailGate = document.getElementById('email-gate');
+  const dlButtons = document.getElementById('dl-buttons');
 
   if (!sid) {
     loading.style.display = 'none';
     errMsg.style.display = 'block';
     return;
   }
+
+  let downloads = [];
 
   try {
     const res  = await fetch(`/api/verify-payment?sid=${encodeURIComponent(sid)}&p=${encodeURIComponent(p || '')}`);
@@ -113,8 +131,46 @@
       return;
     }
 
-    const dlZone = document.getElementById('dl-zone');
-    const downloads = data.downloads || (data.url ? [{ slug: '', url: data.url }] : []);
+    downloads = data.downloads || (data.url ? [{ slug: '', url: data.url }] : []);
+
+    // Affiche la gate email avant le download
+    emailGate.style.display = 'flex';
+
+  } catch {
+    loading.style.display = 'none';
+    errMsg.style.display = 'block';
+  }
+
+  // Soumission de la gate email
+  document.getElementById('email-gate').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('gate-email').value.trim();
+    const consent = document.getElementById('gate-consent').checked;
+    const gateErr = document.getElementById('gate-error');
+    const gateBtn = document.getElementById('gate-btn');
+
+    if (!email || !consent) return;
+
+    gateBtn.disabled = true;
+    gateBtn.textContent = 'Inscription…';
+    gateErr.style.display = 'none';
+
+    try {
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'achat_merci' }),
+      });
+    } catch (_) {}
+
+    // Cache la gate, affiche les boutons de téléchargement
+    emailGate.style.display = 'none';
+    dlButtons.style.display = 'flex';
+    revealDownloads(downloads);
+  });
+
+  function revealDownloads(downloads) {
+    const dlBtn = document.getElementById('dl-btn');
 
     if (downloads.length === 0) {
       dlBtn.textContent = 'Lien de téléchargement bientôt disponible';
@@ -127,25 +183,18 @@
       dlBtn.style.display = 'inline-flex';
       setTimeout(() => dlBtn.click(), 600);
     } else {
-      // Plusieurs produits → un bouton par fichier
       dlBtn.style.display = 'none';
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;';
       downloads.forEach((d, i) => {
         const a = document.createElement('a');
         a.href = d.url;
         a.download = '';
         a.className = 'dl-btn';
-        a.style.justifyContent = 'center';
+        a.style.cssText = 'width:100%;justify-content:center;';
         a.textContent = `Télécharger fichier ${i + 1} ↓`;
-        wrap.appendChild(a);
+        dlButtons.appendChild(a);
         setTimeout(() => a.click(), 600 + i * 800);
       });
-      dlZone.appendChild(wrap);
     }
-  } catch {
-    loading.style.display = 'none';
-    errMsg.style.display = 'block';
   }
 })();
 </script>

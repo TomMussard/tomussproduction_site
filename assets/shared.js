@@ -57,39 +57,4 @@ document.addEventListener('DOMContentLoaded', () => {
       updateProgress();
     }
   }
-})();
-
-/* ── COUNT-UP ── */
-(function() {
-  const ease = t => t < .5 ? 2*t*t : -1+(4-2*t)*t;
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      io.unobserve(e.target);
-      const el = e.target;
-      const target = parseInt(el.dataset.target, 10);
-      const suffix = el.dataset.suffix || '';
-      const dur = 1400;
-      const start = performance.now();
-      const step = now => {
-        const p = Math.min((now - start) / dur, 1);
-        el.textContent = Math.round(ease(p) * target) + suffix;
-        if (p < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    });
-  }, { threshold: 0.4 });
-  document.querySelectorAll('.count-val').forEach(el => io.observe(el));
-})();
-
-/* ── WIPE-IN ── */
-(function() {
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      io.unobserve(e.target);
-      e.target.classList.add('in');
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.wipe-in').forEach(el => io.observe(el));
-})();
+});

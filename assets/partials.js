@@ -5,7 +5,6 @@ window.renderNav = function(active) {
     { key: 'projects', label: 'Projets',     href: 'projets.html' },
     { key: 'shop',     label: 'Shop',        href: 'shop.html' },
     { key: 'about',    label: 'Studio',      href: 'about.html' },
-    { key: 'offers',   label: 'Prestations', href: 'offres.html' },
     { key: 'actus',    label: 'Actus',       href: 'actu.html' },
   ];
   return `
@@ -17,7 +16,7 @@ window.renderNav = function(active) {
         ${items.map(i => `<li><a href="${i.href}" class="${i.key===active?'active':''}">${i.label}</a></li>`).join('')}
       </ul>
       <div class="nav-end">
-        <a class="nav-cta" href="offres.html#contact">Contact ↗</a>
+        <a class="nav-cta" href="mailto:tomussproduction@gmail.com">Contact ↗</a>
         <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
           <span></span><span></span>
         </button>
@@ -27,7 +26,7 @@ window.renderNav = function(active) {
       <ul>
         ${items.map(i => `<li><a href="${i.href}" class="${i.key===active?'active':''}">${i.label}</a></li>`).join('')}
       </ul>
-      <a class="nav-drawer-cta" href="offres.html#contact">Contact ↗</a>
+      <a class="nav-drawer-cta" href="mailto:tomussproduction@gmail.com">Contact ↗</a>
     </div>
     <div class="nav-overlay"></div>
   `;
@@ -46,7 +45,6 @@ window.renderFooter = function() {
           <li><a href="/">SHOWREEL</a></li>
           <li><a href="projets.html">PROJETS</a></li>
           <li><a href="about.html">STUDIO</a></li>
-          <li><a href="offres.html">PRESTATIONS</a></li>
           <li><a href="actu.html">ACTUS</a></li>
           <li><a href="shop.html">SHOP</a></li>
         </ul>

@@ -245,6 +245,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-radius: 50%;
   }
 
+  /* ── EDITORIAL STATEMENT ── */
+  .statement-band {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 36px var(--gutter);
+  }
+  .statement-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: clamp(20px, 4vw, 56px);
+  }
+  .statement-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line-strong);
+    min-width: 24px;
+  }
+  .statement-text {
+    font-family: var(--f-body);
+    font-size: clamp(14px, 1.4vw, 19px);
+    color: var(--fg-dim);
+    text-align: center;
+    flex-shrink: 0;
+    max-width: 640px;
+  }
+  @media (max-width: 660px) {
+    .statement-text { font-size: 14px; }
+    .statement-rule { display: none; }
+  }
+
   /* ── HORIZONTAL GALLERY ── */
   .gallery-wrap {
     position: relative;
@@ -558,16 +590,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* ── STATS STRIP ── */
   .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
   }
   .stat {
+    flex: 1;
     padding: 60px var(--gutter);
     border-right: 1px solid var(--line);
     position: relative;
   }
+  .stat:first-child { flex: 0 0 38%; }
   .stat:last-child { border-right: none; }
   .stat .num {
     font-family: var(--f-display);
@@ -576,10 +609,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     color: var(--fg);
   }
   .stat .num em { color: var(--accent); font-style: italic; font-weight: 400; }
-  .stat:first-child { background: var(--accent); }
-  .stat:first-child .num { color: #0F0F0F; }
-  .stat:first-child .num em { color: #0F0F0F; }
-  .stat:first-child .lbl { color: rgba(15,15,15,.65); }
   .stat .lbl {
     font-family: var(--f-mono);
     font-size: 11px;
@@ -587,6 +616,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     letter-spacing: .22em;
     color: var(--fg-dim);
     margin-top: 14px;
+  }
+  .stat-sub {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--fg-faint);
+    letter-spacing: .08em;
+    margin-top: 6px;
   }
 
   /* ── SERVICES TEASER ── */
@@ -679,9 +715,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @media (max-width: 880px) {
     /* Grilles */
     .gallery-intro, .services-teaser { grid-template-columns: 1fr; gap: 40px; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .stat:nth-child(2) { border-right: none; }
-    .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    .stats { flex-wrap: wrap; }
+    .stat { flex: 1 1 calc(50% - 1px); }
+    .stat:first-child { flex: 0 0 100%; border-right: none; border-bottom: 1px solid var(--line); }
+    .stat:nth-child(2) { border-bottom: 1px solid var(--line); }
+    .stat:nth-child(3) { border-right: none; }
     .service-row { grid-template-columns: 32px 1fr; }
     .service-row .desc, .service-row .arr { display: none; }
 
@@ -852,38 +890,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </section>
 
-<!-- ════════════════════ TICKER ════════════════════ -->
-<div class="ticker">
-  <div class="ticker-track">
-    <span>
-      Montage vidéo
-      <span class="dot"></span>
-      Cadrage
-      <span class="dot"></span>
-      Tournage YouTube
-      <span class="dot"></span>
-      Captation événementielle
-      <span class="dot"></span>
-      Color grading
-      <span class="dot"></span>
-      Sound design
-      <span class="dot"></span>
-    </span>
-    <span>
-      Montage vidéo
-      <span class="dot"></span>
-      Cadrage
-      <span class="dot"></span>
-      Tournage YouTube
-      <span class="dot"></span>
-      Captation événementielle
-      <span class="dot"></span>
-      Color grading
-      <span class="dot"></span>
-      Sound design
-      <span class="dot"></span>
-    </span>
-  
+<!-- ════════════════════ STATEMENT ════════════════════ -->
+<div class="statement-band">
+  <div class="statement-inner">
+    <span class="statement-rule" aria-hidden="true"></span>
+    <p class="statement-text">Les vidéos que je monte passent l'algo.&nbsp;&nbsp;12&nbsp;millions de preuves depuis 2022.</p>
+    <span class="statement-rule" aria-hidden="true"></span>
   </div>
 </div>
 
@@ -891,7 +903,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section id="gallery" class="gallery-wrap" data-screen-label="01 Landing — Galerie horizontale">
   <div class="gallery-intro">
     <div class="fade-up">
-      <p class="eyebrow" style="margin-bottom: 32px;">mes réalisations</p>
       <h2>Tout ce que<br/> je PRODUIS</h2>
     </div>
     <div class="fade-up">
@@ -1132,7 +1143,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section class="stats" data-screen-label="01 Landing — Chiffres">
   <div class="stat fade-up">
     <div class="num">12<em>M+</em></div>
-    <div class="lbl">Vues cumulées</div>
+    <div class="lbl">Vues YouTube</div>
+    <div class="stat-sub">vérifiables dans les analytics</div>
   </div>
   <div class="stat fade-up">
     <div class="num">100<em>+</em></div>
@@ -1153,8 +1165,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section class="testimonials" data-screen-label="01 Landing — Témoignages">
   <div class="testimonials-head fade-up">
     <div>
-      <p class="eyebrow" style="margin-bottom: 20px;">Ils en parlent mieux que moi</p>
-      <h2>Ce qu'ils<br/><em>disent.</em></h2>
+      <h2>Ils en parlent<br/><em>mieux que moi.</em></h2>
     </div>
   </div>
   <div class="testimonials-grid">
@@ -1188,7 +1199,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ════════════════════ SERVICES TEASER ════════════════════ -->
 <section class="services-teaser" data-screen-label="01 Landing — Services">
   <div class="fade-up">
-    <p class="eyebrow" style="margin-bottom: 28px;">Expertise &amp; prestations</p>
     <h2>TOURNAGE<br/>CADRAGE<br/><em>MONTAGE</em></h2>
     <p style="color:var(--fg-dim);font-size:15px;line-height:1.6;margin-top:28px;max-width:380px;">Je viens sur le terrain ou je reçois tes rushes. Dans les deux cas tu récupères une vidéo qui tient la route, livrée dans les temps.</p>
   </div>
@@ -1219,7 +1229,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ════════════════════ BIG CTA ════════════════════ -->
 <section class="big-cta" data-screen-label="01 Landing — CTA">
-  <p class="pre fade-up">Disponible pour vos projets</p>
   <h2 class="fade-up">On en parle <em>?</em></h2>
   <a href="mailto:tomussproduction@gmail.com" class="pill fade-up">Contactez-moi ↗</a>
 </section>

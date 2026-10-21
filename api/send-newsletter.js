@@ -26,28 +26,32 @@ module.exports = async (req, res) => {
     emails = subscribers.map(s => s.email);
   }
 
-  // Envoi via Resend (batch)
-  const resendRes = await fetch('https://api.resend.com/emails/batch', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(
-      emails.map(to => ({
-        from: 'Tomuss Production <newsletter@tomussproduction.fr>',
-        to,
-        subject,
-        html: html + `<br/><br/><hr style="border:none;border-top:1px solid #333;margin:32px 0"/><p style="color:#666;font-size:12px;text-align:center">Tu reçois ce mail car tu es abonné à la newsletter Tomuss Production.<br/><a href="https://tomussproduction.fr/unsubscribe?email=${encodeURIComponent(to)}" style="color:#666">Se désabonner</a></p>`,
-        ...(preview_text ? { headers: { 'X-Preview-Text': preview_text } } : {}),
-      }))
-    ),
+  // Envoi via Resend (batch, max 100 par requête)
+  const makeEmail = to => ({
+    from: 'Tomuss Production <newsletter@tomussproduction.fr>',
+    to,
+    subject,
+    html: html + `<br/><br/><hr style="border:none;border-top:1px solid #333;margin:32px 0"/><p style="color:#666;font-size:12px;text-align:center">Tu reçois ce mail car tu es abonné à la newsletter Tomuss Production.<br/><a href="https://tomussproduction.fr/unsubscribe?email=${encodeURIComponent(to)}" style="color:#666">Se désabonner</a></p>`,
+    ...(preview_text ? { headers: { 'X-Preview-Text': preview_text } } : {}),
   });
 
-  if (!resendRes.ok) {
-    const err = await resendRes.json().catch(() => ({}));
-    console.error('[send-newsletter] Resend error:', err);
-    return res.status(500).json({ error: err.message || 'Erreur Resend' });
+  const chunks = [];
+  for (let i = 0; i < emails.length; i += 100) chunks.push(emails.slice(i, i + 100));
+
+  for (const chunk of chunks) {
+    const r = await fetch('https://api.resend.com/emails/batch', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(chunk.map(makeEmail)),
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      console.error('[send-newsletter] Resend error:', err);
+      return res.status(500).json({ error: err.message || 'Erreur Resend' });
+    }
   }
 
   res.json({ ok: true, count: emails.length });

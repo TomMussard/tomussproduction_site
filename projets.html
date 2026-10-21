@@ -654,7 +654,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   fetchPlaylistProjects()
-    .then(renderProjects)
+    .then(apiProjects => {
+      const apiUrls = new Set(apiProjects.map(p => p.url));
+      const missing = fallbackProjects.filter(p => !apiUrls.has(p.url)).map((p, i) => ({
+        ...p, idx: apiProjects.length + i + 1, feat: false
+      }));
+      renderProjects([...apiProjects, ...missing]);
+    })
     .catch(() => renderProjects(fallbackProjects));
 
   /* ══════════════════════════════════════════════

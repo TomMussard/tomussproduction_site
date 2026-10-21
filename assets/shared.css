@@ -8,7 +8,7 @@
   --surface: #1A1A1A;
   --fg: #F4EFE6;
   --fg-dim: rgba(244, 239, 230, 0.62);
-  --fg-faint: rgba(244, 239, 230, 0.34);
+  --fg-faint: rgba(244, 239, 230, 0.55);
   --line: rgba(244, 239, 230, 0.10);
   --line-strong: rgba(244, 239, 230, 0.22);
   --accent: #1fa5ff;
@@ -476,6 +476,7 @@ img { display: block; max-width: 100%; }
   gap: 48px;
   animation: ticker 38s linear infinite;
 }
+.ticker-track:hover { animation-play-state: paused; }
 .ticker-track span { display: inline-flex; align-items: center; gap: 48px; }
 .ticker-track .dot {
   display: inline-block;
@@ -615,6 +616,15 @@ body.nav-open { overflow: hidden; }
   .footer { grid-template-columns: 1fr; }
   .footer .big { font-size: 36px; }
   .footer h4 { margin-top: 8px; }
+}
+
+/* Respect du paramètre système "réduire les animations" */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* curseur classique */

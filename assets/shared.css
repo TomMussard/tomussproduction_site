@@ -161,10 +161,7 @@ img { display: block; max-width: 100%; }
 }
 .nav > * { pointer-events: auto; }
 .nav.solid {
-  background: rgba(15,15,15,.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(180deg, rgba(15,15,15,.85), rgba(15,15,15,0));
   mix-blend-mode: normal;
 }
 

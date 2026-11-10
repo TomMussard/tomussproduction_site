@@ -566,7 +566,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       ? `<img src="${p.thumbnail}" alt="${p.title}" loading="lazy" />`
       : `<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:11px;color:var(--fg-faint);">[ ${String(p.idx).padStart(2,'0')} ]</span>`;
     return `
-      <a class="thumb ${p.feat ? 'featured' : ''} fade-up" href="${p.url}" target="_blank" rel="noopener">
+      <a class="thumb ${p.feat ? 'featured' : ''}" href="${p.url}" target="_blank" rel="noopener">
         <div class="thumb-frame">
           ${thumb}
           <span class="duration">${p.dur || '—'}</span>
@@ -676,7 +676,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           : `<img src="${s.thumbnail || ''}" alt="${s.title}" loading="lazy">`;
         const href = s.youtube ? `https://youtu.be/${s.youtube}` : (s.url || '#');
         return `
-          <a class="short-card fade-up" href="${href}" target="_blank" rel="noopener">
+          <a class="short-card" href="${href}" target="_blank" rel="noopener">
             <div class="short-frame">
               ${media}
               <div class="play"><span>▶</span></div>
@@ -758,7 +758,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const el = document.getElementById(containerId);
     if (!el) return;
     el.innerHTML = photos.map((p, i) => `
-      <div class="photo-item fade-up" data-idx="${i}" role="button" tabindex="0" aria-label="${p.caption}">
+      <div class="photo-item" data-idx="${i}" role="button" tabindex="0" aria-label="${p.caption}">
         <img src="${p.src}" alt="${p.caption}" loading="lazy" />
         <div class="photo-overlay"><span>Voir ⤢</span></div>
       </div>`).join('');

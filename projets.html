@@ -218,7 +218,7 @@
   .event-pill .pill-count { font-family: var(--f-mono); font-size: 11px; color: var(--fg-faint); margin-left: 8px; }
   .event-pill.soon-event { opacity: .4; cursor: default; }
   /* Grille masonry */
-  .photo-masonry { columns: 3; column-gap: 10px; padding: 24px var(--gutter) 48px; }
+  .photo-masonry { columns: 6; column-gap: 8px; padding: 24px var(--gutter) 48px; }
   .photo-item { break-inside: avoid; margin-bottom: 10px; position: relative; overflow: hidden; border-radius: 3px; cursor: pointer; }
   .photo-item img { width: 100%; display: block; transition: transform .5s var(--ease); }
   .photo-item:hover img { transform: scale(1.03); }
@@ -255,14 +255,14 @@
     .tab-btn:last-child { border-bottom: none; }
     .video-grid { grid-template-columns: 1fr 1fr; gap: 28px 14px; }
     .shorts-grid { grid-template-columns: repeat(2, 1fr); }
-    .photo-masonry { columns: 2; }
+    .photo-masonry { columns: 4; }
   }
   @media (max-width: 640px) {
     .video-grid { grid-template-columns: 1fr; }
     .vcard.featured { grid-column: span 1; }
     .vcard.featured .vcard-frame { aspect-ratio: 16/9; }
     .shorts-grid { grid-template-columns: repeat(2, 1fr); }
-    .photo-masonry { columns: 2; }
+    .photo-masonry { columns: 3; }
     .event-pill { padding: 14px 18px; font-size: 14px; }
   }
 </style>
@@ -309,9 +309,8 @@
 <div class="tab-section" id="tab-shorts">
   <div class="filters" id="filters-shorts">
     <button class="pill-filter active" data-filter="all">Tous</button>
-    <button class="pill-filter" data-filter="Reel">Reels</button>
-    <button class="pill-filter" data-filter="Short">Shorts</button>
-    <button class="pill-filter" data-filter="Clip">Clips</button>
+    <button class="pill-filter" data-filter="Divertissement">Divertissement</button>
+    <button class="pill-filter" data-filter="Evenementiel">Événementiel</button>
   </div>
   <div id="shorts-body"></div>
 </div>

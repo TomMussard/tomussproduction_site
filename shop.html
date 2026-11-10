@@ -17,7 +17,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   gtag('js', new Date());
   gtag('config', 'G-MW53QBWFB2');
 </script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Shop — Tomuss Production</title>
 <meta name="description" content="Ressources créées par Tomuss : packs SFX, presets, templates vidéo. Téléchargements gratuits et payants." />
 <meta property="og:title" content="Shop — Tomuss Production" />
@@ -374,7 +374,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   line-height: 1;
 }
 .shop-section-title em { color: var(--accent); font-style: normal; }
-.shop-section-sub { color: var(--fg-dim); font-size: 14px; margin-top: 8px; font-family: var(--f-mono); letter-spacing: .1em; }
+.shop-section-sub { color: var(--fg-dim); font-size: 14px; margin-top: 8px; font-family: var(--f-mono); letter-spacing: .02em; }
 
 /* ── EMPTY STATE ──────────────────────────────────────────── */
 .shop-empty {
@@ -810,8 +810,8 @@ async function loadProducts() {
     .eq('active', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
-  if (error) { console.error(error); return; }
-  PRODUCTS = data || [];
+  if (error) { console.error(error); PRODUCTS = []; }
+  else { PRODUCTS = data || []; }
   renderProducts(activeFilter);
 }
 

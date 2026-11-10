@@ -246,7 +246,7 @@ img { display: block; max-width: 100%; }
 /* Footer */
 .footer {
   border-top: 1px solid var(--line);
-  padding: 80px var(--gutter) 36px;
+  padding: 80px var(--gutter) max(36px, env(safe-area-inset-bottom));
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr 1fr;
   gap: 48px;

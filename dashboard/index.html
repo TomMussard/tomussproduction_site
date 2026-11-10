@@ -259,6 +259,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       <div class="nav-item" onclick="goTo('shop',this)"><span class="nav-icon">◐</span> Shop<span class="nav-badge" id="badge-shop" style="display:none;background:#22c55e;color:#000">0</span></div>
       <div class="nav-item" onclick="goTo('newsletter',this)"><span class="nav-icon">✉</span> Newsletter<span class="nav-badge" id="badge-newsletter" style="display:none;background:var(--accent);color:#000">0</span></div>
       <div class="nav-item" onclick="goTo('bandeau',this)"><span class="nav-icon">▬</span> Bandeau</div>
+      <div class="nav-item" onclick="goTo('contenu',this)"><span class="nav-icon">▤</span> Contenu site</div>
       <div class="nav-section-label" style="margin-top:12px">Liens</div>
       <a class="nav-item" href="https://analytics.google.com" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Google Analytics</a>
       <a class="nav-item" href="https://vercel.com/dashboard" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Vercel Dashboard</a>
@@ -692,6 +693,74 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
         <div class="card">
           <div class="card-header"><span class="card-title">Liste des abonnés</span><button class="btn btn-ghost btn-sm" onclick="loadNewsletter()">↻ Actualiser</button></div>
           <div id="nl-list"><div class="card-empty">Chargement…</div></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── CONTENU SITE ── -->
+    <section id="section-contenu" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div><div class="page-title">Contenu site</div><div class="page-subtitle">Vidéos, shorts &amp; photos affichés sur projets.html</div></div>
+        </div>
+      </div>
+      <div class="page-body">
+
+        <!-- sous-tabs -->
+        <div style="display:flex;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:24px;width:fit-content">
+          <button class="btn" id="ctab-videos"  onclick="setCTab('videos')"  style="border-radius:0;background:var(--accent);color:#000;">Montage</button>
+          <button class="btn btn-ghost" id="ctab-shorts"  onclick="setCTab('shorts')"  style="border-radius:0;border-left:1px solid var(--line);">Shorts &amp; Reels</button>
+          <button class="btn btn-ghost" id="ctab-events"  onclick="setCTab('events')"  style="border-radius:0;border-left:1px solid var(--line);">Photos</button>
+        </div>
+
+        <!-- ── VIDÉOS MONTAGE ── -->
+        <div id="ctab-section-videos">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <span style="font-size:12px;color:var(--fg-faint)">Les vidéos affichées sur la page Projets</span>
+            <button class="btn btn-primary btn-sm" onclick="openVideoModal(null)">+ Ajouter une vidéo</button>
+          </div>
+          <div class="card">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>Miniature</th><th>Titre</th><th>Créateur</th><th>Tag</th><th>Vues</th><th>Ordre</th><th>Actif</th><th></th></tr></thead>
+                <tbody id="videos-tbody"></tbody>
+              </table>
+            </div>
+            <div id="videos-empty" class="empty-state" style="display:none">
+              <div class="empty-icon">▶</div><div class="empty-text">Aucune vidéo</div>
+              <button class="btn btn-primary" onclick="openVideoModal(null)">+ Ajouter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SHORTS & REELS ── -->
+        <div id="ctab-section-shorts" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <span style="font-size:12px;color:var(--fg-faint)">Shorts &amp; Reels affichés sur la page Projets</span>
+            <button class="btn btn-primary btn-sm" onclick="openShortModal(null)">+ Ajouter un clip</button>
+          </div>
+          <div class="card">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>Titre</th><th>Créateur</th><th>Tag</th><th>Source</th><th>Ordre</th><th>Actif</th><th></th></tr></thead>
+                <tbody id="shorts-tbody"></tbody>
+              </table>
+            </div>
+            <div id="shorts-empty" class="empty-state" style="display:none">
+              <div class="empty-icon">◻</div><div class="empty-text">Aucun clip pour l'instant</div>
+              <button class="btn btn-primary" onclick="openShortModal(null)">+ Ajouter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PHOTOS / ÉVÉNEMENTS ── -->
+        <div id="ctab-section-events" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <span style="font-size:12px;color:var(--fg-faint)">Événements photo — cliquer pour gérer les photos</span>
+            <button class="btn btn-primary btn-sm" onclick="openEventModal(null)">+ Nouvel événement</button>
+          </div>
+          <div id="events-list"></div>
         </div>
 
       </div>
@@ -1919,6 +1988,279 @@ async function testNotifPush() {
     if (testBtn) testBtn.style.display = '';
   }
 })();
+
+// ═══════════════════════════════════════════
+// CONTENU SITE — Vidéos, Shorts, Photos
+// ═══════════════════════════════════════════
+
+// Sous-onglets
+function setCTab(name) {
+  ['videos','shorts','events'].forEach(t => {
+    const btn = $('ctab-' + t);
+    const sec = $('ctab-section-' + t);
+    const active = t === name;
+    btn.style.background = active ? 'var(--accent)' : '';
+    btn.style.color = active ? '#000' : '';
+    btn.className = active ? 'btn' : 'btn btn-ghost';
+    btn.style.borderRadius = '0';
+    btn.style.borderLeft = t !== 'videos' ? '1px solid var(--line)' : '';
+    sec.style.display = active ? '' : 'none';
+  });
+  if (name === 'videos' && !window._videosLoaded) { window._videosLoaded = true; loadSiteVideos(); }
+  if (name === 'shorts' && !window._shortsLoaded) { window._shortsLoaded = true; loadSiteShorts(); }
+  if (name === 'events' && !window._eventsLoaded) { window._eventsLoaded = true; loadSiteEvents(); }
+}
+
+// Charge les vidéos au premier clic sur "Contenu site"
+const _origGoTo = goTo;
+function goTo(name, el) {
+  _origGoTo(name, el);
+  if (name === 'contenu' && !window._videosLoaded) { window._videosLoaded = true; loadSiteVideos(); }
+}
+
+/* ─── VIDÉOS MONTAGE ─── */
+let siteVideos = [];
+async function loadSiteVideos() {
+  const { data } = await sb.from('site_videos').select('*').order('sort_order');
+  siteVideos = data || [];
+  renderSiteVideos();
+}
+function renderSiteVideos() {
+  const tbody = $('videos-tbody'), empty = $('videos-empty');
+  if (!siteVideos.length) { tbody.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  tbody.innerHTML = siteVideos.map(v => `
+    <tr>
+      <td><img src="${esc(v.thumbnail||`https://img.youtube.com/vi/${v.youtube_id}/mqdefault.jpg`)}" style="width:80px;height:45px;object-fit:cover;border-radius:3px;"></td>
+      <td style="max-width:260px;font-size:13px">${esc(v.title)}</td>
+      <td style="font-size:12px;color:var(--fg-dim)">${esc(v.creator)}</td>
+      <td><span style="font-family:var(--f-mono);font-size:11px;background:var(--surface2);padding:2px 8px;border-radius:4px">${esc(v.tag)}</span></td>
+      <td style="font-size:12px;color:var(--fg-dim)">${esc(v.views_label)}</td>
+      <td><input type="number" value="${v.sort_order}" min="1" style="width:52px;padding:4px 6px;font-size:12px" onchange="updateVideoOrder(${v.id},this.value)"></td>
+      <td><input type="checkbox" ${v.active?'checked':''} onchange="toggleVideo(${v.id},this.checked)"></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick='openVideoModal(${JSON.stringify(v)})'>✎</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteVideo(${v.id})">✕</button>
+      </td>
+    </tr>`).join('');
+}
+async function toggleVideo(id, val) {
+  await sb.from('site_videos').update({active:val}).eq('id',id);
+  toast(val ? 'Vidéo activée' : 'Vidéo masquée', 'success');
+}
+async function updateVideoOrder(id, val) {
+  await sb.from('site_videos').update({sort_order:+val}).eq('id',id);
+  toast('Ordre mis à jour', 'success');
+}
+async function deleteVideo(id) {
+  if (!confirm('Supprimer cette vidéo ?')) return;
+  await sb.from('site_videos').delete().eq('id',id);
+  siteVideos = siteVideos.filter(v => v.id !== id);
+  renderSiteVideos(); toast('Vidéo supprimée','success');
+}
+function openVideoModal(v) {
+  const isNew = !v;
+  openModal(`
+    <h3 style="font-family:var(--f-display);font-size:24px;margin-bottom:20px">${isNew?'Nouvelle vidéo':'Modifier la vidéo'}</h3>
+    <div class="form-group"><label>YouTube ID (ex: r0zvh0ElcnM)</label><input id="vm-ytid" value="${esc(v?.youtube_id||'')}" placeholder="ID de la vidéo YouTube"></div>
+    <div class="form-group"><label>Titre</label><input id="vm-title" value="${esc(v?.title||'')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Créateur</label><input id="vm-creator" value="${esc(v?.creator||'')}"></div>
+      <div class="form-group"><label>Vues (ex: 552 k)</label><input id="vm-views" value="${esc(v?.views_label||'')}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date (ex: Mai 2026)</label><input id="vm-date" value="${esc(v?.date_label||'')}"></div>
+      <div class="form-group"><label>Tag / Catégorie</label>
+        <select id="vm-tag">
+          ${['Storytelling','Multicam','Facecam','Interview','Montage'].map(t=>`<option${v?.tag===t?' selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>URL miniature (laisser vide = YouTube auto)</label><input id="vm-thumb" value="${esc(v?.thumbnail||'')}"></div>
+    <div class="form-group"><label>URL avatar créateur</label><input id="vm-avatar" value="${esc(v?.avatar||'')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Ordre d'affichage</label><input type="number" id="vm-order" value="${v?.sort_order||1}" min="1"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveVideo(${v?.id||'null'})">Enregistrer</button>
+    </div>`);
+}
+async function saveVideo(id) {
+  const ytid = $('vm-ytid').value.trim();
+  const title = $('vm-title').value.trim();
+  if (!ytid || !title) { toast('YouTube ID et titre requis','error'); return; }
+  const data = {
+    youtube_id: ytid, title, creator: $('vm-creator').value.trim(),
+    views_label: $('vm-views').value.trim(), date_label: $('vm-date').value.trim(),
+    tag: $('vm-tag').value, thumbnail: $('vm-thumb').value.trim(),
+    avatar: $('vm-avatar').value.trim(), sort_order: +$('vm-order').value||1, active:true
+  };
+  if (id) await sb.from('site_videos').update(data).eq('id',id);
+  else     await sb.from('site_videos').insert(data);
+  closeModal(); await loadSiteVideos(); toast('Vidéo enregistrée ✓','success');
+}
+
+/* ─── SHORTS & REELS ─── */
+let siteShorts = [];
+async function loadSiteShorts() {
+  const { data } = await sb.from('site_shorts').select('*').order('sort_order');
+  siteShorts = data || [];
+  renderSiteShorts();
+}
+function renderSiteShorts() {
+  const tbody = $('shorts-tbody'), empty = $('shorts-empty');
+  if (!siteShorts.length) { tbody.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  tbody.innerHTML = siteShorts.map(s => `
+    <tr>
+      <td style="font-size:13px">${esc(s.title)}</td>
+      <td style="font-size:12px;color:var(--fg-dim)">${esc(s.creator)}</td>
+      <td><span style="font-family:var(--f-mono);font-size:11px;background:var(--surface2);padding:2px 8px;border-radius:4px">${esc(s.tag)}</span></td>
+      <td style="font-family:var(--f-mono);font-size:11px;color:var(--fg-faint)">${s.youtube_id ? 'YT: '+esc(s.youtube_id) : esc(s.src||'—')}</td>
+      <td><input type="number" value="${s.sort_order}" min="1" style="width:52px;padding:4px 6px;font-size:12px" onchange="updateShortOrder(${s.id},this.value)"></td>
+      <td><input type="checkbox" ${s.active?'checked':''} onchange="toggleShort(${s.id},this.checked)"></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick='openShortModal(${JSON.stringify(s)})'>✎</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteShort(${s.id})">✕</button>
+      </td>
+    </tr>`).join('');
+}
+async function toggleShort(id,val){ await sb.from('site_shorts').update({active:val}).eq('id',id); toast(val?'Clip activé':'Clip masqué','success'); }
+async function updateShortOrder(id,val){ await sb.from('site_shorts').update({sort_order:+val}).eq('id',id); toast('Ordre mis à jour','success'); }
+async function deleteShort(id){
+  if(!confirm('Supprimer ce clip ?'))return;
+  await sb.from('site_shorts').delete().eq('id',id);
+  siteShorts=siteShorts.filter(s=>s.id!==id); renderSiteShorts(); toast('Clip supprimé','success');
+}
+function openShortModal(s){
+  openModal(`
+    <h3 style="font-family:var(--f-display);font-size:24px;margin-bottom:20px">${!s?'Nouveau clip':'Modifier le clip'}</h3>
+    <div class="form-group"><label>Titre</label><input id="sm-title" value="${esc(s?.title||'')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Créateur / Client</label><input id="sm-creator" value="${esc(s?.creator||'')}"></div>
+      <div class="form-group"><label>Date (ex: 2025)</label><input id="sm-date" value="${esc(s?.date_label||'')}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>YouTube ID (si dispo)</label><input id="sm-ytid" value="${esc(s?.youtube_id||'')}" placeholder="ex: dQw4w9WgXcQ"></div>
+      <div class="form-group"><label>Tag</label>
+        <select id="sm-tag">${['Reel','Short','Clip'].map(t=>`<option${s?.tag===t?' selected':''}>${t}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="form-group"><label>URL miniature (optionnel)</label><input id="sm-thumb" value="${esc(s?.thumbnail||'')}"></div>
+    <div class="form-group"><label>Ordre</label><input type="number" id="sm-order" value="${s?.sort_order||1}" min="1"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveShort(${s?.id||'null'})">Enregistrer</button>
+    </div>`);
+}
+async function saveShort(id){
+  const title=$('sm-title').value.trim();
+  if(!title){toast('Titre requis','error');return;}
+  const data={title,creator:$('sm-creator').value.trim(),date_label:$('sm-date').value.trim(),
+    youtube_id:$('sm-ytid').value.trim()||null,tag:$('sm-tag').value,
+    thumbnail:$('sm-thumb').value.trim(),sort_order:+$('sm-order').value||1,active:true};
+  if(id) await sb.from('site_shorts').update(data).eq('id',id);
+  else   await sb.from('site_shorts').insert(data);
+  closeModal(); await loadSiteShorts(); toast('Clip enregistré ✓','success');
+}
+
+/* ─── ÉVÉNEMENTS & PHOTOS ─── */
+let siteEvents=[], sitePhotos=[];
+async function loadSiteEvents(){
+  const [er,pr]=await Promise.all([
+    sb.from('site_events').select('*').order('sort_order'),
+    sb.from('site_photos').select('*').order('sort_order'),
+  ]);
+  siteEvents=er.data||[]; sitePhotos=pr.data||[];
+  renderSiteEvents();
+}
+function renderSiteEvents(){
+  const wrap=$('events-list');
+  if(!siteEvents.length){wrap.innerHTML='<div class="empty-state"><div class="empty-icon">◻</div><div class="empty-text">Aucun événement</div></div>';return;}
+  wrap.innerHTML=siteEvents.map(ev=>{
+    const photos=sitePhotos.filter(p=>p.event_id===ev.id);
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="card-header" style="cursor:default">
+        <div>
+          <span class="card-title">${esc(ev.name)} ${ev.year}</span>
+          <span style="margin-left:12px;font-family:var(--f-mono);font-size:10px;color:${ev.status==='published'?'var(--green)':'var(--yellow)'}">● ${ev.status==='published'?'Publié':'Bientôt'}</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick='openEventModal(${JSON.stringify(ev)})'>✎ Modifier</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddPhotoModal(${ev.id})">+ Photo</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteEvent(${ev.id})">✕</button>
+        </div>
+      </div>
+      <div style="padding:14px 18px">
+        ${photos.length===0?`<span style="font-size:12px;color:var(--fg-faint)">Aucune photo — cliquez "+ Photo" pour en ajouter</span>`:`
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px">
+          ${photos.map(p=>`
+            <div style="position:relative;aspect-ratio:1;overflow:hidden;border-radius:4px;background:var(--surface2)">
+              <img src="${esc(p.src)}" style="width:100%;height:100%;object-fit:cover">
+              <button onclick="deletePhoto(${p.id})" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;font-size:11px;width:20px;height:20px;border-radius:50%;cursor:pointer;line-height:1">✕</button>
+            </div>`).join('')}
+        </div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+function openEventModal(ev){
+  openModal(`
+    <h3 style="font-family:var(--f-display);font-size:24px;margin-bottom:20px">${!ev?'Nouvel événement':'Modifier l\'événement'}</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Nom (ex: 24H du Mans)</label><input id="em-name" value="${esc(ev?.name||'')}"></div>
+      <div class="form-group"><label>Année</label><input type="number" id="em-year" value="${ev?.year||new Date().getFullYear()}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Slug unique (ex: 24h-2026)</label><input id="em-slug" value="${esc(ev?.slug||'')}"></div>
+      <div class="form-group"><label>Statut</label>
+        <select id="em-status"><option value="published"${ev?.status==='published'?' selected':''}>Publié</option><option value="soon"${ev?.status==='soon'?' selected':''}>Bientôt</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label>Ordre</label><input type="number" id="em-order" value="${ev?.sort_order||1}" min="1"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveEvent(${ev?.id||'null'})">Enregistrer</button>
+    </div>`);
+}
+async function saveEvent(id){
+  const name=$('em-name').value.trim(), slug=$('em-slug').value.trim();
+  if(!name||!slug){toast('Nom et slug requis','error');return;}
+  const data={name,year:+$('em-year').value,slug,status:$('em-status').value,sort_order:+$('em-order').value||1,active:true};
+  if(id) await sb.from('site_events').update(data).eq('id',id);
+  else   await sb.from('site_events').insert(data);
+  closeModal(); await loadSiteEvents(); toast('Événement enregistré ✓','success');
+}
+async function deleteEvent(id){
+  if(!confirm('Supprimer cet événement et toutes ses photos ?'))return;
+  await sb.from('site_events').delete().eq('id',id);
+  siteEvents=siteEvents.filter(e=>e.id!==id); sitePhotos=sitePhotos.filter(p=>p.event_id!==id);
+  renderSiteEvents(); toast('Événement supprimé','success');
+}
+function openAddPhotoModal(eventId){
+  openModal(`
+    <h3 style="font-family:var(--f-display);font-size:24px;margin-bottom:20px">Ajouter une photo</h3>
+    <p style="font-size:12px;color:var(--fg-dim);margin-bottom:16px">Colle le chemin du fichier uploadé dans <code>uploads/PHOTO/</code> ou une URL complète.</p>
+    <div class="form-group"><label>URL / chemin du fichier (ex: uploads/PHOTO/DSC01234.jpg)</label><input id="pm-src" placeholder="uploads/PHOTO/..."></div>
+    <div class="form-group"><label>Légende (optionnel)</label><input id="pm-caption" placeholder="Description de la photo"></div>
+    <div class="form-group"><label>Ordre</label><input type="number" id="pm-order" value="1" min="1"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="savePhoto(${eventId})">Ajouter</button>
+    </div>`);
+}
+async function savePhoto(eventId){
+  const src=$('pm-src').value.trim();
+  if(!src){toast('Chemin requis','error');return;}
+  await sb.from('site_photos').insert({event_id:eventId,src,caption:$('pm-caption').value.trim(),sort_order:+$('pm-order').value||1,active:true});
+  closeModal(); await loadSiteEvents(); toast('Photo ajoutée ✓','success');
+}
+async function deletePhoto(id){
+  if(!confirm('Supprimer cette photo ?'))return;
+  await sb.from('site_photos').delete().eq('id',id);
+  sitePhotos=sitePhotos.filter(p=>p.id!==id); renderSiteEvents(); toast('Photo supprimée','success');
+}
 </script>
 </body>
 </html>

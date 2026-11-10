@@ -176,14 +176,34 @@
   .scard-info h3 { font-family: var(--f-body); font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
   .scard-info p { font-family: var(--f-mono); font-size: 11px; color: var(--fg-dim); }
   /* Instagram reel card */
-  .scard-ig .scard-frame { background: #111; border: 1px solid var(--line); }
+  .scard-ig .scard-frame {
+    background: radial-gradient(ellipse at 50% 30%, #1a1a1a 0%, #0a0a0a 100%);
+    border: 1px solid rgba(244,239,230,.08);
+  }
+  .scard-ig .scard-frame::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(244,239,230,.012) 2px, rgba(244,239,230,.012) 4px);
+    pointer-events: none;
+  }
   .scard-ig-inner {
     position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
     transition: opacity .25s;
   }
-  .scard-ig-inner span { font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em; color: rgba(244,239,230,.4); text-transform: uppercase; }
-  .scard-ig:hover .scard-ig-inner { opacity: .7; }
+  .scard-ig-inner span { font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em; color: rgba(244,239,230,.35); text-transform: uppercase; }
+  .scard-ig:hover .scard-ig-inner { opacity: .6; }
+  .scard-ig:hover .scard-frame { border-color: rgba(244,239,230,.18); }
+  /* IG card with thumbnail */
+  .scard-ig .scard-frame img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s var(--ease); }
+  .scard-ig:hover .scard-frame img { transform: scale(1.04); }
+  .scard-ig .scard-ig-badge {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    border: 1px solid rgba(244,239,230,.15); border-radius: 4px;
+    padding: 5px 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .scard-ig .scard-ig-badge span { font-family: var(--f-mono); font-size: 10px; letter-spacing: .15em; color: rgba(244,239,230,.7); text-transform: uppercase; }
   .shorts-soon {
     padding: 72px var(--gutter) 100px;
     display: flex; align-items: center; gap: 32px;
@@ -422,12 +442,26 @@
     const isIG = !s.youtube_id && s.src && s.src.includes('instagram.com');
     const href = s.youtube_id ? `https://youtu.be/${s.youtube_id}` : (s.src || '#');
     const thumb = s.thumbnail || (s.youtube_id ? `https://img.youtube.com/vi/${s.youtube_id}/maxresdefault.jpg` : '');
+    const igSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(244,239,230,.6)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(244,239,230,.6)" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(244,239,230,.6)"/></svg>`;
     if (isIG) {
+      if (thumb) {
+        return `
+          <a class="scard scard-ig" href="${href}" target="_blank" rel="noopener">
+            <div class="scard-frame">
+              <img src="${thumb}" alt="${esc(s.title)}" loading="lazy">
+              <div class="scard-ig-badge">${igSvg}<span>Reel ↗</span></div>
+            </div>
+            <div class="scard-info">
+              <h3>${esc(s.title)}</h3>
+              <p>${esc(s.creator)}${s.date_label ? ` · ${esc(s.date_label)}` : ''}</p>
+            </div>
+          </a>`;
+      }
       return `
         <a class="scard scard-ig" href="${href}" target="_blank" rel="noopener">
           <div class="scard-frame">
             <div class="scard-ig-inner">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(244,239,230,.35)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(244,239,230,.35)" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(244,239,230,.35)"/></svg>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(244,239,230,.4)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(244,239,230,.4)" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(244,239,230,.4)"/></svg>
               <span>Voir le Reel ↗</span>
             </div>
           </div>

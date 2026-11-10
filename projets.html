@@ -176,14 +176,14 @@
   .scard-info h3 { font-family: var(--f-body); font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
   .scard-info p { font-family: var(--f-mono); font-size: 11px; color: var(--fg-dim); }
   /* Instagram reel card */
-  .scard-ig .scard-frame { background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); }
-  .scard-ig-label {
-    position: absolute; bottom: 14px; left: 0; right: 0;
-    text-align: center; font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em;
-    color: rgba(255,255,255,.85); text-transform: uppercase;
+  .scard-ig .scard-frame { background: #111; border: 1px solid var(--line); }
+  .scard-ig-inner {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    transition: opacity .25s;
   }
-  .scard-ig .scard-play span { opacity: .7; font-size: 32px; color: #fff; }
-  .scard-ig:hover .scard-play span { opacity: 1; transform: scale(1); }
+  .scard-ig-inner span { font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em; color: rgba(244,239,230,.4); text-transform: uppercase; }
+  .scard-ig:hover .scard-ig-inner { opacity: .7; }
   .shorts-soon {
     padding: 72px var(--gutter) 100px;
     display: flex; align-items: center; gap: 32px;
@@ -422,13 +422,15 @@
   function shortCard(s) {
     const isIG = !s.youtube_id && s.src && s.src.includes('instagram.com');
     const href = s.youtube_id ? `https://youtu.be/${s.youtube_id}` : (s.src || '#');
-    const thumb = s.thumbnail || (s.youtube_id ? `https://img.youtube.com/vi/${s.youtube_id}/mqdefault.jpg` : '');
+    const thumb = s.thumbnail || (s.youtube_id ? `https://img.youtube.com/vi/${s.youtube_id}/maxresdefault.jpg` : '');
     if (isIG) {
       return `
         <a class="scard scard-ig" href="${href}" target="_blank" rel="noopener">
           <div class="scard-frame">
-            <div class="scard-play"><span>▶</span></div>
-            <div class="scard-ig-label">↗ Instagram</div>
+            <div class="scard-ig-inner">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(244,239,230,.35)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(244,239,230,.35)" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(244,239,230,.35)"/></svg>
+              <span>Voir le Reel ↗</span>
+            </div>
           </div>
           <div class="scard-info">
             <h3>${esc(s.title)}</h3>

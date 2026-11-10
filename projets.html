@@ -104,53 +104,101 @@
 
   /* ── GRILLE VIDÉOS ── */
   .video-grid {
-    padding: 48px var(--gutter) 100px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 48px 28px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    padding: 0 0 100px;
+    margin-top: 32px;
   }
   .vcard {
-    display: block;
+    grid-column: span 2;
+    position: relative;
     text-decoration: none;
     color: var(--fg);
+    overflow: hidden;
+    display: block;
   }
+  .vcard.featured { grid-column: span 6; }
+  .vcard.hero     { grid-column: span 3; }
   .vcard-frame {
     position: relative;
     aspect-ratio: 16/9;
     background: var(--surface);
     overflow: hidden;
-    border-radius: 4px;
-    margin-bottom: 14px;
   }
+  .vcard.featured .vcard-frame { aspect-ratio: 2.35/1; }
   .vcard-frame img {
     width: 100%; height: 100%;
     object-fit: cover; display: block;
-    transition: transform .6s var(--ease), filter .5s;
+    transition: transform .9s var(--ease);
   }
-  .vcard:hover .vcard-frame img { transform: scale(1.04); filter: brightness(1.05); }
-  .vcard.featured { grid-column: span 2; }
-  .vcard.featured .vcard-frame { aspect-ratio: 21/9; }
-  .vcard-play {
+  .vcard:hover .vcard-frame img { transform: scale(1.04); }
+  /* Gradient + info overlay */
+  .vcard-overlay {
     position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0); transition: background .3s;
+    background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.18) 45%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: clamp(12px, 2vw, 28px);
+    opacity: 0; transition: opacity .35s;
+    text-decoration: none;
   }
-  .vcard-play span { font-size: 36px; opacity: 0; transform: scale(.8); transition: opacity .3s, transform .3s; }
-  .vcard:hover .vcard-play { background: rgba(0,0,0,.28); }
-  .vcard:hover .vcard-play span { opacity: 1; transform: scale(1); }
+  .vcard.featured .vcard-overlay { opacity: 1; }
+  .vcard:hover .vcard-overlay { opacity: 1; }
+  .vcard-overlay-title {
+    font-family: var(--f-sans);
+    font-size: clamp(12px, 1.1vw, 16px);
+    font-weight: 500; line-height: 1.35;
+    color: #fff; margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .vcard.featured .vcard-overlay-title  { font-size: clamp(18px, 2.4vw, 36px); -webkit-line-clamp: 3; }
+  .vcard.hero     .vcard-overlay-title  { font-size: clamp(14px, 1.5vw, 22px); }
+  .vcard-overlay-meta {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-family: var(--f-mono); font-size: 11px; color: rgba(255,255,255,.55);
+  }
+  .vcard-overlay-views { color: var(--accent); font-weight: 600; font-size: 12px; }
+  /* Tag pill */
   .vcard-tag {
-    position: absolute; top: 10px; left: 10px;
-    font-family: var(--f-mono); font-size: 10px; letter-spacing: .18em;
-    text-transform: uppercase; color: #fff;
-    background: rgba(0,0,0,.72); padding: 3px 9px; border-radius: 3px;
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em;
+    text-transform: uppercase; color: rgba(244,239,230,.8);
+    background: rgba(0,0,0,.52); backdrop-filter: blur(6px);
+    padding: 4px 10px; border-radius: 2px;
+    border: 1px solid rgba(244,239,230,.1);
   }
-  .vcard-meta { display: flex; gap: 12px; align-items: flex-start; }
-  .vcard-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--surface); }
-  .vcard-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .vcard-info h3 { font-family: var(--f-sans); font-size: 14px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
-  .vcard-info p { font-family: var(--f-mono); font-size: 11px; color: var(--fg-dim); }
+  /* Play hint */
+  .vcard-play-hint {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85);
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.25);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 18px; padding-left: 3px;
+    opacity: 0; transition: opacity .3s, transform .3s;
+    pointer-events: none;
+  }
+  .vcard:hover .vcard-play-hint { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  /* YouTube autoplay iframe */
+  .vcard-iframe-wrap {
+    position: absolute; inset: -2px; pointer-events: none;
+    opacity: 0; transition: opacity .6s;
+    overflow: hidden;
+  }
+  .vcard-iframe-wrap.playing { opacity: 1; }
+  .vcard-iframe-wrap iframe { width: 100%; height: 100%; border: none; transform: scale(1.06); }
+  /* Minimal below-frame label */
+  .vcard-below {
+    padding: 8px 0 20px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(244,239,230,.05);
+  }
+  .vcard-below-name { font-family: var(--f-mono); font-size: 11px; color: var(--fg-faint); }
+  .vcard-below-sep  { font-family: var(--f-mono); font-size: 11px; color: var(--fg-faint); opacity: .3; }
+  .vcard-below-date { font-family: var(--f-mono); font-size: 11px; color: var(--fg-faint); }
+  .vcard.featured .vcard-below, .vcard.hero .vcard-below { display: none; }
   .sep { margin: 0 6px; opacity: .4; }
-  .video-empty { padding: 80px var(--gutter); text-align: center; color: var(--fg-faint); font-family: var(--f-mono); font-size: 13px; letter-spacing: .1em; }
+  .video-empty { padding: 80px var(--gutter); text-align: center; color: var(--fg-faint); font-family: var(--f-mono); font-size: 13px; letter-spacing: .1em; grid-column: 1/-1; }
 
   /* ── GRILLE SHORTS ── */
   .shorts-grid {
@@ -265,22 +313,33 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 1024px) {
-    .video-grid { grid-template-columns: repeat(2, 1fr); }
-    .vcard.featured { grid-column: span 2; }
+    .video-grid { grid-template-columns: repeat(4, 1fr); }
+    .vcard.featured { grid-column: span 4; }
+    .vcard.hero     { grid-column: span 2; }
+    .vcard           { grid-column: span 2; }
     .shorts-grid { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 880px) {
     .tabs { grid-template-columns: 1fr; }
     .tab-btn { border-right: none; border-bottom: 1px solid var(--line); }
     .tab-btn:last-child { border-bottom: none; }
-    .video-grid { grid-template-columns: 1fr 1fr; gap: 28px 14px; }
+    .video-grid { grid-template-columns: repeat(2, 1fr); gap: 2px; }
+    .vcard.featured { grid-column: span 2; }
+    .vcard.hero     { grid-column: span 1; }
+    .vcard           { grid-column: span 1; }
+    .vcard-below { display: none; }
     .shorts-grid { grid-template-columns: repeat(2, 1fr); }
     .photo-masonry { columns: 4; }
   }
   @media (max-width: 640px) {
-    .video-grid { grid-template-columns: 1fr; }
-    .vcard.featured { grid-column: span 1; }
+    .video-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+    .vcard.featured { grid-column: span 2; }
     .vcard.featured .vcard-frame { aspect-ratio: 16/9; }
+    .vcard.hero     { grid-column: span 1; }
+    .vcard           { grid-column: span 1; }
+    .vcard-overlay { opacity: 1; }
+    .vcard-overlay-title { font-size: 11px; }
+    .vcard-overlay-meta  { font-size: 10px; }
     .shorts-grid { grid-template-columns: repeat(2, 1fr); }
     .photo-masonry { columns: 3; }
     .event-pill { padding: 14px 18px; font-size: 14px; }
@@ -383,35 +442,65 @@
   let allVideos = [];
   let activeVideoFilter = 'all';
 
-  function videoCard(v, featured) {
-    const yt = `https://youtu.be/${v.youtube_id}`;
+  function videoCard(v, featured, hero) {
+    const yt  = `https://youtu.be/${v.youtube_id}`;
     const thumb = v.thumbnail || `https://img.youtube.com/vi/${v.youtube_id}/maxresdefault.jpg`;
+    const views = v.views_label && v.views_label !== '—' ? v.views_label : '';
+    const cls = featured ? 'featured' : hero ? 'hero' : '';
     return `
-      <a class="vcard${featured ? ' featured' : ''}" href="${yt}" target="_blank" rel="noopener">
+      <div class="vcard${cls ? ' '+cls : ''}" data-yt="${esc(v.youtube_id)}">
         <div class="vcard-frame">
-          <img src="${thumb}" alt="${v.title}" loading="lazy">
-          <span class="vcard-tag">${v.tag || ''}</span>
-          <div class="vcard-play"><span>▶</span></div>
+          <img src="${esc(thumb)}" alt="${esc(v.title)}" loading="lazy">
+          <div class="vcard-iframe-wrap"></div>
+          <span class="vcard-tag">${esc(v.tag || '')}</span>
+          <div class="vcard-play-hint">▶</div>
+          <a class="vcard-overlay" href="${esc(yt)}" target="_blank" rel="noopener" aria-label="${esc(v.title)}">
+            <div class="vcard-overlay-title">${esc(v.title)}</div>
+            <div class="vcard-overlay-meta">
+              ${views ? `<span class="vcard-overlay-views">${esc(views)} vues</span><span>·</span>` : ''}
+              <span>${esc(v.creator)}</span>
+              ${v.date_label ? `<span>·</span><span>${esc(v.date_label)}</span>` : ''}
+            </div>
+          </a>
         </div>
-        <div class="vcard-meta">
-          <div class="vcard-avatar">${v.avatar ? `<img src="${v.avatar}" alt="${v.creator}">` : ''}</div>
-          <div class="vcard-info">
-            <h3>${v.title}</h3>
-            <p>${v.creator}${v.views_label && v.views_label !== '—' ? `<span class="sep">·</span>${v.views_label} vues` : ''}<span class="sep">·</span>${v.date_label}</p>
-          </div>
+        <div class="vcard-below">
+          <span class="vcard-below-name">${esc(v.creator)}</span>
+          <span class="vcard-below-sep">·</span>
+          <span class="vcard-below-date">${esc(v.date_label)}</span>
         </div>
-      </a>`;
+      </div>`;
+  }
+
+  function attachHoverPlay() {
+    document.querySelectorAll('#grid-montage .vcard[data-yt]').forEach(card => {
+      const wrap = card.querySelector('.vcard-iframe-wrap');
+      let timer;
+      card.addEventListener('mouseenter', () => {
+        timer = setTimeout(() => {
+          const id = card.dataset.yt;
+          wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&playsinline=1&rel=0" allow="autoplay" allowfullscreen></iframe>`;
+          wrap.classList.add('playing');
+        }, 400);
+      });
+      card.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+        wrap.classList.remove('playing');
+        setTimeout(() => { wrap.innerHTML = ''; }, 500);
+      });
+    });
   }
 
   function renderVideos() {
     const grid = document.getElementById('grid-montage');
     const filtered = activeVideoFilter === 'all' ? allVideos : allVideos.filter(v => v.tag === activeVideoFilter);
     if (!filtered.length) {
-      grid.innerHTML = `<div class="video-empty" style="grid-column:1/-1">Aucune vidéo dans cette catégorie.</div>`;
+      grid.innerHTML = `<div class="video-empty">Aucune vidéo dans cette catégorie.</div>`;
       return;
     }
-    grid.innerHTML = filtered.map((v, i) => videoCard(v, i === 0 && activeVideoFilter === 'all')).join('');
+    const isAll = activeVideoFilter === 'all';
+    grid.innerHTML = filtered.map((v, i) => videoCard(v, isAll && i === 0, isAll && (i === 1 || i === 2))).join('');
     document.getElementById('cnt-montage').textContent = allVideos.length;
+    attachHoverPlay();
   }
 
   async function loadVideos() {

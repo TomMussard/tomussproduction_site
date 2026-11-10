@@ -96,18 +96,18 @@
     flex-shrink: 0;
   }
   .hero-id h2 {
-    font-size: 10px; letter-spacing: .28em; text-transform: uppercase;
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
     color: var(--fg-faint); margin-bottom: 16px; padding-bottom: 12px;
     border-bottom: 1px solid var(--line);
   }
   .hero-id dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; }
-  .hero-id dt { color: var(--fg-faint); text-transform: uppercase; letter-spacing: .15em; font-size: 10px; }
+  .hero-id dt { color: var(--fg-faint); text-transform: uppercase; letter-spacing: .12em; font-size: 11px; }
   .hero-id dd { color: var(--fg); }
   .hero-scroll {
     position: absolute;
     bottom: clamp(28px,4vh,48px); left: 50%;
     transform: translateX(-50%);
-    font-family: var(--f-mono); font-size: 10px; letter-spacing: .28em;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .22em;
     text-transform: uppercase; color: var(--fg-faint);
     display: flex; flex-direction: column; align-items: center; gap: 10px;
   }
@@ -219,12 +219,12 @@
   .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .portrait .p-label {
     position: absolute; top: 14px; left: 14px;
-    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em;
     text-transform: uppercase; color: var(--accent); z-index: 2;
   }
   .portrait .p-label2 {
     position: absolute; bottom: 14px; right: 14px;
-    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .15em;
     text-transform: uppercase; color: var(--fg-faint); z-index: 2;
   }
   .bio-text {}
@@ -243,6 +243,7 @@
     color: var(--fg-dim);
     margin-bottom: 20px;
     max-width: 580px;
+    text-wrap: pretty;
   }
   .bio-text p strong { color: var(--fg); font-weight: 400; }
   .bio-text p:first-of-type::first-letter {
@@ -278,7 +279,7 @@
   }
   .service-row:hover .service-name { color: var(--accent); }
   .service-desc {
-    font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em;
+    font-family: var(--f-mono); font-size: 12px; letter-spacing: .02em;
     color: var(--fg-faint); line-height: 1.6;
   }
 
@@ -315,7 +316,7 @@
     font-family: var(--f-display); font-size: clamp(22px,2.5vw,34px);
     text-transform: uppercase; line-height: 1; margin-bottom: 10px;
   }
-  .approach-row .desc { color: var(--fg-dim); font-size: 15px; line-height: 1.6; }
+  .approach-row .desc { color: var(--fg-dim); font-size: 15px; line-height: 1.6; text-wrap: pretty; }
 
   /* ── COLLABS ── */
   .collab {
@@ -469,7 +470,6 @@
     <span class="p-label2">Le Mans · 2022 →</span>
   </div>
   <div class="bio-text fade-up">
-    <span class="eyebrow">À propos</span>
     <h2>Tournage<br/>Montage<br/>et <em>Création</em></h2>
     <p>
       <strong>Je m'appelle Tomuss, je fais de la vidéo depuis 2022.</strong> Basé au Mans, je travaille en freelance avec des créateurs YouTube, des marques et des organisateurs d'événements. Depuis mes débuts, j'ai eu la chance de collaborer sur des dizaines de projets et de cumuler plus de 12 millions de vues sur les vidéos que j'ai montées.
@@ -505,7 +505,6 @@
 <!-- ══ PROCESS ══ -->
 <section class="approach">
   <div class="fade-up">
-    <span class="eyebrow" style="display:block;margin-bottom:20px">Comment je fonctionne</span>
     <h2 class="approach-heading">Mon<br/>process<br/><em>en 5<br/>étapes.</em></h2>
   </div>
   <div class="approach-list fade-up">

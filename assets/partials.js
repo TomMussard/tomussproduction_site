@@ -135,7 +135,12 @@ async function injectBanner() {
 
     const el = document.createElement('div');
     el.id = 'site-banner';
-    el.style.cssText = `background:${cfg.bg||'#1fa5ff'};color:${cfg.color||'#000'};text-align:center;padding:10px 48px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;position:relative;z-index:150;`;
+    const bg = cfg.bg || '#1fa5ff';
+    // Auto-pick dark/light text for WCAG AA — overrides any configured color that fails contrast
+    const lum = s => { const h = s.replace('#',''); const r=parseInt(h.slice(0,2),16)/255,g=parseInt(h.slice(2,4),16)/255,b=parseInt(h.slice(4,6),16)/255; const c=x=>x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4); return .2126*c(r)+.7152*c(g)+.0722*c(b); };
+    const contrast = (c1,c2) => { const l1=lum(c1),l2=lum(c2); return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05); };
+    const fg = contrast(bg,'#0F0F0F') >= 4.5 ? '#0F0F0F' : '#F4EFE6';
+    el.style.cssText = `background:${bg};color:${fg};text-align:center;padding:10px 48px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;position:relative;z-index:150;`;
     el.innerHTML = `<span>${cfg.text}</span><button onclick="this.closest('#site-banner').remove();document.querySelector('.nav')&&(document.querySelector('.nav').style.top='0');sessionStorage.setItem('banner_dismissed','${cfg.text.replace(/'/g,"\\'")}');" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:inherit;opacity:.7;line-height:1;">✕</button>`;
     // Insérer avant le nav-mount, pas avant body entier
     const navMount = document.getElementById('nav-mount');

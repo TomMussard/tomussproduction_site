@@ -317,14 +317,15 @@
     .photo-masonry { columns: 4; }
   }
   @media (max-width: 640px) {
-    .video-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    /* 1 colonne — les miniatures sont lisibles, les titres ne se marchent plus dessus */
+    .video-grid { grid-template-columns: 1fr; gap: 20px; }
     .video-section-label { font-size: 24px; }
     .vcard-overlay { opacity: 1; }
-    .vcard-overlay-title { font-size: 11px; }
-    .vcard-overlay-meta  { font-size: 10px; }
-    .vcard-below { display: none; }
-    .shorts-grid { grid-template-columns: repeat(2, 1fr); }
-    .photo-masonry { columns: 3; }
+    .vcard-overlay-title { font-size: 13px; }
+    .vcard-overlay-meta  { font-size: 11px; }
+    .vcard-below { display: block; }
+    .shorts-grid { grid-template-columns: 1fr; }
+    .photo-masonry { columns: 2; }
     .event-pill { padding: 14px 18px; font-size: 14px; }
   }
 </style>

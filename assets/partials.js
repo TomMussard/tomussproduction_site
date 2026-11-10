@@ -146,11 +146,16 @@ async function injectBanner() {
     const navMount = document.getElementById('nav-mount');
     if (navMount) navMount.parentNode.insertBefore(el, navMount);
     else document.body.insertBefore(el, document.body.firstChild);
-    // Décaler la nav fixe vers le bas
-    requestAnimationFrame(() => {
+    // Décaler la nav fixe vers le bas — ResizeObserver garantit la bonne hauteur même après chargement des fonts
+    function syncNavTop() {
       const nav = document.querySelector('.nav');
       if (nav) nav.style.top = el.offsetHeight + 'px';
-    });
+    }
+    syncNavTop();
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(syncNavTop);
+      ro.observe(el);
+    }
   } catch(_) {}
 }
 

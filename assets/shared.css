@@ -602,6 +602,8 @@ body.nav-open { overflow: hidden; }
   .nav-links { display: none; }
   .nav-cta   { display: none; }
   .nav-toggle { display: flex; }
+  /* Logo réduit sur mobile — évite l'écart visuel en haut */
+  .logo-img { height: 90px; margin-top: -28px; }
   .footer { grid-template-columns: 1fr 1fr; }
   .footer .big { font-size: 48px; }
 

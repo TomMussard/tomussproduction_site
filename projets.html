@@ -173,8 +173,17 @@
   .scard-play span { font-size: 28px; opacity: 0; transform: scale(.8); transition: opacity .3s, transform .3s; }
   .scard:hover .scard-play { background: rgba(0,0,0,.28); }
   .scard:hover .scard-play span { opacity: 1; transform: scale(1); }
-  .scard-info h3 { font-family: var(--f-sans); font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+  .scard-info h3 { font-family: var(--f-body); font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
   .scard-info p { font-family: var(--f-mono); font-size: 11px; color: var(--fg-dim); }
+  /* Instagram reel card */
+  .scard-ig .scard-frame { background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); }
+  .scard-ig-label {
+    position: absolute; bottom: 14px; left: 0; right: 0;
+    text-align: center; font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em;
+    color: rgba(255,255,255,.85); text-transform: uppercase;
+  }
+  .scard-ig .scard-play span { opacity: .7; font-size: 32px; color: #fff; }
+  .scard-ig:hover .scard-play span { opacity: 1; transform: scale(1); }
   .shorts-soon {
     padding: 72px var(--gutter) 100px;
     display: flex; align-items: center; gap: 32px;
@@ -184,32 +193,39 @@
 
   /* ── PHOTOS PAR ÉVÉNEMENT ── */
   .photos-wrap { padding: 0 0 80px; }
-  .event-block { border-top: 1px solid var(--line); }
-  .event-block-head {
-    display: flex; align-items: baseline; justify-content: space-between;
-    gap: 24px; padding: 28px var(--gutter); cursor: pointer; user-select: none;
+  /* Sélecteur d'événement */
+  .event-selector {
+    display: flex; gap: 0; border-bottom: 1px solid var(--line);
+    overflow-x: auto; scrollbar-width: none;
   }
-  .event-title {
-    font-family: var(--f-display);
-    font-size: clamp(28px, 4vw, 60px);
-    text-transform: uppercase; line-height: 1;
-    transition: color .2s;
+  .event-selector::-webkit-scrollbar { display: none; }
+  .event-pill {
+    flex-shrink: 0;
+    padding: 20px 28px;
+    font-family: var(--f-display); font-size: clamp(16px, 2vw, 24px);
+    text-transform: uppercase; letter-spacing: .04em;
+    background: none; border: none; border-right: 1px solid var(--line);
+    color: var(--fg-faint); cursor: pointer;
+    transition: color .2s, background .2s;
+    white-space: nowrap;
   }
-  .event-title em { color: var(--accent); font-style: italic; }
-  .event-block-head:hover .event-title { color: var(--accent); }
-  .event-meta { font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em; color: var(--fg-faint); display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
-  .event-toggle { font-size: 20px; transition: transform .3s; display: inline-block; }
-  .event-block.open .event-toggle { transform: rotate(45deg); }
-  .event-block-body { overflow: hidden; max-height: 0; transition: max-height .6s cubic-bezier(.22,1,.36,1); }
-  .event-block.open .event-block-body { max-height: 6000px; }
-  .soon-pill { font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-faint); border: 1px solid var(--line); padding: 6px 16px; border-radius: 100px; }
-  .photo-masonry { columns: 3; column-gap: 14px; padding: 0 var(--gutter) 48px; }
-  .photo-item { break-inside: avoid; margin-bottom: 14px; position: relative; overflow: hidden; border-radius: 4px; cursor: pointer; }
+  .event-pill:hover { color: var(--fg); }
+  .event-pill.active { color: var(--fg); background: rgba(244,239,230,.04); }
+  .event-pill.active::after {
+    content: ''; display: block; height: 2px;
+    background: var(--accent); margin-top: 6px;
+  }
+  .event-pill .pill-count { font-family: var(--f-mono); font-size: 11px; color: var(--fg-faint); margin-left: 8px; }
+  .event-pill.soon-event { opacity: .4; cursor: default; }
+  /* Grille masonry */
+  .photo-masonry { columns: 3; column-gap: 10px; padding: 24px var(--gutter) 48px; }
+  .photo-item { break-inside: avoid; margin-bottom: 10px; position: relative; overflow: hidden; border-radius: 3px; cursor: pointer; }
   .photo-item img { width: 100%; display: block; transition: transform .5s var(--ease); }
   .photo-item:hover img { transform: scale(1.03); }
   .photo-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: flex-end; padding: 14px; opacity: 0; transition: opacity .3s; }
   .photo-item:hover .photo-overlay { opacity: 1; }
   .photo-overlay span { font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em; color: #fff; }
+  .soon-pill { font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-faint); border: 1px solid var(--line); padding: 6px 16px; border-radius: 100px; }
 
   /* ── LIGHTBOX ── */
   .lightbox { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.94); align-items: center; justify-content: center; }
@@ -246,7 +262,8 @@
     .vcard.featured { grid-column: span 1; }
     .vcard.featured .vcard-frame { aspect-ratio: 16/9; }
     .shorts-grid { grid-template-columns: repeat(2, 1fr); }
-    .photo-masonry { columns: 1; }
+    .photo-masonry { columns: 2; }
+    .event-pill { padding: 14px 18px; font-size: 14px; }
   }
 </style>
 </head>
@@ -301,7 +318,10 @@
 
 <!-- ════ PHOTO ════ -->
 <div class="tab-section" id="tab-photo">
-  <div class="photos-wrap" id="events-wrap"></div>
+  <div class="photos-wrap">
+    <div class="event-selector" id="event-selector"></div>
+    <div id="photo-grid-wrap"></div>
+  </div>
 </div>
 
 <!-- ════ LIGHTBOX ════ -->
@@ -399,12 +419,26 @@
   let activeShortFilter = 'all';
 
   function shortCard(s) {
+    const isIG = !s.youtube_id && s.src && s.src.includes('instagram.com');
     const href = s.youtube_id ? `https://youtu.be/${s.youtube_id}` : (s.src || '#');
     const thumb = s.thumbnail || (s.youtube_id ? `https://img.youtube.com/vi/${s.youtube_id}/mqdefault.jpg` : '');
+    if (isIG) {
+      return `
+        <a class="scard scard-ig" href="${href}" target="_blank" rel="noopener">
+          <div class="scard-frame">
+            <div class="scard-play"><span>▶</span></div>
+            <div class="scard-ig-label">↗ Instagram</div>
+          </div>
+          <div class="scard-info">
+            <h3>${esc(s.title)}</h3>
+            <p>${esc(s.creator)}${s.date_label ? ` · ${esc(s.date_label)}` : ''}</p>
+          </div>
+        </a>`;
+    }
     return `
       <a class="scard" href="${href}" target="_blank" rel="noopener">
         <div class="scard-frame">
-          ${thumb ? `<img src="${thumb}" alt="${s.title}" loading="lazy">` : ''}
+          ${thumb ? `<img src="${thumb}" alt="${esc(s.title)}" loading="lazy">` : ''}
           <div class="scard-play"><span>▶</span></div>
         </div>
         <div class="scard-info">
@@ -480,60 +514,39 @@
   });
 
   function buildMasonry(photos) {
-    return photos.map((p, i) => `
-      <div class="photo-item" data-idx="${i}" role="button" tabindex="0" aria-label="${p.caption || 'Photo'}">
-        <img src="${p.src}" alt="${p.caption || ''}" loading="lazy">
+    return `<div class="photo-masonry">${photos.map((p, i) => `
+      <div class="photo-item" data-idx="${i}" role="button" tabindex="0" aria-label="${esc(p.caption || 'Photo')}">
+        <img src="${esc(p.src)}" alt="${esc(p.caption || '')}" loading="lazy">
         <div class="photo-overlay"><span>Voir ⤢</span></div>
-      </div>`).join('');
+      </div>`).join('')}</div>`;
   }
 
-  function buildEventBlock(ev, photos, openByDefault) {
-    const isPublished = ev.status === 'published';
-    const metaHtml = isPublished
-      ? `<div class="event-meta"><span>${photos.length} photo${photos.length > 1 ? 's' : ''}</span><span class="event-toggle">+</span></div>`
-      : `<div class="event-meta"><span class="soon-pill">Bientôt</span></div>`;
-    const bodyHtml = isPublished
-      ? `<div class="event-block-body"><div class="photo-masonry" id="masonry-${ev.slug}">${buildMasonry(photos)}</div></div>`
-      : '';
-    return `
-      <div class="event-block${isPublished && openByDefault ? ' open' : ''}" id="block-${ev.slug}" data-published="${isPublished}">
-        <div class="event-block-head">
-          <span class="event-title">${ev.name} <em>${ev.year}</em></span>
-          ${metaHtml}
-        </div>
-        ${bodyHtml}
-      </div>`;
+  let allEvents = [], allPhotoRows = [], activeEventId = null;
+
+  function renderEventGrid(eventId) {
+    const grid = document.getElementById('photo-grid-wrap');
+    const ev = allEvents.find(e => e.id === eventId);
+    if (!ev || ev.status !== 'published') {
+      grid.innerHTML = `<div style="padding:80px var(--gutter);text-align:center;font-family:var(--f-mono);font-size:13px;letter-spacing:.1em;color:var(--fg-faint)">Photos bientôt disponibles</div>`;
+      return;
+    }
+    const photos = allPhotoRows.filter(p => p.event_id === eventId);
+    grid.innerHTML = buildMasonry(photos);
+    grid.querySelectorAll('.photo-item').forEach(item => {
+      item.addEventListener('click', () => openLb(photos, +item.dataset.idx));
+      item.addEventListener('keydown', e => { if (e.key === 'Enter') openLb(photos, +item.dataset.idx); });
+    });
+  }
+
+  function selectEvent(eventId) {
+    activeEventId = eventId;
+    document.querySelectorAll('.event-pill').forEach(p => p.classList.toggle('active', +p.dataset.id === eventId));
+    renderEventGrid(eventId);
   }
 
   async function loadPhotos() {
-    const wrap = document.getElementById('events-wrap');
-    const FALLBACK_EVENTS = [
-      { id: 1, name: '24H du Mans', year: 2025, slug: '24h-2025', status: 'published', sort_order: 1 },
-      { id: 2, name: '24H du Mans', year: 2026, slug: '24h-2026', status: 'soon',      sort_order: 2 },
-      { id: 3, name: 'Route du Rhum', year: 2026, slug: 'rhum-2026', status: 'soon',   sort_order: 3 },
-    ];
-    const FALLBACK_PHOTOS = [
-      { event_id:1, src:'uploads/PHOTO/DSC03270.jpg',    caption:'24H du Mans 2025', sort_order:1 },
-      { event_id:1, src:'uploads/PHOTO/DSC04947.jpeg',   caption:'24H du Mans 2025', sort_order:2 },
-      { event_id:1, src:'uploads/PHOTO/DSC05020.jpeg',   caption:'24H du Mans 2025', sort_order:3 },
-      { event_id:1, src:'uploads/PHOTO/DSC05054.jpeg',   caption:'24H du Mans 2025', sort_order:4 },
-      { event_id:1, src:'uploads/PHOTO/DSC05080.jpeg',   caption:'24H du Mans 2025', sort_order:5 },
-      { event_id:1, src:'uploads/PHOTO/DSC05088.jpeg',   caption:'24H du Mans 2025', sort_order:6 },
-      { event_id:1, src:'uploads/PHOTO/DSC05115.jpeg',   caption:'24H du Mans 2025', sort_order:7 },
-      { event_id:1, src:'uploads/PHOTO/DSC05399.jpeg',   caption:'24H du Mans 2025', sort_order:8 },
-      { event_id:1, src:'uploads/PHOTO/DSC07198.jpeg',   caption:'24H du Mans 2025', sort_order:9 },
-      { event_id:1, src:'uploads/PHOTO/DSC07207.jpeg',   caption:'24H du Mans 2025', sort_order:10 },
-      { event_id:1, src:'uploads/PHOTO/DSC07222.jpeg',   caption:'24H du Mans 2025', sort_order:11 },
-      { event_id:1, src:'uploads/PHOTO/DSC07248.jpeg',   caption:'24H du Mans 2025', sort_order:12 },
-      { event_id:1, src:'uploads/PHOTO/IMG_1746.jpeg',   caption:'24H du Mans 2025', sort_order:13 },
-      { event_id:1, src:'uploads/PHOTO/IMG_1753.jpeg',   caption:'24H du Mans 2025', sort_order:14 },
-      { event_id:1, src:'uploads/PHOTO/IMG_1760.jpeg',   caption:'24H du Mans 2025', sort_order:15 },
-      { event_id:1, src:'uploads/PHOTO/IMG_1761.jpeg',   caption:'24H du Mans 2025', sort_order:16 },
-      { event_id:1, src:'uploads/PHOTO/IMG_1763.jpeg',   caption:'24H du Mans 2025', sort_order:17 },
-      { event_id:1, src:'uploads/PHOTO/IMG_1769 2.jpeg', caption:'24H du Mans 2025', sort_order:18 },
-    ];
-
-    let events = FALLBACK_EVENTS, photos = FALLBACK_PHOTOS;
+    const selector = document.getElementById('event-selector');
+    let events = [], photos = [];
     try {
       const [evRes, phRes] = await Promise.all([
         sb.from('site_events').select('*').eq('active', true).order('sort_order'),
@@ -542,27 +555,35 @@
       if (!evRes.error && evRes.data?.length) { events = evRes.data; photos = phRes.data || []; }
     } catch {}
 
+    if (!events.length) {
+      events = [
+        { id:1, name:'24H du Mans', year:2025, slug:'24h-2025', status:'published', sort_order:1 },
+      ];
+      photos = [
+        { event_id:1, src:'uploads/PHOTO/DSC03270.jpg', caption:'24H du Mans 2025', sort_order:1 },
+        { event_id:1, src:'uploads/PHOTO/DSC04947.jpeg', caption:'24H du Mans 2025', sort_order:2 },
+      ];
+    }
+
+    allEvents = events; allPhotoRows = photos;
     const totalPhotos = photos.length;
     document.getElementById('cnt-photo').textContent = totalPhotos + ' photos';
 
-    wrap.innerHTML = events.map((ev, i) => {
-      const evPhotos = photos.filter(p => p.event_id === ev.id);
-      return buildEventBlock(ev, evPhotos, i === 0);
+    selector.innerHTML = events.map(ev => {
+      const count = photos.filter(p => p.event_id === ev.id).length;
+      const isSoon = ev.status !== 'published';
+      return `<button class="event-pill${isSoon ? ' soon-event' : ''}" data-id="${ev.id}" ${isSoon ? 'disabled' : ''}>
+        ${esc(ev.name)} <em style="color:var(--accent);font-style:italic">${ev.year}</em>
+        <span class="pill-count">${isSoon ? 'bientôt' : count}</span>
+      </button>`;
     }).join('');
 
-    // Accordéon + lightbox
-    wrap.querySelectorAll('.event-block[data-published="true"]').forEach(block => {
-      block.querySelector('.event-block-head').addEventListener('click', () => {
-        block.classList.toggle('open');
-      });
-      const slug = block.id.replace('block-', '');
-      const eventId = events.find(e => e.slug === slug)?.id;
-      const evPhotos = photos.filter(p => p.event_id === eventId);
-      block.querySelectorAll('.photo-item').forEach(item => {
-        item.addEventListener('click', () => openLb(evPhotos, +item.dataset.idx));
-        item.addEventListener('keydown', e => { if (e.key === 'Enter') openLb(evPhotos, +item.dataset.idx); });
-      });
+    selector.querySelectorAll('.event-pill:not(.soon-event)').forEach(btn => {
+      btn.addEventListener('click', () => selectEvent(+btn.dataset.id));
     });
+
+    const firstPublished = events.find(e => e.status === 'published');
+    if (firstPublished) selectEvent(firstPublished.id);
   }
 
   /* ══════════════════ TABS ══════════════════ */

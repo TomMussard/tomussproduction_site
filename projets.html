@@ -438,7 +438,7 @@
 
   function videoCard(v) {
     const yt    = `https://youtu.be/${v.youtube_id}`;
-    const thumb = v.thumbnail || `https://img.youtube.com/vi/${v.youtube_id}/maxresdefault.jpg`;
+    const thumb = v.thumbnail || `https://img.youtube.com/vi/${v.youtube_id}/hqdefault.jpg`;
     const views = v.views_label && v.views_label !== '—' ? v.views_label : '';
     return `
       <div class="vcard" data-yt="${esc(v.youtube_id)}">
@@ -543,7 +543,7 @@
   function shortCard(s) {
     const isIG = !s.youtube_id && s.src && s.src.includes('instagram.com');
     const href = s.youtube_id ? `https://youtu.be/${s.youtube_id}` : (s.src || '#');
-    const thumb = s.thumbnail || (s.youtube_id ? `https://img.youtube.com/vi/${s.youtube_id}/maxresdefault.jpg` : '');
+    const thumb = s.thumbnail || (s.youtube_id ? `https://img.youtube.com/vi/${s.youtube_id}/hqdefault.jpg` : '');
     const igSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(244,239,230,.6)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(244,239,230,.6)" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="rgba(244,239,230,.6)"/></svg>`;
     if (isIG) {
       if (thumb) {

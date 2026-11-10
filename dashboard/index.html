@@ -869,6 +869,7 @@ function goTo(name, el) {
   if (name === 'shop') { loadShopProducts(); loadShopSales(); loadShopStats(); }
   if (name === 'newsletter') { loadNewsletter(); }
   if (name === 'bandeau') { loadBanner(); }
+  if (name === 'contenu' && !window._videosLoaded) { window._videosLoaded = true; loadSiteVideos(); }
 }
 
 // ─── SHOP PRODUCTS ────────────────────────────────────────
@@ -2009,13 +2010,6 @@ function setCTab(name) {
   if (name === 'videos' && !window._videosLoaded) { window._videosLoaded = true; loadSiteVideos(); }
   if (name === 'shorts' && !window._shortsLoaded) { window._shortsLoaded = true; loadSiteShorts(); }
   if (name === 'events' && !window._eventsLoaded) { window._eventsLoaded = true; loadSiteEvents(); }
-}
-
-// Charge les vidéos au premier clic sur "Contenu site"
-const _origGoTo = goTo;
-function goTo(name, el) {
-  _origGoTo(name, el);
-  if (name === 'contenu' && !window._videosLoaded) { window._videosLoaded = true; loadSiteVideos(); }
 }
 
 /* ─── VIDÉOS MONTAGE ─── */

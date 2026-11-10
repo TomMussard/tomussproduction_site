@@ -1,21 +1,46 @@
 // ── Loading screen ─────────────────────────────────────────────────────────
 ;(function() {
+  if (location.pathname.indexOf('/dashboard') !== -1) return;
+  var root = (function(){
+    var s = document.currentScript; if (!s) return '';
+    return s.src.replace(/assets\/partials\.js.*/, '');
+  })();
+  var logoSrc = root + 'uploads/Plan%20de%20travail%205logotomussprod.svg';
+
+  var style = document.createElement('style');
+  style.textContent = [
+    '#site-loader{position:fixed;inset:0;z-index:99999;background:#0F0F0F;display:flex;align-items:center;justify-content:center;transition:opacity .6s cubic-bezier(.22,1,.36,1);}',
+    '#site-loader::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.72\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'200\' height=\'200\' filter=\'url(%23n)\' opacity=\'1\'/%3E%3C/svg%3E");opacity:.04;pointer-events:none;}',
+    '.sl-logo-wrap{position:relative;width:clamp(140px,22vw,260px);height:auto;}',
+    '.sl-logo-base{display:block;width:100%;filter:brightness(0) invert(1);opacity:.18;}',
+    '.sl-logo-fill{position:absolute;inset:0;overflow:hidden;clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.22,1,.36,1);}',
+    '.sl-logo-fill img{display:block;width:100%;filter:brightness(0) saturate(100%) invert(55%) sepia(90%) saturate(600%) hue-rotate(185deg) brightness(110%);}',
+  ].join('');
+  document.head.appendChild(style);
+
   var l = document.createElement('div');
   l.id = 'site-loader';
-  var s = l.style;
-  s.cssText = 'position:fixed;inset:0;z-index:99999;background:#0F0F0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .55s cubic-bezier(.22,1,.36,1);';
-  l.innerHTML = '<span style="font-family:\'Bebas Neue\',\'Oswald\',\'Arial Narrow\',sans-serif;font-size:clamp(28px,5vw,56px);letter-spacing:.14em;color:#F4EFE6;text-transform:uppercase;opacity:.9">TOMUSS PRODUCTION</span>'
-    + '<div style="width:60px;height:1px;background:rgba(244,239,230,.15);overflow:hidden;position:relative"><div id="sl-bar" style="position:absolute;inset:0;background:#1fa5ff;transform:scaleX(0);transform-origin:left;transition:transform .9s cubic-bezier(.22,1,.36,1)"></div></div>';
+  l.innerHTML = '<div class="sl-logo-wrap">'
+    + '<img class="sl-logo-base" src="' + logoSrc + '" alt="">'
+    + '<div class="sl-logo-fill"><img src="' + logoSrc + '" alt=""></div>'
+    + '</div>';
   document.documentElement.appendChild(l);
   document.documentElement.style.overflow = 'hidden';
-  requestAnimationFrame(function(){ var b = document.getElementById('sl-bar'); if(b) b.style.transform='scaleX(1)'; });
+
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      var fill = l.querySelector('.sl-logo-fill');
+      if (fill) fill.style.clipPath = 'inset(0% 0 0 0)';
+    });
+  });
+
   function hide() {
     document.documentElement.style.overflow = '';
     l.style.opacity = '0';
-    setTimeout(function(){ if(l.parentNode) l.parentNode.removeChild(l); }, 560);
+    setTimeout(function(){ if(l.parentNode) l.parentNode.removeChild(l); style.parentNode && style.parentNode.removeChild(style); }, 620);
   }
-  if (document.readyState === 'complete') { setTimeout(hide, 350); }
-  else { window.addEventListener('load', function(){ setTimeout(hide, 180); }); }
+  if (document.readyState === 'complete') { setTimeout(hide, 400); }
+  else { window.addEventListener('load', function(){ setTimeout(hide, 220); }); }
 })();
 
 // Reusable nav + footer injection

@@ -426,11 +426,15 @@
   let activeVideoFilter = 'all';
 
   const SECTION_META = {
-    'Multicam':     { label: 'Multicam',     desc: 'Plusieurs angles, une seule énergie' },
-    'Facecam':      { label: 'Facecam',       desc: 'Format direct — rythme, réactions, flow' },
-    'Storytelling': { label: 'Storytelling',  desc: 'Un arc narratif, une émotion' },
-    'Interview':    { label: 'Interview',     desc: 'La parole mise en valeur' },
+    'Multicam':       { label: 'Multicam',       desc: 'Plusieurs angles, une seule énergie' },
+    'Facecam':        { label: 'Facecam',         desc: 'Format direct — rythme, réactions, flow' },
+    'Storytelling':   { label: 'Storytelling',    desc: 'Un arc narratif, une émotion' },
+    'Interview':      { label: 'Interview',       desc: 'La parole mise en valeur' },
+    'Evenementiel':   { label: 'Événementiel',    desc: 'Captation live — 24H du Mans, Route du Rhum' },
+    'Divertissement': { label: 'Divertissement',  desc: 'Format court, énergie max' },
   };
+  const VIDEO_ORDER  = ['Multicam','Facecam','Storytelling','Interview'];
+  const SHORTS_ORDER = ['Evenementiel','Divertissement'];
 
   function videoCard(v) {
     const yt    = `https://youtu.be/${v.youtube_id}`;
@@ -495,14 +499,10 @@
         </div>
         <div class="video-grid">${filtered.map(v => videoCard(v)).join('')}</div>`;
     } else {
-      /* Regrouper par tag dans l'ordre d'apparition */
-      const order = [];
+      /* Regrouper par tag dans l'ordre défini */
       const groups = {};
-      filtered.forEach(v => {
-        const t = v.tag || 'Autre';
-        if (!groups[t]) { groups[t] = []; order.push(t); }
-        groups[t].push(v);
-      });
+      filtered.forEach(v => { const t = v.tag || 'Autre'; if (!groups[t]) groups[t] = []; groups[t].push(v); });
+      const order = [...VIDEO_ORDER.filter(t => groups[t]), ...Object.keys(groups).filter(t => !VIDEO_ORDER.includes(t))];
       wrap.innerHTML = order.map(tag => {
         const meta = SECTION_META[tag] || { label: tag, desc: '' };
         return `
@@ -587,19 +587,40 @@
   }
 
   function renderShorts() {
-    const body = document.getElementById('shorts-body');
+    const wrap = document.getElementById('shorts-body');
     const filtered = activeShortFilter === 'all' ? allShorts : allShorts.filter(s => s.tag === activeShortFilter);
     if (!allShorts.length) {
       document.getElementById('cnt-shorts').textContent = 'bientôt';
-      body.innerHTML = `<div class="shorts-soon"><span class="shorts-soon-rule"></span><span class="shorts-soon-label">Clips à venir</span><span class="shorts-soon-rule"></span></div>`;
+      wrap.innerHTML = `<div class="shorts-soon"><span class="shorts-soon-rule"></span><span class="shorts-soon-label">Clips à venir</span><span class="shorts-soon-rule"></span></div>`;
       return;
     }
     document.getElementById('cnt-shorts').textContent = allShorts.length;
     if (!filtered.length) {
-      body.innerHTML = `<div class="shorts-soon"><span class="shorts-soon-rule"></span><span class="shorts-soon-label">Aucun clip dans cette catégorie</span><span class="shorts-soon-rule"></span></div>`;
+      wrap.innerHTML = `<div class="shorts-soon"><span class="shorts-soon-rule"></span><span class="shorts-soon-label">Aucun clip dans cette catégorie</span><span class="shorts-soon-rule"></span></div>`;
       return;
     }
-    body.innerHTML = `<div class="shorts-grid">${filtered.map(shortCard).join('')}</div>`;
+    if (activeShortFilter !== 'all') {
+      const meta = SECTION_META[activeShortFilter] || {};
+      wrap.innerHTML = `
+        <div class="video-section-header">
+          <span class="video-section-label">${esc(meta.label || activeShortFilter)}</span>
+          ${meta.desc ? `<span class="video-section-desc">${esc(meta.desc)}</span>` : ''}
+        </div>
+        <div class="shorts-grid">${filtered.map(shortCard).join('')}</div>`;
+    } else {
+      const groups = {};
+      filtered.forEach(s => { const t = s.tag || 'Autre'; if (!groups[t]) groups[t] = []; groups[t].push(s); });
+      const order = [...SHORTS_ORDER.filter(t => groups[t]), ...Object.keys(groups).filter(t => !SHORTS_ORDER.includes(t))];
+      wrap.innerHTML = order.map(tag => {
+        const meta = SECTION_META[tag] || { label: tag, desc: '' };
+        return `
+          <div class="video-section-header">
+            <span class="video-section-label">${esc(meta.label)}</span>
+            ${meta.desc ? `<span class="video-section-desc">${esc(meta.desc)}</span>` : ''}
+          </div>
+          <div class="shorts-grid">${groups[tag].map(shortCard).join('')}</div>`;
+      }).join('');
+    }
   }
 
   async function loadShorts() {

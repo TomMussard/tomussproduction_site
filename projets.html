@@ -434,7 +434,7 @@
     'Divertissement': { label: 'Divertissement',  desc: 'Format court, énergie max' },
   };
   const VIDEO_ORDER  = ['Multicam','Facecam','Storytelling','Interview'];
-  const SHORTS_ORDER = ['Evenementiel','Divertissement'];
+  const SHORTS_ORDER = ['Divertissement','Evenementiel'];
 
   function videoCard(v) {
     const yt    = `https://youtu.be/${v.youtube_id}`;
@@ -443,7 +443,7 @@
     return `
       <div class="vcard" data-yt="${esc(v.youtube_id)}">
         <div class="vcard-frame">
-          <img src="${esc(thumb)}" alt="${esc(v.title)}" loading="lazy">
+          <img src="${esc(thumb)}" alt="${esc(v.title)}" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='https://img.youtube.com/vi/${esc(v.youtube_id)}/hqdefault.jpg'}">
           <div class="vcard-iframe-wrap"></div>
           <a class="vcard-overlay" href="${esc(yt)}" target="_blank" rel="noopener" aria-label="${esc(v.title)}">
             <div class="vcard-overlay-title">${esc(v.title)}</div>
@@ -576,7 +576,7 @@
     return `
       <a class="scard" href="${href}" target="_blank" rel="noopener">
         <div class="scard-frame">
-          ${thumb ? `<img src="${thumb}" alt="${esc(s.title)}" loading="lazy">` : ''}
+          ${thumb ? `<img src="${thumb}" alt="${esc(s.title)}" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='https://img.youtube.com/vi/${s.youtube_id}/hqdefault.jpg'}">` : ''}
           <div class="scard-play"><span>▶</span></div>
         </div>
         <div class="scard-info">

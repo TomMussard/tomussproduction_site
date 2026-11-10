@@ -2,247 +2,337 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-TRVNJ7FQ');</script>
-<!-- End Google Tag Manager -->
-<!-- Google Analytics 4 -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TRVNJ7FQ');</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MW53QBWFB2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-MW53QBWFB2');
-</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MW53QBWFB2');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>À propos — Tomuss Production</title>
-<meta name="description" content="Tomuss, 24 ans, monteur vidéo & vidéaste freelance au Mans depuis 2022. 12M+ vues cumulées, 15+ créateurs accompagnés. Découvrez son parcours et son process." />
-<meta property="og:title" content="À propos — Tomuss Production" />
-<meta property="og:description" content="Monteur vidéo & vidéaste freelance au Mans depuis 2022. 12M+ vues, 15+ créateurs accompagnés." />
+<title>Studio — Tomuss Production</title>
+<meta name="description" content="Tomuss, 24 ans, monteur vidéo & vidéaste freelance au Mans depuis 2022. 12M+ vues cumulées, 15+ créateurs accompagnés." />
+<meta property="og:title" content="Studio — Tomuss Production" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://tomussproduction.fr/about.html" />
 <meta property="og:image" content="https://tomussproduction.fr/uploads/bg-hero.jpg" />
-<meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" type="image/png" href="uploads/Plan de travail 5logotest.png" />
 <link rel="canonical" href="https://tomussproduction.fr/about.html" />
 <link rel="stylesheet" href="assets/shared.css" />
 <style>
-  .about-hero {
-    padding: 160px var(--gutter) 40px;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 80px;
-    align-items: end;
-  }
-  .about-hero h1 {
-    font-family: var(--f-display);
-    font-size: clamp(80px, 14vw, 240px);
-    line-height: .82;
-    text-transform: uppercase;
-  }
-  .about-hero h1 em { color: var(--accent); font-style: italic; font-weight: 400; }
-  .about-hero .id-card {
-    border: 1px solid var(--line-strong);
-    padding: 24px;
-    font-family: var(--f-mono);
-    font-size: 12px;
-    color: var(--fg-dim);
-  }
-  .id-card h2 {
-    font-size: 10px;
-    letter-spacing: .25em;
-    text-transform: uppercase;
-    color: var(--fg);
-    margin-bottom: 16px;
-  }
-  .id-card dl {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px 24px;
-  }
-  .id-card dt { color: var(--fg-faint); text-transform: uppercase; letter-spacing: .15em; font-size: 12px; }
-  .id-card dd { color: var(--fg); }
 
-  /* Portrait + bio */
-  .bio {
-    padding: 80px var(--gutter) 120px;
-    display: grid;
-    grid-template-columns: minmax(320px, 380px) 1.4fr;
-    gap: 80px;
-    max-width: 1240px;
-    margin: 0 auto;
-    justify-content: center;
-    border-bottom: 1px solid var(--line);
-    align-items: stretch;
-  }
-  .portrait {
-    width: 100%;
-    max-width: 380px;
-    height: 100%;
-    border: 1px solid var(--line);
+  /* ── HERO ── */
+  .studio-hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 var(--gutter) clamp(48px,6vh,80px);
     position: relative;
     overflow: hidden;
-    justify-self: end;
+    border-bottom: 1px solid var(--line);
   }
-  .portrait img {
+  .hero-bg-word {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -52%);
+    font-family: var(--f-display);
+    font-size: clamp(180px, 28vw, 420px);
+    text-transform: uppercase;
+    letter-spacing: -.01em;
+    line-height: 1;
+    color: rgba(244,239,230,.028);
+    pointer-events: none;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .hero-top {
+    position: absolute;
+    top: clamp(100px,12vh,140px); left: var(--gutter); right: var(--gutter);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .hero-top .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+  }
+  .hero-top .status {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-top .status::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: blink 1.8s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .hero-bottom {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: flex-end;
+  }
+  .hero-h1 {
+    font-family: var(--f-display);
+    font-size: clamp(72px, 13vw, 200px);
+    line-height: .88;
+    text-transform: uppercase;
+    letter-spacing: -.01em;
+  }
+  .hero-h1 em { color: var(--accent); font-style: italic; }
+  .hero-id {
+    border: 1px solid var(--line-strong);
+    padding: 20px 24px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    min-width: 220px;
+    max-width: 260px;
+    flex-shrink: 0;
+  }
+  .hero-id h2 {
+    font-size: 10px; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--fg-faint); margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-id dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; }
+  .hero-id dt { color: var(--fg-faint); text-transform: uppercase; letter-spacing: .15em; font-size: 10px; }
+  .hero-id dd { color: var(--fg); }
+  .hero-scroll {
+    position: absolute;
+    bottom: clamp(28px,4vh,48px); left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .28em;
+    text-transform: uppercase; color: var(--fg-faint);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .hero-scroll::after {
+    content: '';
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, var(--fg-faint), transparent);
+    animation: scrollLine 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollLine { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(.6)} }
+
+  /* ── MARQUEE ── */
+  .marquee-strip {
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    padding: 18px 0;
+    background: var(--surface);
+  }
+  .marquee-track {
+    display: flex; gap: 0;
+    animation: marquee 22s linear infinite;
+    width: max-content;
+  }
+  .marquee-track span {
+    font-family: var(--f-display);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .3em;
+    color: var(--fg-faint);
+    padding: 0 32px;
+    white-space: nowrap;
+  }
+  .marquee-track span em { color: var(--accent); font-style: normal; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* ── STATEMENT ── */
+  .statement {
+    padding: clamp(80px,10vh,140px) var(--gutter);
+    border-bottom: 1px solid var(--line);
+    max-width: 1100px;
+    margin: 0 auto;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    box-sizing: border-box;
+  }
+  .statement blockquote {
+    font-family: var(--f-display);
+    font-size: clamp(32px, 4.5vw, 68px);
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    margin: 0;
+  }
+  .statement blockquote em { color: var(--accent); font-style: italic; }
+  .statement .st-label {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--fg-faint);
+    margin-bottom: 28px; display: block;
+  }
+
+  /* ── NUMBERS ── */
+  .nums {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--line);
+  }
+  .num-cell {
+    padding: clamp(48px,7vw,96px) var(--gutter);
+    border-right: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .num-cell:last-child { border-right: none; }
+  .num-cell .big {
+    font-family: var(--f-display);
+    font-size: clamp(72px, 10vw, 160px);
+    line-height: .85;
+    text-transform: uppercase;
+    margin-bottom: 12px;
     display: block;
   }
-  .portrait::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-  .portrait .corner {
-    position: absolute;
-    top: 16px; left: 16px;
+  .num-cell .big em { color: var(--accent); font-style: italic; }
+  .num-cell .label {
     font-family: var(--f-mono);
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: .2em;
+    font-size: 11px;
     text-transform: uppercase;
-    z-index: 2;
+    letter-spacing: .22em;
+    color: var(--fg-faint);
   }
-  .portrait .corner2 {
-    position: absolute;
-    bottom: 16px; right: 16px;
-    font-family: var(--f-mono);
-    font-size: 12px;
-    color: var(--fg-dim);
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    z-index: 2;
+  .num-cell .idx {
+    position: absolute; top: 20px; right: var(--gutter);
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .25em; color: var(--fg-faint); opacity: .4;
   }
-  .bio-text .eyebrow { margin-bottom: 24px; }
+
+  /* ── BIO ── */
+  .bio {
+    display: grid;
+    grid-template-columns: minmax(280px,360px) 1fr;
+    gap: 72px;
+    padding: clamp(64px,8vw,120px) var(--gutter);
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .portrait {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    aspect-ratio: 3/4;
+  }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .portrait .p-label {
+    position: absolute; top: 14px; left: 14px;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--accent); z-index: 2;
+  }
+  .portrait .p-label2 {
+    position: absolute; bottom: 14px; right: 14px;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--fg-faint); z-index: 2;
+  }
+  .bio-text {}
+  .bio-text .eyebrow { margin-bottom: 20px; }
   .bio-text h2 {
     font-family: var(--f-display);
-    font-size: clamp(40px, 5vw, 76px);
-    line-height: .95;
+    font-size: clamp(40px, 5.5vw, 80px);
+    line-height: .92;
     text-transform: uppercase;
     margin-bottom: 32px;
   }
   .bio-text h2 em { color: var(--accent); font-style: italic; }
   .bio-text p {
-    font-size: 17px;
-    line-height: 1.55;
+    font-size: clamp(15px, 1.2vw, 17px);
+    line-height: 1.6;
     color: var(--fg-dim);
-    margin-bottom: 22px;
-    max-width: 620px;
+    margin-bottom: 20px;
+    max-width: 580px;
   }
   .bio-text p strong { color: var(--fg); font-weight: 400; }
   .bio-text p:first-of-type::first-letter {
-    font-family: var(--f-display);
-    font-size: 64px;
-    line-height: .8;
-    color: var(--accent);
-    float: left;
-    margin: 6px 14px 0 0;
+    font-family: var(--f-display); font-size: 60px; line-height: .8;
+    color: var(--accent); float: left; margin: 4px 12px 0 0;
   }
 
-  /* Big numbers */
-  .nums {
-    padding: 0;
+  /* ── SERVICES ── */
+  .services {
+    border-bottom: 1px solid var(--line);
+  }
+  .service-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 60px 1fr 1fr;
+    gap: 32px;
+    padding: 32px var(--gutter);
     border-bottom: 1px solid var(--line);
+    align-items: center;
+    transition: background .2s;
+    cursor: default;
   }
-  .num-cell {
-    padding: 80px var(--gutter);
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    position: relative;
+  .service-row:last-child { border-bottom: none; }
+  .service-row:hover { background: var(--surface); }
+  .service-num {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em;
+    color: var(--fg-faint); text-transform: uppercase;
   }
-  .num-cell:nth-child(2n) { border-right: none; }
-  .num-cell:nth-last-child(-n+2) { border-bottom: none; }
-  .num-cell .big {
+  .service-name {
     font-family: var(--f-display);
-    font-size: clamp(96px, 14vw, 240px);
-    line-height: .82;
-    text-transform: uppercase;
-    margin-bottom: 14px;
+    font-size: clamp(28px, 3.5vw, 52px);
+    text-transform: uppercase; line-height: 1;
+    transition: color .2s;
   }
-  .num-cell .big em { color: var(--accent); font-style: italic; }
-  .num-cell .desc {
-    font-family: var(--f-mono);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .22em;
-    color: var(--fg-dim);
-  }
-  .num-cell .desc strong { color: var(--fg); font-weight: 400; }
-  .num-cell .idx {
-    position: absolute;
-    top: 28px; right: var(--gutter);
-    font-family: var(--f-mono);
-    font-size: 12px;
-    letter-spacing: .25em;
-    color: var(--fg-faint);
+  .service-row:hover .service-name { color: var(--accent); }
+  .service-desc {
+    font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em;
+    color: var(--fg-faint); line-height: 1.6;
   }
 
-  /* Process / approach */
+  /* ── PROCESS ── */
   .approach {
-    padding: 140px var(--gutter);
+    padding: clamp(64px,8vw,120px) var(--gutter);
     display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    gap: 80px;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 72px;
     border-bottom: 1px solid var(--line);
   }
-  .approach h2 {
+  .approach-heading {
     font-family: var(--f-display);
-    font-size: clamp(56px, 8vw, 120px);
-    line-height: .88;
+    font-size: clamp(48px, 7vw, 110px);
+    line-height: .9;
     text-transform: uppercase;
+    position: sticky; top: 100px;
   }
-  .approach h2 em { color: var(--accent); font-style: italic; }
+  .approach-heading em { color: var(--accent); font-style: italic; }
   .approach-list { border-top: 1px solid var(--line); }
   .approach-row {
     border-bottom: 1px solid var(--line);
     padding: 28px 0;
     display: grid;
-    grid-template-columns: 60px 1fr 2fr;
-    gap: 32px;
+    grid-template-columns: 56px 1fr;
+    gap: 24px;
     align-items: start;
   }
   .approach-row .step {
-    font-family: var(--f-mono);
-    font-size: 13px;
-    color: var(--fg-dim);
-    letter-spacing: .2em;
-    padding-top: 4px;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em;
+    color: var(--fg-faint); padding-top: 5px; text-transform: uppercase;
   }
   .approach-row .name {
-    font-family: var(--f-display);
-    font-size: 28px;
-    text-transform: uppercase;
-    line-height: 1;
+    font-family: var(--f-display); font-size: clamp(22px,2.5vw,34px);
+    text-transform: uppercase; line-height: 1; margin-bottom: 10px;
   }
-  .approach-row .desc {
-    color: var(--fg-dim);
-    font-size: 17px;
-    line-height: 1.55;
-  }
+  .approach-row .desc { color: var(--fg-dim); font-size: 15px; line-height: 1.6; }
 
-  /* Collaborators ticker - duplicate of ticker but with names */
+  /* ── COLLABS ── */
   .collab {
-    padding: 120px var(--gutter);
-    text-align: center;
+    padding: clamp(64px,8vw,112px) var(--gutter);
     border-bottom: 1px solid var(--line);
   }
-  .collab .eyebrow { margin-bottom: 28px; }
-  .collab h2 {
+  .collab-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 48px;
+  }
+  .collab-head h2 {
     font-family: var(--f-display);
     font-size: clamp(40px, 5vw, 72px);
-    line-height: .95;
-    text-transform: uppercase;
-    margin-bottom: 60px;
+    line-height: .95; text-transform: uppercase;
   }
-  .collab h2 em { color: var(--accent); font-style: italic; }
+  .collab-head h2 em { color: var(--accent); font-style: italic; }
+  .collab-head .eyebrow { flex-shrink: 0; }
   .collab-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -250,128 +340,219 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-left: 1px solid var(--line);
   }
   .collab-cell {
-    padding: 32px 16px;
+    padding: 28px 20px;
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     font-family: var(--f-display);
-    font-size: 22px;
+    font-size: clamp(16px, 1.8vw, 24px);
     text-transform: uppercase;
     color: var(--fg-dim);
-    transition: color .25s var(--ease), background .25s var(--ease);
+    transition: color .2s, background .2s;
+    cursor: default;
   }
   .collab-cell:hover { color: var(--fg); background: var(--surface); }
+  .collab-cell.accent { color: var(--accent); }
 
-  @media (max-width: 1000px) {
-    .about-hero, .bio, .approach { grid-template-columns: 1fr; gap: 40px; padding-top: 130px; }
-    .nums { grid-template-columns: 1fr; }
-    .num-cell { border-right: none; border-bottom: 1px solid var(--line); }
-    .num-cell:last-child { border-bottom: none; }
-    .collab-grid { grid-template-columns: repeat(2, 1fr); }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .nums { grid-template-columns: repeat(2,1fr); }
+    .num-cell:nth-child(2) { border-right: none; }
+    .num-cell:nth-child(3) { border-right: 1px solid var(--line); }
+    .num-cell:nth-child(1),.num-cell:nth-child(2) { border-bottom: 1px solid var(--line); }
+    .approach { grid-template-columns: 1fr; gap: 40px; }
+    .approach-heading { position: static; font-size: clamp(48px,8vw,80px); }
+    .collab-grid { grid-template-columns: repeat(3,1fr); }
   }
-
-  @media (max-width: 880px) {
-    .about-hero  { padding: 120px var(--gutter) 32px; }
-    .bio         { padding: 48px var(--gutter) 64px; }
-    .approach    { padding: 64px var(--gutter); }
-    .collab      { padding: 64px var(--gutter); }
-    .num-cell    { padding: 48px var(--gutter); }
-    .num-cell .big { font-size: clamp(72px, 18vw, 160px); }
-    .approach-row { grid-template-columns: 40px 1fr; gap: 20px; }
-    .approach-row .desc { grid-column: 1 / -1; padding-left: 60px; margin-top: -12px; }
-    .collab-grid { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 860px) {
+    .hero-bottom { grid-template-columns: 1fr; }
+    .hero-id { display: none; }
+    .bio { grid-template-columns: 1fr; gap: 40px; }
+    .portrait { max-width: 320px; aspect-ratio: 3/4; }
+    .service-row { grid-template-columns: 40px 1fr; gap: 16px; }
+    .service-desc { grid-column: 2; margin-top: -4px; }
+    .collab-grid { grid-template-columns: repeat(2,1fr); }
+    .nums { grid-template-columns: repeat(2,1fr); }
   }
-
-  @media (max-width: 480px) {
+  @media (max-width: 540px) {
     .collab-grid { grid-template-columns: 1fr; }
-    .portrait    { max-width: 100%; }
-    .bio-text h2 { font-size: clamp(36px, 10vw, 60px); }
-    .collab h2   { font-size: clamp(32px, 9vw, 56px); }
+    .num-cell { border-right: none; border-bottom: 1px solid var(--line); }
+    .nums { grid-template-columns: 1fr; }
+    .service-row { grid-template-columns: 1fr; }
+    .service-num { display: none; }
   }
-
 </style>
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRVNJ7FQ"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRVNJ7FQ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="curtain"></div>
 <div id="nav-mount"></div>
 
-<section class="about-hero" data-screen-label="03 About — Hero">
-  <div>
-    <h1>Tomuss<br/>en <em>vrai.</em></h1>
+<!-- ══ HERO ══ -->
+<section class="studio-hero">
+  <div class="hero-bg-word" aria-hidden="true">STUDIO</div>
+  <div class="hero-top">
+    <span class="eyebrow">Tomuss Production — Studio</span>
+    <span class="status">Disponible</span>
   </div>
-  <div class="id-card">
-    <h2>Fiche identité</h2>
-    <dl>
-      <dt>Nom</dt><dd>Tomuss</dd>
-      <dt>Âge</dt><dd>24 ans</dd>
-      <dt>Base</dt><dd>Le Mans, France</dd>
-      <dt>Statut</dt><dd>Freelance</dd>
-      <dt>Depuis</dt><dd>2022</dd>
-      <dt>Dispo</dt><dd><span class="rec" style="color:var(--accent)">EN MISSION mais DISPONIBLE</span></dd>
-    </dl>
+  <div class="hero-bottom fade-up">
+    <h1 class="hero-h1">Tomuss<br/>en <em>vrai.</em></h1>
+    <div class="hero-id">
+      <h2>Fiche identité</h2>
+      <dl>
+        <dt>Nom</dt><dd>Tomuss</dd>
+        <dt>Âge</dt><dd>24 ans</dd>
+        <dt>Base</dt><dd>Le Mans, France</dd>
+        <dt>Statut</dt><dd>Freelance</dd>
+        <dt>Depuis</dt><dd>2022</dd>
+        <dt>Dispo</dt><dd style="color:var(--accent)">En mission · Dispo</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">Scroll</div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Montage YouTube</span><span><em>·</em></span>
+    <span>Tournage Événementiel</span><span><em>·</em></span>
+    <span>Format Court</span><span><em>·</em></span>
+    <span>Color Grading</span><span><em>·</em></span>
+    <span>12M+ Vues</span><span><em>·</em></span>
+    <span>Le Mans</span><span><em>·</em></span>
+    <span>Montage YouTube</span><span><em>·</em></span>
+    <span>Tournage Événementiel</span><span><em>·</em></span>
+    <span>Format Court</span><span><em>·</em></span>
+    <span>Color Grading</span><span><em>·</em></span>
+    <span>12M+ Vues</span><span><em>·</em></span>
+    <span>Le Mans</span><span><em>·</em></span>
+  </div>
+</div>
+
+<!-- ══ STATEMENT ══ -->
+<section class="statement fade-up">
+  <span class="st-label">— Point de vue</span>
+  <blockquote>
+    Je ne monte pas<br/>des vidéos —<br/>je monte des vidéos<br/>que les gens<br/>regardent <em>jusqu'au bout.</em>
+  </blockquote>
+</section>
+
+<!-- ══ NUMBERS ══ -->
+<section class="nums">
+  <div class="num-cell fade-up">
+    <span class="idx">01</span>
+    <span class="big">12M<em>+</em></span>
+    <span class="label">Vues cumulées</span>
+  </div>
+  <div class="num-cell fade-up">
+    <span class="idx">02</span>
+    <span class="big">50<em>+</em></span>
+    <span class="label">Projets livrés</span>
+  </div>
+  <div class="num-cell fade-up">
+    <span class="idx">03</span>
+    <span class="big">3<em>ans</em></span>
+    <span class="label">D'expérience</span>
+  </div>
+  <div class="num-cell fade-up">
+    <span class="idx">04</span>
+    <span class="big">15<em>+</em></span>
+    <span class="label">Créateurs accompagnés</span>
   </div>
 </section>
 
-<section class="bio" data-screen-label="03 About — Bio">
+<!-- ══ BIO ══ -->
+<section class="bio">
   <div class="portrait fade-up">
     <img src="uploads/Plan de travail 1pp4.png" alt="Portrait de Tomuss" />
-    <span class="corner">[ MONTEUR VIDéO / VIDéASTE ]</span>
-    <span class="corner2">3:4 · b&amp;w</span>
+    <span class="p-label">[ Monteur · Vidéaste ]</span>
+    <span class="p-label2">Le Mans · 2022 →</span>
   </div>
   <div class="bio-text fade-up">
-    <h2>TOURNAGE<br/>MONTAGE<br/> et <em>CRéATION</em></h2>
+    <span class="eyebrow">— À propos</span>
+    <h2>Tournage<br/>Montage<br/>et <em>Création</em></h2>
     <p>
       <strong>Je m'appelle Tomuss, je fais de la vidéo depuis 2022.</strong> Basé au Mans, je travaille en freelance avec des créateurs YouTube, des marques et des organisateurs d'événements. Depuis mes débuts, j'ai eu la chance de collaborer sur des dizaines de projets et de cumuler plus de 12 millions de vues sur les vidéos que j'ai montées.
-</p>
-<p>
-  Je monte des vidéos YouTube, je tourne des aftermovies, je fais du cadrage en plateau ou en extérieur. Chaque projet est différent et je m'adapte à ce dont vous avez besoin. Que vous soyez créateur de contenu, une marque ou un organisateur d'événement, je m'implique du début à la fin pour que le résultat soit à la hauteur de vos attentes.
-</p>
-<p>
-  Je travaille seul sur la majorité des projets, en équipe sur les plus gros tournages. <strong>Je suis quelqu'un de direct et de sérieux.</strong> On se met d'accord sur les délais et je les respecte. Si vous avez des retours à faire, on en parle et on règle ça simplement. Mon objectif est toujours le même, vous livrer une vidéo dont vous êtes fier et qui remplit son rôle. Si vous cherchez quelqu'un sur qui vous pouvez compter, vous êtes au bon endroit.
-</p>
+    </p>
+    <p>
+      Je monte des vidéos YouTube, je tourne des aftermovies, je fais du cadrage en plateau ou en extérieur. Chaque projet est différent et je m'adapte à ce dont vous avez besoin. Que vous soyez créateur de contenu, une marque ou un organisateur d'événement, je m'implique du début à la fin pour que le résultat soit à la hauteur.
+    </p>
+    <p>
+      Je travaille seul sur la majorité des projets, en équipe sur les plus gros tournages. <strong>Je suis direct et sérieux.</strong> On se met d'accord sur les délais et je les respecte. Mon objectif est toujours le même : vous livrer une vidéo dont vous êtes fier et qui remplit son rôle.
+    </p>
   </div>
 </section>
 
+<!-- ══ SERVICES ══ -->
+<section class="services">
+  <div class="service-row fade-up">
+    <span class="service-num">01</span>
+    <span class="service-name">Montage YouTube</span>
+    <p class="service-desc">Dérushage, structure, rythme, couleurs, son. Des vidéos calibrées pour maximiser la rétention et les vues.</p>
+  </div>
+  <div class="service-row fade-up">
+    <span class="service-num">02</span>
+    <span class="service-name">Tournage Événementiel</span>
+    <p class="service-desc">Captation live, aftermovie, format court. 24H du Mans, Route du Rhum, concerts, lancements.</p>
+  </div>
+  <div class="service-row fade-up">
+    <span class="service-num">03</span>
+    <span class="service-name">Format Court</span>
+    <p class="service-desc">Reels, Shorts, TikTok. Montage vertical dynamique pour maximiser l'engagement sur les plateformes courtes.</p>
+  </div>
+</section>
 
-<section class="approach" data-screen-label="03 About — Process">
+<!-- ══ PROCESS ══ -->
+<section class="approach">
   <div class="fade-up">
-    <h2>Comment<br/>je <em>fonctionne.</em></h2>
+    <span class="eyebrow" style="display:block;margin-bottom:20px">— Comment je fonctionne</span>
+    <h2 class="approach-heading">Mon<br/>process<br/><em>en 5<br/>étapes.</em></h2>
   </div>
   <div class="approach-list fade-up">
     <div class="approach-row">
-      <span class="step">— 01</span>
-      <span class="name">Brief</span>
-      <p class="desc">On échange sur votre projet : l'objectif, le format, la deadline et le budget. Je prends le temps de comprendre ce que vous voulez avant de commencer quoi que ce soit.</p>
+      <span class="step">01</span>
+      <div>
+        <span class="name">Brief</span>
+        <p class="desc">On échange sur votre projet : l'objectif, le format, la deadline et le budget. Je prends le temps de comprendre ce que vous voulez avant de commencer quoi que ce soit.</p>
+      </div>
     </div>
     <div class="approach-row">
-      <span class="step">— 02</span>
-      <span class="name">Tournage / Réception des rushes</span>
-      <p class="desc">Si le projet nécessite un tournage, je me déplace et je m'occupe de tout. Sinon, vous m'envoyez vos rushes comme vous voulez, cloud, disque dur, on trouve la solution qui vous convient.</p>
+      <span class="step">02</span>
+      <div>
+        <span class="name">Tournage / Rushes</span>
+        <p class="desc">Si le projet nécessite un tournage, je me déplace et m'occupe de tout. Sinon, vous m'envoyez vos rushes comme vous voulez — cloud, disque dur, on trouve la solution.</p>
+      </div>
     </div>
     <div class="approach-row">
-      <span class="step">— 03</span>
-      <span class="name">Premier montage</span>
-      <p class="desc">Je vous livre une première version dans le délai qu'on a fixé ensemble. Le dérushage, la structure et le rythme sont déjà soignés dès cette première version.</p>
+      <span class="step">03</span>
+      <div>
+        <span class="name">Premier montage</span>
+        <p class="desc">Je vous livre une première version dans le délai fixé ensemble. Dérushage, structure et rythme déjà soignés dès cette première version.</p>
+      </div>
     </div>
     <div class="approach-row">
-      <span class="step">— 04</span>
-      <span class="name">Retours</span>
-      <p class="desc">Deux tours de retours sont inclus. Vous pouvez commenter directement sur la vidéo avec des notes précises, c'est simple et rapide. On avance ensemble jusqu'à ce que vous soyez satisfait.</p>
+      <span class="step">04</span>
+      <div>
+        <span class="name">Retours</span>
+        <p class="desc">Deux tours de retours inclus. Commentez directement sur la vidéo avec des notes précises. On avance ensemble jusqu'à ce que vous soyez satisfait.</p>
+      </div>
     </div>
     <div class="approach-row">
-      <span class="step">— 05</span>
-      <span class="name">Color, son, export</span>
-      <p class="desc">Une fois les retours validés, je finalise l'étalonnage, le mix audio et j'exporte dans tous les formats dont vous avez besoin. Votre vidéo est prête à être publiée.</p>
+      <span class="step">05</span>
+      <div>
+        <span class="name">Color, son, export</span>
+        <p class="desc">Étalonnage, mix audio, export dans tous les formats dont vous avez besoin. Votre vidéo est prête à être publiée.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="collab" data-screen-label="03 About — Collaborateurs">
-  <h2>15+ créateurs<br/><em>qui m'ont fait confiance.</em></h2>
+<!-- ══ COLLABS ══ -->
+<section class="collab fade-up">
+  <div class="collab-head">
+    <h2>Ils m'ont<br/>fait <em>confiance.</em></h2>
+    <span class="eyebrow">15+ créateurs</span>
+  </div>
   <div class="collab-grid">
     <div class="collab-cell">Pitch Addict</div>
     <div class="collab-cell">Pierre Croce</div>
@@ -379,19 +560,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="collab-cell">Camille LV</div>
     <div class="collab-cell">Vinsky</div>
     <div class="collab-cell">Guizzi</div>
-    <div class="collab-cell">MG PRODUCTION</div>
-    <div class="collab-cell">MOTHAIBA</div>
-    <div class="collab-cell">STUDIO MVS</div>
-    <div class="collab-cell">+ 10 autres</div>
+    <div class="collab-cell">MG Production</div>
+    <div class="collab-cell">Mothaiba</div>
+    <div class="collab-cell">Studio MVS</div>
+    <div class="collab-cell accent">+ 6 autres</div>
   </div>
 </section>
 
-<div id="footer-mount"></div>
+<!-- ══ CTA ══ -->
+<section class="bottom-cta">
+  <h2 class="fade-up">Faisons<br/>la <em>prochaine.</em></h2>
+  <a href="mailto:tomussproduction@gmail.com" class="pill fade-up">Démarrer un projet ↗</a>
+</section>
 
+<div id="footer-mount"></div>
 <script src="assets/partials.js"></script>
 <script src="assets/shared.js"></script>
-<script>
-window.injectChrome('about');
-</script>
+<script>window.injectChrome('about');</script>
 </body>
 </html>

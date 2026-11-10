@@ -1,3 +1,23 @@
+// ── Loading screen ─────────────────────────────────────────────────────────
+;(function() {
+  var l = document.createElement('div');
+  l.id = 'site-loader';
+  var s = l.style;
+  s.cssText = 'position:fixed;inset:0;z-index:99999;background:#0F0F0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .55s cubic-bezier(.22,1,.36,1);';
+  l.innerHTML = '<span style="font-family:\'Bebas Neue\',\'Oswald\',\'Arial Narrow\',sans-serif;font-size:clamp(28px,5vw,56px);letter-spacing:.14em;color:#F4EFE6;text-transform:uppercase;opacity:.9">TOMUSS PRODUCTION</span>'
+    + '<div style="width:60px;height:1px;background:rgba(244,239,230,.15);overflow:hidden;position:relative"><div id="sl-bar" style="position:absolute;inset:0;background:#1fa5ff;transform:scaleX(0);transform-origin:left;transition:transform .9s cubic-bezier(.22,1,.36,1)"></div></div>';
+  document.documentElement.appendChild(l);
+  document.documentElement.style.overflow = 'hidden';
+  requestAnimationFrame(function(){ var b = document.getElementById('sl-bar'); if(b) b.style.transform='scaleX(1)'; });
+  function hide() {
+    document.documentElement.style.overflow = '';
+    l.style.opacity = '0';
+    setTimeout(function(){ if(l.parentNode) l.parentNode.removeChild(l); }, 560);
+  }
+  if (document.readyState === 'complete') { setTimeout(hide, 350); }
+  else { window.addEventListener('load', function(){ setTimeout(hide, 180); }); }
+})();
+
 // Reusable nav + footer injection
 window.renderNav = function(active) {
   const items = [

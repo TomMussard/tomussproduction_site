@@ -348,6 +348,7 @@
   const SB_URL = 'https://kmsimclzeitnnbbemeij.supabase.co';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttc2ltY2x6ZWl0bm5iYmVtZWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Nzc1NzYsImV4cCI6MjA5NTA1MzU3Nn0.w9uNRA5g37SBgB9wvE-iSIrWcYLIU8jcw27cEwAM7mg';
   const sb = window.supabase.createClient(SB_URL, SB_KEY);
+  const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
   /* ── Fallback si Supabase indisponible ── */
   const FALLBACK_VIDEOS = [
@@ -492,14 +493,14 @@
 
   function openLb(photos, idx) {
     lbPhotos = photos; lbIdx = ((idx % photos.length) + photos.length) % photos.length;
-    lbImg.src = photos[lbIdx].src; lbImg.alt = photos[lbIdx].caption || '';
+    lbImg.src = photoSrc(photos[lbIdx].src); lbImg.alt = photos[lbIdx].caption || '';
     lbCount.textContent = `${lbIdx + 1} / ${photos.length}`;
     lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
   }
   function closeLb() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
   function navLb(d) {
     lbIdx = ((lbIdx + d + lbPhotos.length) % lbPhotos.length);
-    lbImg.src = lbPhotos[lbIdx].src; lbImg.alt = lbPhotos[lbIdx].caption || '';
+    lbImg.src = photoSrc(lbPhotos[lbIdx].src); lbImg.alt = lbPhotos[lbIdx].caption || '';
     lbCount.textContent = `${lbIdx + 1} / ${lbPhotos.length}`;
   }
   document.getElementById('lb-close').addEventListener('click', closeLb);
@@ -513,10 +514,13 @@
     if (e.key === 'ArrowRight') navLb(1);
   });
 
+  function photoSrc(src) {
+    return src.split('/').map((seg, i) => i === 0 ? seg : encodeURIComponent(seg)).join('/');
+  }
   function buildMasonry(photos) {
     return `<div class="photo-masonry">${photos.map((p, i) => `
       <div class="photo-item" data-idx="${i}" role="button" tabindex="0" aria-label="${esc(p.caption || 'Photo')}">
-        <img src="${esc(p.src)}" alt="${esc(p.caption || '')}" loading="lazy">
+        <img src="${photoSrc(p.src)}" alt="${esc(p.caption || '')}" loading="lazy">
         <div class="photo-overlay"><span>Voir ⤢</span></div>
       </div>`).join('')}</div>`;
   }

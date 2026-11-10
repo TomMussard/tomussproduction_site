@@ -303,10 +303,10 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
 
         <!-- ── SHOP STATS ── -->
         <div class="stats-grid" style="margin-bottom:20px">
-          <div class="stat-card"><div class="stat-label">Commandes shop</div><div class="stat-value blue" id="stat-shop-orders" style="font-size:32px">—</div><div class="stat-sub">total téléchargements</div></div>
+          <div class="stat-card"><div class="stat-label">Téléchargements payants</div><div class="stat-value blue" id="stat-shop-orders" style="font-size:32px">—</div><div class="stat-sub">via Stripe</div></div>
           <div class="stat-card"><div class="stat-label">CA shop</div><div class="stat-value green" id="stat-shop-revenue" style="font-size:26px">—</div><div class="stat-sub">encaissé via Stripe</div></div>
-          <div class="stat-card"><div class="stat-label">Abonnés newsletter</div><div class="stat-value" id="stat-shop-subs" style="font-size:32px">—</div><div class="stat-sub">emails collectés</div></div>
-          <div class="stat-card"><div class="stat-label">Gratuits</div><div class="stat-value" id="stat-shop-free" style="font-size:32px">—</div><div class="stat-sub">téléchargements gratuits</div></div>
+          <div class="stat-card"><div class="stat-label">Téléchargements gratuits</div><div class="stat-value" id="stat-shop-free" style="font-size:32px">—</div><div class="stat-sub">packs gratuits</div></div>
+          <div class="stat-card"><div class="stat-label">Total téléchargements</div><div class="stat-value" id="stat-shop-total" style="font-size:32px">—</div><div class="stat-sub">tous packs confondus</div></div>
         </div>
 
         <div id="analytics-section" style="display:none">
@@ -486,6 +486,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-label">Ventes aujourd'hui</div><div class="stat-value blue" id="s-today-count">—</div><div class="stat-sub" id="s-today-rev">— €</div></div>
           <div class="stat-card"><div class="stat-label">Revenus ce mois</div><div class="stat-value green" id="s-revenue">— €</div><div class="stat-sub" id="s-month-rev">— ventes</div></div>
+          <div class="stat-card"><div class="stat-label">Gratuits ce mois</div><div class="stat-value" id="s-free-total">—</div><div class="stat-sub">téléchargements 0 €</div></div>
           <div class="stat-card"><div class="stat-label">Stripe Dashboard</div><div class="stat-value" style="margin-top:8px"><a href="https://dashboard.stripe.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:14px;font-family:var(--f-mono);letter-spacing:.1em;">Ouvrir ↗</a></div></div>
         </div>
 
@@ -874,10 +875,15 @@ function goTo(name, el) {
 
 // ─── SHOP PRODUCTS ────────────────────────────────────────
 async function loadShopProducts() {
+  window._productsLoaded = true;
   const { data, error } = await sb.from('products').select('*').order('sort_order').order('created_at', { ascending: false });
   const list = $('products-list');
   if (error || !data) { list.innerHTML = '<div class="card-empty" style="color:var(--red)">Erreur de chargement.</div>'; return; }
   if (data.length === 0) { list.innerHTML = '<div class="card-empty">Aucun produit. Clique sur "+ Nouveau produit" pour commencer.</div>'; return; }
+
+  const stats = window._shopStats || {};
+  const pp    = stats.per_product      || {};
+  const ppFree = stats.per_product_free || {};
 
   list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px">
     <thead><tr style="color:var(--fg-dim)">
@@ -885,20 +891,30 @@ async function loadShopProducts() {
       <th style="padding:10px 12px;font-weight:500;text-align:left">Nom</th>
       <th style="padding:10px 12px;font-weight:500;text-align:left">Catégorie</th>
       <th style="padding:10px 12px;font-weight:500;text-align:left">Prix</th>
+      <th style="padding:10px 12px;font-weight:500;text-align:left">Téléchargements</th>
       <th style="padding:10px 12px;font-weight:500;text-align:left">Statut</th>
       <th style="padding:10px 12px;font-weight:500;text-align:right">Actions</th>
     </tr></thead>
-    <tbody>${data.map(p => `<tr style="border-top:1px solid var(--line)">
+    <tbody>${data.map(p => {
+      const paid = pp[p.slug]?.paid || 0;
+      const freeRaw = Object.entries(ppFree).filter(([k]) => k === p.slug || k === p.name || k === p.slug.replace(/-/g,' ')).reduce((s,[,v]) => s+v, 0);
+      const total = paid + freeRaw;
+      const dlCell = total > 0
+        ? `<span style="font-family:var(--f-mono);font-size:13px;color:var(--accent)">${total}</span>`
+          + (paid > 0 || freeRaw > 0 ? `<div style="font-size:10px;color:var(--fg-faint)">${paid > 0 ? paid+' payants' : ''}${paid > 0 && freeRaw > 0 ? ' · ' : ''}${freeRaw > 0 ? freeRaw+' gratuits' : ''}</div>` : '')
+        : `<span style="color:var(--fg-faint);font-family:var(--f-mono)">—</span>`;
+      return `<tr style="border-top:1px solid var(--line)">
       <td style="padding:8px 12px"><img src="${p.image_url||''}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:4px;background:var(--surface2);display:block"/></td>
       <td style="padding:8px 12px"><strong>${p.name}</strong><div style="font-size:11px;color:var(--fg-faint);font-family:var(--f-mono)">${p.slug}</div></td>
       <td style="padding:8px 12px;color:var(--fg-dim);text-transform:uppercase;font-size:11px;font-family:var(--f-mono)">${p.category}</td>
       <td style="padding:8px 12px;font-family:var(--f-mono)">${p.price ? p.price+' €' : '<span style="color:var(--green)">Gratuit</span>'}</td>
+      <td style="padding:8px 12px">${dlCell}</td>
       <td style="padding:8px 12px"><span style="font-size:11px;padding:3px 8px;border-radius:20px;font-family:var(--f-mono);background:${p.active?'rgba(34,197,94,.15)':'rgba(239,68,68,.12)'};color:${p.active?'var(--green)':'var(--red)'}">${p.active?'Visible':'Masqué'}</span></td>
       <td style="padding:8px 12px;text-align:right;white-space:nowrap">
         <button class="btn btn-ghost btn-sm" onclick='editProduct(${JSON.stringify(p)})' style="margin-right:6px">✎ Modifier</button>
         <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}','${p.name.replace(/'/g,"\\'")}')">✕</button>
       </td>
-    </tr>`).join('')}</tbody>
+    </tr>`;}).join('')}</tbody>
   </table>`;
 }
 
@@ -1137,39 +1153,43 @@ async function deleteProduct(id, name) {
 // ─── SHOP STATS ───────────────────────────────────────────
 async function loadShopSales() {
   try {
-    const res  = await fetch('/api/shop-stats');
+    const res = await fetch('/api/shop-stats');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
+    window._shopStats = d;
 
     const fmt = n => Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     $('s-today-count').textContent = d.today?.count  ?? '0';
-    $('s-today-rev').textContent   = fmt(d.today?.revenue  ?? 0) + ' €';
-    $('s-month-count') && ($('s-month-count').textContent = d.month?.count  ?? '0');
-    $('s-month-rev').textContent   = (d.month?.count ?? 0) + ' vente' + (d.month?.count !== 1 ? 's' : '');
+    $('s-today-rev').textContent   = fmt(d.today?.revenue ?? 0) + ' €';
+    $('s-month-rev').textContent   = (d.month?.count ?? 0) + ' vente' + ((d.month?.count ?? 0) !== 1 ? 's' : '');
     $('s-revenue').textContent     = fmt(d.month?.revenue ?? 0) + ' €';
+    if ($('s-free-total')) $('s-free-total').textContent = d.free ?? '—';
 
     const list = $('shop-sales-list');
     if (!d.recent || d.recent.length === 0) {
       list.innerHTML = '<div class="card-empty">Aucune vente pour l\'instant.</div>';
-      return;
+    } else {
+      list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="color:var(--fg-dim);text-align:left">
+          <th style="padding:8px 12px;font-weight:500">Date</th>
+          <th style="padding:8px 12px;font-weight:500">Produit</th>
+          <th style="padding:8px 12px;font-weight:500">Montant</th>
+          <th style="padding:8px 12px;font-weight:500">Email</th>
+        </tr></thead>
+        <tbody>${d.recent.map(t => `<tr style="border-top:1px solid var(--line)">
+          <td style="padding:9px 12px;color:var(--fg-dim);white-space:nowrap">${t.date || '—'}</td>
+          <td style="padding:9px 12px">${t.product || '—'}</td>
+          <td style="padding:9px 12px;color:#22c55e;font-family:var(--f-mono)">${fmt(t.amount)} €</td>
+          <td style="padding:9px 12px;color:var(--fg-dim);font-size:12px">${t.email || '—'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
     }
-    list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead><tr style="color:var(--fg-dim);text-align:left">
-        <th style="padding:8px 12px;font-weight:500">Date</th>
-        <th style="padding:8px 12px;font-weight:500">Produit</th>
-        <th style="padding:8px 12px;font-weight:500">Montant</th>
-        <th style="padding:8px 12px;font-weight:500">Email</th>
-      </tr></thead>
-      <tbody>${d.recent.map(t => `<tr style="border-top:1px solid var(--line)">
-        <td style="padding:9px 12px;color:var(--fg-dim);white-space:nowrap">${t.date || '—'}</td>
-        <td style="padding:9px 12px">${t.product || '—'}</td>
-        <td style="padding:9px 12px;color:#22c55e;font-family:var(--f-mono)">${fmt(t.amount)} €</td>
-        <td style="padding:9px 12px;color:var(--fg-dim);font-size:12px">${t.email || '—'}</td>
-      </tr>`).join('')}</tbody>
-    </table>`;
+
+    // Refresh products table now that we have per-product stats
+    if (window._productsLoaded) loadShopProducts();
   } catch (e) {
-    $('shop-sales-list').innerHTML = '<div class="card-empty" style="color:#ef4444">Erreur de chargement — vérifie que STRIPE_SECRET_KEY est défini dans Vercel.</div>';
+    $('shop-sales-list').innerHTML = '<div class="card-empty" style="color:#ef4444">Erreur — vérifie que STRIPE_SECRET_KEY est défini dans Vercel.</div>';
   }
 }
 function toggleSidebar() { $('sidebar').classList.toggle('open'); }
@@ -1341,18 +1361,15 @@ function renderStats() {
 
 async function loadShopStats() {
   try {
-    const rSubs = await sb.from('newsletter_subscribers').select('id, source');
-    const allSubs = rSubs.data || [];
-    $('stat-shop-subs').textContent = allSubs.length;
-    const freeCount = allSubs.filter(s => s.source === 'shop_gratuit' || s.source === 'achat_merci').length;
-    $('stat-shop-free').textContent = freeCount;
-
     const rOrders = await fetch('/api/shop-stats');
-    if (rOrders.ok) {
-      const { orders, revenue } = await rOrders.json();
-      $('stat-shop-orders').textContent = freeCount + (orders ?? 0);
-      $('stat-shop-revenue').textContent = revenue != null ? revenue.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €' : '0,00 €';
-    }
+    if (!rOrders.ok) return;
+    const d = await rOrders.json();
+    window._shopStats = d;
+    const fmt2 = n => Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    $('stat-shop-orders').textContent  = d.orders ?? '0';
+    $('stat-shop-free').textContent    = d.free ?? '0';
+    $('stat-shop-total').textContent   = (d.orders ?? 0) + (d.free ?? 0);
+    $('stat-shop-revenue').textContent = d.revenue != null ? fmt2(d.revenue) + ' €' : '0,00 €';
   } catch(e) { console.warn('shop stats', e); }
 }
 

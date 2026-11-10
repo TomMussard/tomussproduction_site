@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
       'Content-Type': 'application/json',
       Prefer: 'resolution=ignore-duplicates',
     },
-    body: JSON.stringify({ email: clean, source }),
+    body: JSON.stringify({ email: clean, source: source === 'shop_gratuit' && product_name ? `shop_gratuit:${product_name}` : source }),
   });
 
   const sbBody = await r.text().catch(() => '');

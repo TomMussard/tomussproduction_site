@@ -61,7 +61,7 @@ window.renderNav = function(active) {
         ${items.map(i => `<li><a href="${i.href}" class="${i.key===active?'active':''}">${i.label}</a></li>`).join('')}
       </ul>
       <div class="nav-end">
-        <a class="nav-cta" href="mailto:tomussproduction@gmail.com">Contact ↗</a>
+        <a class="nav-cta" href="offres.html">Contact ↗</a>
         <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
           <span></span><span></span>
         </button>
@@ -71,7 +71,7 @@ window.renderNav = function(active) {
       <ul>
         ${items.map(i => `<li><a href="${i.href}" class="${i.key===active?'active':''}">${i.label}</a></li>`).join('')}
       </ul>
-      <a class="nav-drawer-cta" href="mailto:tomussproduction@gmail.com">Contact ↗</a>
+      <a class="nav-drawer-cta" href="offres.html">Contact ↗</a>
     </div>
     <div class="nav-overlay"></div>
   `;

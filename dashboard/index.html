@@ -253,9 +253,6 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
     <nav class="sidebar-nav">
       <div class="nav-section-label">Navigation</div>
       <div class="nav-item active" onclick="goTo('overview',this)"><span class="nav-icon">◈</span> Vue d'ensemble</div>
-      <div class="nav-item" onclick="goTo('projets',this)"><span class="nav-icon">◫</span> Projets<span class="nav-badge" id="badge-projets" style="display:none">0</span></div>
-      <div class="nav-item" onclick="goTo('contacts',this)"><span class="nav-icon">◎</span> Contacts</div>
-      <div class="nav-item" onclick="goTo('notes',this)"><span class="nav-icon">◉</span> Notes</div>
       <div class="nav-item" onclick="goTo('shop',this)"><span class="nav-icon">◐</span> Shop<span class="nav-badge" id="badge-shop" style="display:none;background:#22c55e;color:#000">0</span></div>
       <div class="nav-item" onclick="goTo('newsletter',this)"><span class="nav-icon">✉</span> Newsletter<span class="nav-badge" id="badge-newsletter" style="display:none;background:var(--accent);color:#000">0</span></div>
       <div class="nav-item" onclick="goTo('bandeau',this)"><span class="nav-icon">▬</span> Bandeau</div>
@@ -267,7 +264,6 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
     <div class="sidebar-bottom">
       <div class="nav-item" id="push-btn" onclick="activerNotifsPush()" style="font-size:12px;color:var(--accent)"><span class="nav-icon">🔔</span> Activer les notifs</div>
       <div class="nav-item" id="push-test-btn" onclick="testNotifPush()" style="font-size:12px;color:var(--fg-dim);display:none"><span class="nav-icon">🧪</span> Tester notif</div>
-      <div class="nav-item" onclick="exportData()" style="font-size:12px"><span class="nav-icon">⬇</span> Exporter données</div>
       <div class="nav-item" onclick="logout()" style="color:var(--fg-faint);font-size:12px"><span class="nav-icon">←</span> Déconnexion</div>
     </div>
   </div>
@@ -285,22 +281,6 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
         </div>
       </div>
       <div class="page-body">
-        <div id="reminders-section"></div>
-
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-label">Projets actifs</div><div class="stat-value blue" id="stat-actifs">—</div><div class="stat-sub">en cours</div></div>
-          <div class="stat-card"><div class="stat-label">Livrés</div><div class="stat-value green" id="stat-livres">—</div><div class="stat-sub">total</div></div>
-          <div class="stat-card"><div class="stat-label">Devis en attente</div><div class="stat-value yellow" id="stat-devis">—</div><div class="stat-sub">à convertir</div></div>
-          <div class="stat-card"><div class="stat-label">Contacts</div><div class="stat-value" id="stat-contacts">—</div><div class="stat-sub">total</div></div>
-        </div>
-
-        <div class="stats-grid" style="margin-bottom:20px">
-          <div class="stat-card"><div class="stat-label">CA total</div><div class="stat-value green" id="stat-total" style="font-size:26px">—</div><div class="stat-sub">encaissé</div></div>
-          <div class="stat-card"><div class="stat-label">CA cette année</div><div class="stat-value green" id="stat-year" style="font-size:26px">—</div><div class="stat-sub">encaissé</div></div>
-          <div class="stat-card"><div class="stat-label">Taux conversion</div><div class="stat-value" id="stat-conv" style="font-size:32px">—</div><div class="stat-sub">devis → livré</div></div>
-          <div class="stat-card"><div class="stat-label">Valeur moyenne</div><div class="stat-value" id="stat-avg" style="font-size:26px">—</div><div class="stat-sub">par projet livré</div></div>
-        </div>
-
         <!-- ── SHOP STATS ── -->
         <div class="stats-grid" style="margin-bottom:20px">
           <div class="stat-card"><div class="stat-label">Téléchargements payants</div><div class="stat-value blue" id="stat-shop-orders" style="font-size:32px">—</div><div class="stat-sub">via Stripe</div></div>
@@ -331,27 +311,11 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
           <a class="quick-link" href="/" target="_blank" rel="noopener">🌐 Voir le site</a>
         </div>
 
-        <div class="overview-grid">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Projets récents</span>
-              <button class="btn btn-ghost btn-sm" onclick="goTo('projets',document.querySelectorAll('.nav-item')[1])">Voir tout</button>
-            </div>
-            <div id="recent-projets"><div class="card-empty">Chargement…</div></div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Contacts récents</span>
-              <button class="btn btn-ghost btn-sm" onclick="goTo('contacts',document.querySelectorAll('.nav-item')[2])">Voir tout</button>
-            </div>
-            <div id="recent-contacts"><div class="card-empty">Chargement…</div></div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- ── PROJETS ── -->
-    <section id="section-projets" class="section">
+    <!-- ── PROJETS (supprimé) ── -->
+    <section id="section-projets" class="section" style="display:none!important">
       <div class="page-header">
         <div class="page-header-inner">
           <div>
@@ -411,8 +375,8 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       </div>
     </section>
 
-    <!-- ── CONTACTS ── -->
-    <section id="section-contacts" class="section">
+    <!-- ── CONTACTS (supprimé) ── -->
+    <section id="section-contacts" class="section" style="display:none!important">
       <div class="page-header">
         <div class="page-header-inner">
           <div>
@@ -451,8 +415,8 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       </div>
     </section>
 
-    <!-- ── NOTES ── -->
-    <section id="section-notes" class="section">
+    <!-- ── NOTES (supprimé) ── -->
+    <section id="section-notes" class="section" style="display:none!important">
       <div class="page-header">
         <div class="page-header-inner">
           <div><div class="page-title">Notes</div><div class="page-subtitle">Bloc-notes privé</div></div>
@@ -813,38 +777,12 @@ async function startApp() {
   $('app').style.display = 'block';
   const now = new Date();
   $('today-date').textContent = now.toLocaleDateString('fr-FR',{ weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  loading(true);
-  await loadAll();
-  loading(false);
-  renderAll();
-  loadAnalytics();
-}
-
-// ─── STATE ────────────────────────────────────────────────
-const DB = { projects: [], contacts: [], notes: [] };
-
-async function loadAll() {
-  const [p, c, n] = await Promise.all([
-    sb.from('projects').select('*').order('updated_at', { ascending: false }),
-    sb.from('contacts').select('*').order('created_at', { ascending: false }),
-    sb.from('notes').select('*').order('updated_at', { ascending: false })
-  ]);
-  DB.projects = p.data || [];
-  DB.contacts = c.data || [];
-  DB.notes    = n.data || [];
-}
-
-function renderAll() {
-  renderStats(); renderReminders();
-  renderRecentProjects(); renderRecentContacts();
-  renderProjects(); renderContacts(); renderNotes();
-  updateBadge();
   loadShopStats();
+  loadAnalytics();
 }
 
 // ─── UTILS ────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
-const F = { p: 'all', c: 'all', ptag: null };
 const today = () => new Date().toISOString().split('T')[0];
 function loading(on) { $('global-loading').className = on ? 'on' : ''; }
 function toast(msg, type = '') {
@@ -1373,6 +1311,16 @@ async function loadShopStats() {
   } catch(e) { console.warn('shop stats', e); }
 }
 
+// ─── COMPAT STUBS (sections supprimées) ──────────────────
+function renderStats() {}
+function renderReminders() {}
+function renderRecentProjects() {}
+function renderRecentContacts() {}
+function renderProjects() {}
+function renderContacts() {}
+function renderNotes() {}
+function updateBadge() {}
+
 // Temps réel — mise à jour instantanée à chaque nouveau téléchargement
 sb.channel('realtime-downloads')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'newsletter_subscribers' }, () => {
@@ -1445,469 +1393,9 @@ async function loadAnalytics() {
   } catch (_) {}
 }
 
-// ─── RECENT ───────────────────────────────────────────────
-function renderRecentProjects() {
-  const list = DB.projects.slice(0, 5);
-  const el   = $('recent-projets');
-  if (!list.length) { el.innerHTML = '<div class="card-empty">Aucun projet</div>'; return; }
-  el.innerHTML = list.map(p => `
-    <div class="list-item">
-      <div><div class="list-item-name">${esc(p.name)}</div><div class="list-item-sub">${esc(p.client || '—')}</div></div>
-      ${badge(p.status)}
-    </div>`).join('');
-}
-
-function renderRecentContacts() {
-  const list = DB.contacts.slice(0, 5);
-  const el   = $('recent-contacts');
-  if (!list.length) { el.innerHTML = '<div class="card-empty">Aucun contact</div>'; return; }
-  el.innerHTML = list.map(c => `
-    <div class="list-item">
-      <div><div class="list-item-name">${esc(c.name)}</div><div class="list-item-sub">${esc(c.email || c.phone || '—')}</div></div>
-      <span class="badge badge-${c.type}">${c.type === 'client' ? 'Client' : 'Prospect'}</span>
-    </div>`).join('');
-}
-
-// ─── FILTERS ──────────────────────────────────────────────
-function setFilter(btn, section) {
-  const id = section === 'p' ? 'pfilters' : 'cfilters';
-  document.querySelectorAll(`#${id} .filter-btn`).forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  F[section] = btn.dataset.f;
-  section === 'p' ? renderProjects() : renderContacts();
-}
-
-let VIEW_PROJECTS = 'liste';
-function setProjectView(v) {
-  VIEW_PROJECTS = v;
-  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.v === v));
-  renderProjects();
-}
-
-function setTagFilter(tag) {
-  F.ptag = F.ptag === tag ? null : tag;
-  renderTagFilterButtons();
-  renderProjects();
-}
-
-function renderTagFilterButtons() {
-  const allTags = [...new Set(DB.projects.flatMap(p => p.tags || []))].sort();
-  const row = $('tag-filters-row');
-  const container = $('tag-filters');
-  if (!allTags.length) { row.style.display = 'none'; return; }
-  row.style.display = '';
-  container.innerHTML = allTags.map(t =>
-    `<button class="tag-filter-btn${F.ptag === t ? ' active' : ''}" onclick="setTagFilter('${esc(t)}')">#${esc(t)}</button>`
-  ).join('');
-}
-
-// ─── STATUS HELPERS ───────────────────────────────────────
-const STATUS_LABEL = { devis:'Devis', en_cours:'En cours', livre:'Livré', archive:'Archivé' };
-const SOURCE_LABEL = { site:'Site web', reseaux:'Réseaux', bouche:'Bouche à oreille', autre:'Autre' };
-const badge = s => `<span class="badge badge-${s}">${STATUS_LABEL[s] || s}</span>`;
-
-// ─── PROJECTS ─────────────────────────────────────────────
-function getFilteredProjects() {
-  const q = ($('search-projets')?.value || '').toLowerCase();
-  let p = [...DB.projects];
-  if (F.p !== 'all') p = p.filter(x => x.status === F.p);
-  if (F.ptag)        p = p.filter(x => (x.tags || []).includes(F.ptag));
-  if (q)             p = p.filter(x => x.name.toLowerCase().includes(q) || (x.client||'').toLowerCase().includes(q));
-  return p;
-}
-
-function renderProjects() {
-  renderTagFilterButtons();
-  $('projets-sub').textContent = `${DB.projects.length} projet${DB.projects.length > 1 ? 's' : ''}`;
-  if (VIEW_PROJECTS === 'kanban') {
-    $('projects-list-view').style.display   = 'none';
-    $('projects-kanban-view').style.display = '';
-    renderKanban();
-  } else {
-    $('projects-list-view').style.display   = '';
-    $('projects-kanban-view').style.display = 'none';
-    renderProjectsList();
-  }
-}
-
-function renderProjectsList() {
-  const p     = getFilteredProjects();
-  const tbody = $('projects-tbody');
-  const empty = $('projects-empty');
-  if (!p.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-  tbody.innerHTML = p.map(x => `
-    <tr>
-      <td class="td-primary">${esc(x.name)}</td>
-      <td>${esc(x.client || '—')}</td>
-      <td>${badge(x.status)}</td>
-      <td style="font-family:var(--f-mono);font-size:12px">
-        ${x.budget ? Number(x.budget).toLocaleString('fr-FR') + ' €' : '—'}
-        ${Number(x.amount_paid) > 0 ? `<div style="color:var(--green);font-size:11px;margin-top:2px">✓ ${Number(x.amount_paid).toLocaleString('fr-FR')} €</div>` : ''}
-      </td>
-      <td><div class="tags-cell">${(x.tags||[]).length ? x.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('') : '<span style="color:var(--fg-faint)">—</span>'}</div></td>
-      <td style="font-family:var(--f-mono);font-size:12px">${fmtDate(x.deadline)}</td>
-      <td>
-        <div class="row-actions">
-          <button class="btn btn-ghost btn-sm" onclick="openProjectModal('${x.id}')">Éditer</button>
-          <button class="btn btn-danger btn-sm" onclick="delProject('${x.id}')">Suppr.</button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
-
-function renderKanban() {
-  const q = ($('search-projets')?.value || '').toLowerCase();
-  let all = [...DB.projects];
-  if (F.ptag) all = all.filter(x => (x.tags||[]).includes(F.ptag));
-  if (q)      all = all.filter(x => x.name.toLowerCase().includes(q) || (x.client||'').toLowerCase().includes(q));
-
-  const board = $('kanban-board');
-  const empty = $('kanban-empty');
-
-  if (!all.length) { board.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  board.innerHTML = ['devis','en_cours','livre','archive'].map(col => {
-    const items = all.filter(p => p.status === col);
-    return `<div class="kanban-col">
-      <div class="kanban-col-header">
-        <span class="kanban-col-title">${STATUS_LABEL[col]}</span>
-        <span class="kanban-col-count">${items.length}</span>
-      </div>
-      <div class="kanban-cards">
-        ${items.length ? items.map(p => `
-          <div class="kanban-card" onclick="openProjectModal('${p.id}')">
-            <div class="kanban-card-name">${esc(p.name)}</div>
-            ${p.client ? `<div class="kanban-card-client">${esc(p.client)}</div>` : ''}
-            ${(p.tags||[]).length ? `<div class="kanban-card-tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
-            <div class="kanban-card-footer">
-              <span class="kanban-card-meta">${p.budget ? Number(p.budget).toLocaleString('fr-FR') + ' €' : '—'}</span>
-              ${p.deadline ? `<span class="kanban-card-meta">${fmtDate(p.deadline)}</span>` : ''}
-            </div>
-          </div>`).join('') : '<div class="kanban-col-empty">Vide</div>'}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ─── TAG INPUT ────────────────────────────────────────────
-let editingTags = [];
-
-function handleTagInput(e) {
-  if (e.key === 'Enter' || e.key === ',') {
-    e.preventDefault();
-    const val = e.target.value.trim().replace(/,/g,'').toLowerCase();
-    if (val && !editingTags.includes(val)) { editingTags.push(val); renderTagChips(); }
-    e.target.value = '';
-  } else if (e.key === 'Backspace' && !e.target.value && editingTags.length) {
-    editingTags.pop(); renderTagChips();
-  }
-}
-function removeTag(i) { editingTags.splice(i,1); renderTagChips(); }
-function renderTagChips() {
-  const wrapper = $('tag-wrapper');
-  const input   = $('tag-field');
-  if (!wrapper || !input) return;
-  wrapper.querySelectorAll('.tag-chip').forEach(c => c.remove());
-  editingTags.forEach((t, i) => {
-    const chip = document.createElement('span');
-    chip.className = 'tag-chip';
-    chip.innerHTML = `${esc(t)} <span class="tag-chip-del" onclick="removeTag(${i})">×</span>`;
-    wrapper.insertBefore(chip, input);
-  });
-}
-
-// ─── PROJECT MODAL ────────────────────────────────────────
-function openProjectModal(id) {
-  const x = id ? DB.projects.find(p => p.id === id) : null;
-  editingTags = x?.tags ? [...x.tags] : [];
-
-  $('modal-title').textContent = x ? 'Modifier le projet' : 'Nouveau projet';
-  $('modal-body').innerHTML = `
-    <div class="form-group"><label>Nom du projet *</label>
-      <input type="text" id="f-name" value="${esc(x?.name)}" placeholder="Ex: Clip YouTube — Chaîne"/></div>
-    <div class="form-group"><label>Client</label>
-      <input type="text" id="f-client" value="${esc(x?.client)}" placeholder="Nom du client"/></div>
-    <div class="form-row">
-      <div class="form-group"><label>Statut</label>
-        <select id="f-status">
-          ${['devis','en_cours','livre','archive'].map(s =>
-            `<option value="${s}" ${x?.status===s?'selected':''}>${STATUS_LABEL[s]}</option>`).join('')}
-        </select></div>
-      <div class="form-group"><label>Budget (€)</label>
-        <input type="number" id="f-budget" value="${x?.budget ?? ''}" placeholder="0" min="0"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Montant encaissé (€)</label>
-        <input type="number" id="f-paid" value="${x?.amount_paid ?? ''}" placeholder="0" min="0"/></div>
-      <div class="form-group"><label>Tags</label>
-        <div class="tag-input-wrapper" id="tag-wrapper" onclick="document.getElementById('tag-field').focus()">
-          <input type="text" id="tag-field" placeholder="tag, Enter pour valider"
-                 onkeydown="handleTagInput(event)" autocomplete="off"
-                 style="flex:1;min-width:60px;background:transparent;border:none;outline:none;color:var(--fg);font-family:var(--f-body);font-size:14px;padding:2px 0;width:auto"/>
-        </div>
-        <div style="font-size:10px;color:var(--fg-faint);margin-top:4px">Entrée ou virgule pour ajouter</div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Date de début</label>
-        <input type="date" id="f-start" value="${esc(x?.start_date)}"/></div>
-      <div class="form-group"><label>Deadline</label>
-        <input type="date" id="f-deadline" value="${esc(x?.deadline)}"/></div>
-    </div>
-    <div class="form-group"><label>Notes</label>
-      <textarea id="f-notes" placeholder="Détails, demandes, liens drive…">${esc(x?.notes)}</textarea></div>`;
-
-  $('modal-footer').innerHTML = `
-    <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-    <button class="btn btn-primary" onclick="saveProject('${id||''}')">${x ? 'Sauvegarder' : 'Créer'}</button>`;
-
-  $('modal-overlay').classList.add('open');
-  setTimeout(() => { renderTagChips(); $('f-name')?.focus(); }, 50);
-}
-
-async function saveProject(id) {
-  const name = $('f-name').value.trim();
-  if (!name) { toast('Le nom est requis', 'error'); return; }
-
-  const data = {
-    name, client: $('f-client').value.trim(), status: $('f-status').value,
-    budget:      parseFloat($('f-budget').value) || null,
-    amount_paid: parseFloat($('f-paid').value) || 0,
-    tags:        editingTags,
-    start_date:  $('f-start').value || null,
-    deadline:    $('f-deadline').value || null,
-    notes:       $('f-notes').value.trim(),
-    updated_at:  new Date().toISOString()
-  };
-
-  loading(true);
-  let err;
-  if (id) {
-    ({ error: err } = await sb.from('projects').update(data).eq('id', id));
-  } else {
-    ({ error: err } = await sb.from('projects').insert(data));
-  }
-  if (err) { loading(false); toast('Erreur : ' + err.message, 'error'); return; }
-
-  await loadAll(); loading(false); closeModal();
-  renderProjects(); renderStats(); renderRecentProjects(); updateBadge();
-  toast(id ? 'Projet mis à jour' : 'Projet créé', 'success');
-}
-
-async function delProject(id) {
-  if (!confirm('Supprimer ce projet définitivement ?')) return;
-  loading(true);
-  await sb.from('projects').delete().eq('id', id);
-  await loadAll(); loading(false);
-  renderProjects(); renderStats(); renderRecentProjects(); updateBadge();
-  toast('Projet supprimé');
-}
-
-// ─── CONTACTS ─────────────────────────────────────────────
-function renderContacts() {
-  const q = ($('search-contacts')?.value || '').toLowerCase();
-  let c = [...DB.contacts];
-  if (F.c !== 'all') c = c.filter(x => x.type === F.c);
-  if (q) c = c.filter(x =>
-    x.name.toLowerCase().includes(q) ||
-    (x.email||'').toLowerCase().includes(q) ||
-    (x.phone||'').toLowerCase().includes(q)
-  );
-
-  $('contacts-sub').textContent = `${DB.contacts.length} contact${DB.contacts.length > 1 ? 's' : ''}`;
-  const tbody = $('contacts-tbody');
-  const empty = $('contacts-empty');
-  if (!c.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  const todayStr = today();
-  tbody.innerHTML = c.map(x => {
-    const isDue = x.reminder_date && x.reminder_date <= todayStr;
-    return `
-    <tr>
-      <td class="td-primary">${esc(x.name)}</td>
-      <td>
-        ${x.email ? `<div style="font-size:12px">${esc(x.email)}</div>` : ''}
-        ${x.phone ? `<div style="font-size:11px;color:var(--fg-faint)">${esc(x.phone)}</div>` : ''}
-        ${!x.email && !x.phone ? '—' : ''}
-      </td>
-      <td><span class="badge badge-${x.type}">${x.type === 'client' ? 'Client' : 'Prospect'}</span></td>
-      <td style="font-size:12px;color:var(--fg-faint)">${SOURCE_LABEL[x.source] || '—'}</td>
-      <td style="font-family:var(--f-mono);font-size:12px">${fmtDate(x.contact_date)}</td>
-      <td>
-        ${x.reminder_date
-          ? `<span style="font-family:var(--f-mono);font-size:11px;color:${isDue?'var(--yellow)':'var(--fg-faint)'}">${isDue?'🔔 ':''}${fmtDate(x.reminder_date)}</span>`
-          : '<span style="color:var(--fg-faint)">—</span>'}
-      </td>
-      <td style="max-width:140px;font-size:12px;color:var(--fg-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.notes)||'—'}</td>
-      <td>
-        <div class="row-actions">
-          <button class="btn btn-ghost btn-sm" onclick="openContactModal('${x.id}')">Éditer</button>
-          <button class="btn btn-danger btn-sm" onclick="delContact('${x.id}')">Suppr.</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function openContactModal(id) {
-  const x = id ? DB.contacts.find(c => c.id === id) : null;
-  $('modal-title').textContent = x ? 'Modifier le contact' : 'Nouveau contact';
-  $('modal-body').innerHTML = `
-    <div class="form-group"><label>Nom *</label>
-      <input type="text" id="f-name" value="${esc(x?.name)}" placeholder="Prénom Nom"/></div>
-    <div class="form-row">
-      <div class="form-group"><label>Email</label>
-        <input type="email" id="f-email" value="${esc(x?.email)}" placeholder="contact@exemple.com"/></div>
-      <div class="form-group"><label>Téléphone</label>
-        <input type="tel" id="f-phone" value="${esc(x?.phone)}" placeholder="06 XX XX XX XX"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Type</label>
-        <select id="f-type">
-          <option value="prospect" ${!x||x.type==='prospect'?'selected':''}>Prospect</option>
-          <option value="client"   ${x?.type==='client'?'selected':''}>Client</option>
-        </select></div>
-      <div class="form-group"><label>Source</label>
-        <select id="f-source">
-          <option value="site"    ${x?.source==='site'?'selected':''}>Site web</option>
-          <option value="reseaux" ${x?.source==='reseaux'?'selected':''}>Réseaux sociaux</option>
-          <option value="bouche"  ${x?.source==='bouche'?'selected':''}>Bouche à oreille</option>
-          <option value="autre"   ${!x||x.source==='autre'?'selected':''}>Autre</option>
-        </select></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Date de contact</label>
-        <input type="date" id="f-date" value="${esc(x?.contact_date) || today()}"/></div>
-      <div class="form-group"><label>Rappel (date)</label>
-        <input type="date" id="f-reminder" value="${esc(x?.reminder_date) || ''}"/>
-        <div style="font-size:10px;color:var(--fg-faint);margin-top:4px">Alerte sur le tableau de bord</div>
-      </div>
-    </div>
-    <div class="form-group"><label>Notes</label>
-      <textarea id="f-notes" placeholder="Projet demandé, contexte, suivi…">${esc(x?.notes)}</textarea></div>`;
-  $('modal-footer').innerHTML = `
-    <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-    <button class="btn btn-primary" onclick="saveContact('${id||''}')">${x ? 'Sauvegarder' : 'Ajouter'}</button>`;
-  $('modal-overlay').classList.add('open');
-  setTimeout(() => $('f-name')?.focus(), 50);
-}
-
-async function saveContact(id) {
-  const name = $('f-name').value.trim();
-  if (!name) { toast('Le nom est requis', 'error'); return; }
-
-  const data = {
-    name, email: $('f-email').value.trim(), phone: $('f-phone').value.trim(),
-    type: $('f-type').value, source: $('f-source').value,
-    contact_date:  $('f-date').value || null,
-    reminder_date: $('f-reminder').value || null,
-    notes:         $('f-notes').value.trim(),
-    updated_at:    new Date().toISOString()
-  };
-
-  loading(true);
-  let err;
-  if (id) {
-    ({ error: err } = await sb.from('contacts').update(data).eq('id', id));
-  } else {
-    ({ error: err } = await sb.from('contacts').insert(data));
-  }
-  if (err) { loading(false); toast('Erreur : ' + err.message, 'error'); return; }
-
-  await loadAll(); loading(false); closeModal();
-  renderContacts(); renderStats(); renderRecentContacts(); renderReminders();
-  toast(id ? 'Contact mis à jour' : 'Contact ajouté', 'success');
-}
-
-async function delContact(id) {
-  if (!confirm('Supprimer ce contact définitivement ?')) return;
-  loading(true);
-  await sb.from('contacts').delete().eq('id', id);
-  await loadAll(); loading(false);
-  renderContacts(); renderStats(); renderRecentContacts(); renderReminders();
-  toast('Contact supprimé');
-}
-
-// ─── NOTES ────────────────────────────────────────────────
-function renderNotes() {
-  const notes = [...DB.notes].sort((a,b) => b.updated_at.localeCompare(a.updated_at));
-  const list  = $('notes-list');
-  const empty = $('notes-empty');
-  if (!notes.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-  list.innerHTML = notes.map(n => `
-    <div class="note-card" id="nc-${n.id}">
-      <div class="note-meta">
-        <span class="note-date">${new Date(n.updated_at).toLocaleDateString('fr-FR',{
-          day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
-        })}</span>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-ghost btn-sm" onclick="editNote('${n.id}')">Éditer</button>
-          <button class="btn btn-danger btn-sm" onclick="delNote('${n.id}')">Suppr.</button>
-        </div>
-      </div>
-      <div class="note-content" id="ntxt-${n.id}">${esc(n.content)||'<em style="color:var(--fg-faint)">Note vide — cliquez sur Éditer</em>'}</div>
-    </div>`).join('');
-}
-
-async function addNote() {
-  loading(true);
-  const { error } = await sb.from('notes').insert({ content: '' });
-  if (error) { loading(false); toast('Erreur : ' + error.message, 'error'); return; }
-  await loadAll(); loading(false); renderNotes();
-  const first = DB.notes.sort((a,b) => b.created_at.localeCompare(a.created_at))[0];
-  if (first) editNote(first.id);
-}
-
-function editNote(id) {
-  const n = DB.notes.find(x => x.id === id);
-  if (!n) return;
-  const card   = $('nc-' + id);
-  const txtDiv = $('ntxt-' + id);
-  if (!card || !txtDiv) return;
-  card.classList.add('editing');
-  const ta = document.createElement('textarea');
-  ta.className = 'note-textarea';
-  ta.value     = n.content;
-  ta.rows      = Math.max(4, (n.content.match(/\n/g)||[]).length + 3);
-  txtDiv.replaceWith(ta);
-  ta.focus();
-  async function persist() {
-    loading(true);
-    await sb.from('notes').update({ content: ta.value, updated_at: new Date().toISOString() }).eq('id', id);
-    await loadAll(); loading(false); renderNotes();
-  }
-  ta.addEventListener('blur', persist);
-  ta.addEventListener('keydown', e => {
-    if (e.key === 'Escape') ta.blur();
-    if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); ta.blur(); }
-  });
-}
-
-async function delNote(id) {
-  if (!confirm('Supprimer cette note ?')) return;
-  loading(true);
-  await sb.from('notes').delete().eq('id', id);
-  await loadAll(); loading(false); renderNotes();
-  toast('Note supprimée');
-}
-
 // ─── MODAL ────────────────────────────────────────────────
 function closeModal() { $('modal-overlay').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ─── EXPORT ───────────────────────────────────────────────
-function exportData() {
-  const data = { exportedAt: new Date().toISOString(), projects: DB.projects, contacts: DB.contacts, notes: DB.notes };
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type:'application/json' }));
-  a.download = `tomuss-dashboard-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  toast('Données exportées', 'success');
-}
 </script>
 
 <script>

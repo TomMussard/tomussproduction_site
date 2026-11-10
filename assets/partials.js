@@ -111,6 +111,20 @@ window.injectChrome = function(active) {
   if (footerMount) footerMount.outerHTML = window.renderFooter();
   injectBanner();
 
+  // ── Bouton retour en haut ─────────────────────────────────────────────────
+  const btt = document.createElement('button');
+  btt.id = 'back-to-top';
+  btt.innerHTML = '↑';
+  btt.setAttribute('aria-label', 'Retour en haut');
+  btt.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:200;width:44px;height:44px;border-radius:50%;border:1px solid rgba(244,239,230,.22);background:rgba(15,15,15,.85);color:#F4EFE6;font-size:18px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
+  document.body.appendChild(btt);
+  window.addEventListener('scroll', () => {
+    const show = window.scrollY > 300;
+    btt.style.opacity = show ? '1' : '0';
+    btt.style.pointerEvents = show ? 'auto' : 'none';
+  }, { passive: true });
+  btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
   // ── Mobile nav toggle ──────────────────────────────────────────────────────
   const toggle  = document.querySelector('.nav-toggle');
   const drawer  = document.querySelector('.nav-drawer');

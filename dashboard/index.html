@@ -217,6 +217,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
   #sidebar.open{transform:translateX(0);}
   #content{margin-left:0;}
   .stats-grid{grid-template-columns:1fr 1fr;}
+  #dc-grille{grid-template-columns:1fr!important;}
   .analytics-row{grid-template-columns:1fr 1fr;}
   .overview-grid{grid-template-columns:1fr;}
   .form-row{grid-template-columns:1fr;}
@@ -257,6 +258,7 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       <div class="nav-item" onclick="goTo('newsletter',this)"><span class="nav-icon">✉</span> Newsletter<span class="nav-badge" id="badge-newsletter" style="display:none;background:var(--accent);color:#000">0</span></div>
       <div class="nav-item" onclick="goTo('bandeau',this)"><span class="nav-icon">▬</span> Bandeau</div>
       <div class="nav-item" onclick="goTo('contenu',this)"><span class="nav-icon">▤</span> Contenu site</div>
+      <div class="nav-item" onclick="goTo('discord',this)"><span class="nav-icon">◉</span> Discord</div>
       <div class="nav-section-label" style="margin-top:12px">Liens</div>
       <a class="nav-item" href="https://analytics.google.com" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Google Analytics</a>
       <a class="nav-item" href="https://vercel.com/dashboard" target="_blank" rel="noopener"><span class="nav-icon">↗</span> Vercel Dashboard</a>
@@ -731,6 +733,103 @@ tr:hover td{background:rgba(244,239,230,.02);color:var(--fg);}
       </div>
     </section>
 
+    <section id="section-discord" class="section">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div>
+            <div class="page-title">Discord</div>
+            <div class="page-subtitle" id="dc-sous">TOMUSS PRODUCTION</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="dc-etat" style="font-size:12px;color:var(--fg-faint)">—</span>
+            <button class="btn btn-ghost btn-sm" onclick="dcTout()">Rafraîchir</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <!-- Clé d'accès : demandée une fois, gardée dans ce navigateur -->
+        <div class="card" id="dc-connexion" style="max-width:560px;display:none">
+          <div class="card-header"><span class="card-title">Connexion au bot</span></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
+            <div class="form-group" style="margin:0">
+              <label>Adresse du bot</label>
+              <input id="dc-url" type="text" placeholder="https://xxx.up.railway.app"/>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Clé d'accès (DASHBOARD_TOKEN)</label>
+              <input id="dc-cle" type="password" placeholder="••••••••••••"/>
+            </div>
+            <button class="btn btn-primary" onclick="dcConnecter()">Se connecter</button>
+            <div id="dc-err" style="color:var(--red);font-size:12.5px;line-height:1.5"></div>
+          </div>
+        </div>
+
+        <div id="dc-contenu" style="display:none">
+          <div class="stats-grid" id="dc-stats" style="margin-bottom:20px"></div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start" id="dc-grille">
+            <div class="card">
+              <div class="card-header"><span class="card-title">Messages par jour — 14 jours</span></div>
+              <div style="padding:18px"><div id="dc-graphe"></div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Santé du serveur</span></div>
+              <div style="padding:6px 18px 14px" id="dc-sante"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Classement des niveaux</span></div>
+              <div id="dc-classement"><div class="card-empty">Chargement…</div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Activité par salon — 30 jours</span></div>
+              <div id="dc-salons"><div class="card-empty">Chargement…</div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Podium du mois</span></div>
+              <div id="dc-podium"><div class="card-empty">Chargement…</div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Les plus anciens</span></div>
+              <div id="dc-anciens"><div class="card-empty">Chargement…</div></div>
+            </div>
+
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-header"><span class="card-title">Envoyer sur le serveur</span></div>
+              <div style="padding:22px;display:flex;flex-direction:column;gap:14px">
+                <div class="form-row">
+                  <div class="form-group" style="margin:0">
+                    <label>Salon</label>
+                    <select id="dc-salon-annonce"></select>
+                  </div>
+                  <div class="form-group" style="margin:0">
+                    <label>Publier le classement dans</label>
+                    <div style="display:flex;gap:8px">
+                      <select id="dc-salon-classement" style="flex:1"></select>
+                      <button class="btn btn-ghost" onclick="dcPublierClassement()">Publier</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label>Message</label>
+                  <textarea id="dc-texte" rows="4" placeholder="Ton message…"></textarea>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center">
+                  <button class="btn btn-primary" onclick="dcEnvoyer()">Envoyer l'annonce</button>
+                  <span style="font-size:12px;color:var(--fg-faint)">Immédiat et irréversible.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 </div>
 
@@ -809,6 +908,7 @@ function goTo(name, el) {
   if (name === 'newsletter') { loadNewsletter(); }
   if (name === 'bandeau') { loadBanner(); }
   if (name === 'contenu' && !window._videosLoaded) { window._videosLoaded = true; loadSiteVideos(); }
+  if (name === 'discord') { dcDemarrer(); }
 }
 
 // ─── SHOP PRODUCTS ────────────────────────────────────────
@@ -1760,6 +1860,320 @@ async function deletePhoto(id){
   await sb.from('site_photos').delete().eq('id',id);
   sitePhotos=sitePhotos.filter(p=>p.id!==id); renderSiteEvents(); toast('Photo supprimée','success');
 }
+
+// ═══════════════════════════════════════════════════════════
+//  DISCORD — pilote le bot TOMUSSBOT hébergé sur Railway
+//  La clé d'accès est saisie une fois et reste dans CE navigateur.
+//  Elle n'est jamais écrite dans le code : le dépôt est public.
+// ═══════════════════════════════════════════════════════════
+
+let DC_URL = localStorage.getItem('tp_url') || '';
+let DC_CLE = localStorage.getItem('tp_cle') || '';
+let DC_STATS = null, DC_JOURS = null, DC_DEMARRE = false;
+
+const dcEchap = t => String(t ?? '').replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+async function dcAppel(route, options = {}) {
+  const r = await fetch(DC_URL + route, {
+    ...options,
+    headers: {
+      'Authorization': 'Bearer ' + DC_CLE,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (r.status === 401) throw new Error("Clé d'accès refusée");
+  if (!r.ok) {
+    let d = {};
+    try { d = await r.json(); } catch (e) {}
+    throw new Error(d.erreur || ('erreur ' + r.status));
+  }
+  return r.json();
+}
+
+function dcDemarrer() {
+  if (DC_URL && DC_CLE) {
+    $('dc-connexion').style.display = 'none';
+    $('dc-contenu').style.display = 'block';
+    if (!DC_DEMARRE) { DC_DEMARRE = true; dcTout(); }
+  } else {
+    $('dc-connexion').style.display = 'block';
+    $('dc-contenu').style.display = 'none';
+    if (DC_URL) $('dc-url').value = DC_URL;
+  }
+}
+
+async function dcConnecter() {
+  const url = $('dc-url').value.trim().replace(/\/+$/, '');
+  const cle = $('dc-cle').value.trim();
+  if (!url || !cle) { $('dc-err').textContent = 'Remplis les deux champs.'; return; }
+  DC_URL = url; DC_CLE = cle;
+  try {
+    await dcAppel('/api/stats');
+    localStorage.setItem('tp_url', DC_URL);
+    localStorage.setItem('tp_cle', DC_CLE);
+    $('dc-err').textContent = '';
+    DC_DEMARRE = false;
+    dcDemarrer();
+  } catch (e) {
+    $('dc-err').textContent = e.message +
+      ". Vérifie l'adresse Railway, la clé, et que le bot tourne.";
+  }
+}
+
+function dcEtat(ok, texte) {
+  const el = $('dc-etat');
+  el.textContent = texte;
+  el.style.color = ok ? 'var(--green)' : 'var(--red)';
+}
+
+function dcTendance(actuel, precedent, inverse) {
+  if (precedent === 0 && actuel === 0) return '<div class="stat-sub">—</div>';
+  if (precedent === 0) return '<div class="stat-sub">nouveau</div>';
+  const pct = Math.round(((actuel - precedent) / precedent) * 100);
+  if (pct === 0) return '<div class="stat-sub">stable</div>';
+  const bon = inverse ? pct < 0 : pct > 0;
+  return `<div class="stat-sub" style="color:${bon ? 'var(--green)' : 'var(--red)'}">` +
+    `${pct > 0 ? '▲ +' : '▼ '}${pct}% vs 7 j avant</div>`;
+}
+
+async function dcChargerStats() {
+  const [s7, s14] = await Promise.all([
+    dcAppel('/api/stats?jours=7'), dcAppel('/api/stats?jours=14')
+  ]);
+  DC_STATS = s7;
+  const av = {
+    messages: s14.messages - s7.messages,
+    actifs: Math.max(s14.actifs - s7.actifs, 0),
+    arrivees: s14.arrivees - s7.arrivees,
+    departs: s14.departs - s7.departs
+  };
+  const cartes = [
+    ['Membres', s7.membres, '', ''],
+    ['Messages — 7 j', s7.messages, 'blue', dcTendance(s7.messages, av.messages)],
+    ['Ont parlé', s7.actifs, '', dcTendance(s7.actifs, av.actifs)],
+    ['Arrivées / Départs', `+${s7.arrivees} / −${s7.departs}`, 'green',
+     dcTendance(s7.departs, av.departs, true)]
+  ];
+  $('dc-stats').innerHTML = cartes.map(([lib, val, cls, sub]) =>
+    `<div class="stat-card">
+       <div class="stat-label">${lib}</div>
+       <div class="stat-value ${cls}" style="font-size:32px">${dcEchap(val)}</div>
+       ${sub || '<div class="stat-sub">&nbsp;</div>'}
+     </div>`).join('');
+  dcEtat(true, 'bot en ligne');
+}
+
+const DC_JOURS_COURTS = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'];
+
+async function dcChargerActivite() {
+  // L'API renvoie des totaux cumulés : on soustrait pour obtenir chaque journée.
+  const cumuls = await Promise.all(
+    Array.from({ length: 15 }, (_, k) => dcAppel('/api/stats?jours=' + k))
+  );
+  const cum = cumuls.map(c => c.messages);
+  const parJour = cum.map((v, i) => (i === 0 ? v : v - cum[i - 1]));
+  const auj = new Date();
+  DC_JOURS = parJour.map((n, i) => {
+    const d = new Date(auj); d.setDate(d.getDate() - i);
+    return { date: d, n: Math.max(n, 0) };
+  }).reverse();
+  dcGraphe(DC_JOURS);
+  dcSante(DC_JOURS);
+}
+
+function dcGraphe(jours) {
+  const etroit = window.innerWidth < 1100;
+  const L = etroit ? 380 : 560, H = 200;
+  const gauche = 30, droite = 6, haut = 18, bas = 24;
+  const aireL = L - gauche - droite, aireH = H - haut - bas;
+  const max = Math.max(...jours.map(j => j.n), 1);
+  const pas = Math.pow(10, Math.floor(Math.log10(max))) / 2 || 1;
+  const sommet = Math.ceil(max / pas) * pas;
+  const bande = aireL / jours.length;
+  const largeur = Math.max(Math.min(bande - 2, 22), 3);
+  const yDe = v => haut + aireH - (v / sommet) * aireH;
+
+  const grilles = [0, 0.5, 1].map(f => {
+    const y = yDe(sommet * f);
+    return `<line x1="${gauche}" y1="${y}" x2="${L - droite}" y2="${y}"
+              stroke="var(--line)" stroke-width="1"/>
+            <text x="${gauche - 7}" y="${y + 3.5}" text-anchor="end"
+              font-size="10" fill="var(--fg-faint)">${Math.round(sommet * f)}</text>`;
+  }).join('');
+
+  const iMax = jours.reduce((m, j, i) => (j.n > jours[m].n ? i : m), 0);
+  const barres = jours.map((j, i) => {
+    const x = gauche + bande * i + (bande - largeur) / 2;
+    const h = (j.n / sommet) * aireH, y = haut + aireH - h;
+    const r = Math.min(4, h / 2) || 0;
+    const forme = h <= 0 ? '' :
+      `<path fill="var(--accent)" d="M${x} ${y + h} L${x} ${y + r} Q${x} ${y} ${x + r} ${y}
+        L${x + largeur - r} ${y} Q${x + largeur} ${y} ${x + largeur} ${y + r}
+        L${x + largeur} ${y + h} Z"><title>${j.date.toLocaleDateString('fr-FR',
+        { weekday: 'long', day: 'numeric', month: 'short' })} — ${j.n} messages</title></path>`;
+    const etiq = i === iMax && j.n > 0
+      ? `<text x="${x + largeur / 2}" y="${y - 5}" text-anchor="middle"
+           font-size="11" fill="var(--fg)">${j.n}</text>` : '';
+    const jour = i % 3 === 0
+      ? `<text x="${x + largeur / 2}" y="${H - 7}" text-anchor="middle"
+           font-size="10" fill="var(--fg-faint)">${DC_JOURS_COURTS[j.date.getDay()]}</text>` : '';
+    return forme + etiq + jour;
+  }).join('');
+
+  const recent = jours.slice(-7).reduce((a, b) => a + b.n, 0);
+  const avant = jours.slice(0, 7).reduce((a, b) => a + b.n, 0);
+  $('dc-graphe').innerHTML =
+    `<svg viewBox="0 0 ${L} ${H}" style="width:100%;height:200px;display:block"
+       role="img" aria-label="Messages par jour sur 14 jours">${grilles}${barres}</svg>
+     <div style="font-size:12px;color:var(--fg-faint);margin-top:10px;line-height:1.5">
+       ${avant === 0 ? "Pas encore assez d'historique pour comparer."
+                     : `${recent} messages sur 7 jours, contre ${avant} la semaine précédente.`}
+     </div>`;
+}
+
+function dcSante(jours) {
+  if (!DC_STATS) return;
+  const s = DC_STATS;
+  const part = s.membres ? (s.actifs / s.membres) * 100 : 0;
+  const ret = s.arrivees ? ((s.arrivees - s.departs) / s.arrivees) * 100 : 0;
+  const vides = jours.filter(j => j.n === 0).length;
+
+  const mesures = [
+    {
+      nom: 'Membres qui ont parlé', val: `${s.actifs} / ${s.membres}`,
+      pct: Math.min(part, 100),
+      couleur: part >= 10 ? 'var(--green)' : part >= 5 ? 'var(--yellow)' : 'var(--red)',
+      note: part >= 10 ? "Au-dessus de la moyenne d'un serveur de cette taille."
+          : part >= 5 ? "Dans la moyenne. C'est le chiffre à faire monter en priorité."
+          : "Sous les 5%. La grande majorité du serveur ne parle jamais."
+    },
+    {
+      nom: 'Solde arrivées / départs', val: `+${s.arrivees} / −${s.departs}`,
+      pct: Math.min(Math.max(ret, 0), 100),
+      couleur: ret >= 60 ? 'var(--green)' : ret >= 0 ? 'var(--yellow)' : 'var(--red)',
+      note: s.arrivees === 0 ? "Aucune arrivée cette semaine."
+          : ret >= 0 ? "Tu gagnes plus de monde que tu n'en perds."
+          : "Tu perds plus de membres que tu n'en gagnes."
+    },
+    {
+      nom: 'Journées sans aucun message', val: `${vides} / 14`,
+      pct: ((14 - vides) / 14) * 100,
+      couleur: vides <= 1 ? 'var(--green)' : vides <= 4 ? 'var(--yellow)' : 'var(--red)',
+      note: vides === 0 ? "Il s'est passé quelque chose tous les jours."
+          : vides === 1 ? "Une seule journée totalement silencieuse sur 14."
+          : `${vides} journées totalement silencieuses sur 14.`
+    }
+  ];
+
+  $('dc-sante').innerHTML = mesures.map(m => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px">
+        <span style="font-size:13px">${m.nom}</span>
+        <span style="font-size:13px;font-variant-numeric:tabular-nums">${dcEchap(m.val)}</span>
+      </div>
+      <div style="height:6px;background:var(--surface2);border-radius:99px;overflow:hidden">
+        <div style="height:100%;border-radius:99px;width:${m.pct.toFixed(1)}%;background:${m.couleur}"></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--fg-faint);margin-top:6px;line-height:1.5">${m.note}</div>
+    </div>`).join('');
+}
+
+async function dcChargerClassement() {
+  const d = await dcAppel('/api/classement');
+  $('dc-classement').innerHTML = d.length ? d.slice(0, 10).map(m => `
+    <div class="list-item">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span style="width:20px;font-size:12px;color:var(--fg-faint)">${m.rang}</span>
+        ${m.avatar ? `<img src="${dcEchap(m.avatar)}" alt=""
+            style="width:26px;height:26px;border-radius:50%;object-fit:cover">` : ''}
+        <span class="list-item-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${dcEchap(m.pseudo)}</span>
+      </div>
+      <span class="list-item-sub">${dcEchap(m.grade)} · niv. ${m.niveau}</span>
+    </div>`).join('') : '<div class="card-empty">Personne n\'a encore d\'xp.</div>';
+}
+
+async function dcChargerSalons() {
+  const d = await dcAppel('/api/salons?jours=30');
+  if (!d.length) { $('dc-salons').innerHTML = '<div class="card-empty">Aucun salon.</div>'; return; }
+  const morts = d.filter(s => s.messages === 0);
+  $('dc-salons').innerHTML = d.slice(0, 12).map(s => `
+    <div class="list-item">
+      <span class="list-item-name">#${dcEchap(s.nom)}</span>
+      <span class="list-item-sub" style="${s.messages === 0 ? 'color:var(--red)' : ''}">${s.messages} msg</span>
+    </div>`).join('') +
+    (morts.length ? `<div style="padding:12px 18px;font-size:11.5px;color:var(--fg-faint);line-height:1.5">
+       <strong>${morts.length} salon${morts.length > 1 ? 's' : ''}</strong> sans un seul message en 30 jours :
+       ${morts.map(s => '#' + dcEchap(s.nom)).join(' · ')}</div>` : '');
+}
+
+async function dcChargerMembres() {
+  const [p, a] = await Promise.all([dcAppel('/api/podium'), dcAppel('/api/anciens')]);
+  const rendre = (arr, droite) => arr.length ? arr.map(m => `
+    <div class="list-item">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:20px;font-size:12px;color:var(--fg-faint)">${m.rang}</span>
+        <span class="list-item-name">${dcEchap(m.pseudo)}</span>
+      </div>
+      <span class="list-item-sub">${dcEchap(droite(m))}</span>
+    </div>`).join('') : '<div class="card-empty">Rien pour l\'instant.</div>';
+  $('dc-podium').innerHTML = rendre(p, m => m.messages + ' msg');
+  $('dc-anciens').innerHTML = rendre(a, m => m.depuis);
+}
+
+async function dcChargerSalonsListe() {
+  const d = await dcAppel('/api/liste-salons');
+  const html = d.map(s => `<option value="${dcEchap(s.id)}">#${dcEchap(s.nom)}</option>`).join('');
+  $('dc-salon-annonce').innerHTML = html;
+  $('dc-salon-classement').innerHTML = html;
+}
+
+async function dcTout() {
+  try {
+    await dcChargerStats();
+    await Promise.all([
+      dcChargerActivite(), dcChargerClassement(), dcChargerSalons(),
+      dcChargerMembres(), dcChargerSalonsListe()
+    ]);
+  } catch (e) {
+    dcEtat(false, 'bot hors ligne');
+    if (typeof toast === 'function') toast(e.message, 'error');
+    else console.error(e);
+  }
+}
+
+async function dcEnvoyer() {
+  const texte = $('dc-texte').value.trim();
+  if (!texte) { alert('Écris un message.'); return; }
+  if (!confirm("Envoyer ce message sur le serveur Discord ? C'est immédiat.")) return;
+  try {
+    const r = await dcAppel('/api/annonce', {
+      method: 'POST',
+      body: JSON.stringify({ salon: $('dc-salon-annonce').value, texte })
+    });
+    $('dc-texte').value = '';
+    alert('Envoyé dans #' + r.salon);
+  } catch (e) { alert(e.message); }
+}
+
+async function dcPublierClassement() {
+  if (!confirm('Publier le top 10 sur le serveur ?')) return;
+  try {
+    const r = await dcAppel('/api/publier-classement', {
+      method: 'POST',
+      body: JSON.stringify({ salon: $('dc-salon-classement').value })
+    });
+    alert('Classement publié dans #' + r.salon);
+  } catch (e) { alert(e.message); }
+}
+
+let dcMinuteur;
+window.addEventListener('resize', () => {
+  clearTimeout(dcMinuteur);
+  dcMinuteur = setTimeout(() => { if (DC_JOURS) dcGraphe(DC_JOURS); }, 180);
+});
+
 </script>
 </body>
 </html>
